@@ -10,22 +10,28 @@ import javax.tools.ToolProvider;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.sun.source.util.TaskEvent;
+import com.sun.source.util.TaskListener;
+import com.sun.tools.javac.api.JavacTaskImpl;
 
 public class TestCompiler {
 
-    private static final String PLUGIN_NAME = "coco";
-
-    public byte[] compile(String qualifiedClassName, String testSource) {
+    public byte[] compile(String qualifiedClassName, String testSource, String pluginArg) {
         StringWriter output = new StringWriter();
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         FileManager fileManager = newFileManager(compiler);
         List<SourceFile> compilationUnits = getCompilationUnits(qualifiedClassName, testSource);
-        List<String> arguments = getArguments();
+        List<String> arguments = getArguments(pluginArg);
 
         JavaCompiler.CompilationTask task = compiler.getTask(
                 output, fileManager, null, arguments, null, compilationUnits);
 
         task.call();
+
+        String outputString = output.toString();
+        if (!outputString.isEmpty()) {
+            throw new CompilationFailedException(outputString);
+        }
 
         return Iterables.get(fileManager.getCompiled(), 0).getCompiledBinaries();
     }
@@ -39,8 +45,8 @@ public class TestCompiler {
         return Collections.singletonList(new SourceFile(qualifiedClassName, testSource));
     }
 
-    private ArrayList<String> getArguments() {
+    private ArrayList<String> getArguments(String pluginArg) {
         String classpath = System.getProperty("java.class.path");
-        return Lists.newArrayList("-classpath", classpath, "-Xplugin:" + PLUGIN_NAME);
+        return Lists.newArrayList("-classpath", classpath, pluginArg);
     }
 }
