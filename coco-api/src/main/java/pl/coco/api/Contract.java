@@ -7,13 +7,18 @@ package pl.coco.api;
  */
 public class Contract {
 
+    private static final String MESSAGE =
+            "This method call should not be present in compiled code. "
+                    + "Make sure that coco javac plugin is correctly used "
+                    + "(add flag -Xplugin:coco to javac arguments)";
+
     /**
      * Specifies a precondition for a method.
      *
      * @param precondition precondition
      */
     public static void requires(boolean precondition) {
-
+        throw new IllegalStateException(MESSAGE);
     }
 
     /**
@@ -22,7 +27,7 @@ public class Contract {
      * @param postcondition postcondition
      */
     public static void ensures(boolean postcondition) {
-
+        throw new IllegalStateException(MESSAGE);
     }
 
     /**
@@ -33,6 +38,6 @@ public class Contract {
      * @return value returned from a method containing <i>result()</i> call
      */
     public static <T> T result(Class<T> type) {
-        return null;
+        throw new IllegalStateException(MESSAGE);
     }
 }
