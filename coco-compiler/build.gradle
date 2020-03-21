@@ -14,8 +14,11 @@ def toolsJar = files((ToolProvider.systemToolClassLoader as URLClassLoader)
         .find({ url -> url.toString().contains("tools") }))
 
 dependencies {
-    implementation 'com.google.guava:guava:28.1-jre'
     implementation toolsJar
+    implementation project(':coco-api')
+
+    implementation 'com.google.guava:guava:28.1-jre'
+    implementation 'commons-cli:commons-cli:1.4'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
 
@@ -24,4 +27,11 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
 }

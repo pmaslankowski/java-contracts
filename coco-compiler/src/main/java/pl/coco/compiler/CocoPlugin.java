@@ -3,9 +3,12 @@ package pl.coco.compiler;
 import com.sun.source.util.JavacTask;
 import com.sun.source.util.Plugin;
 
+import pl.coco.compiler.arguments.ArgumentParser;
+import pl.coco.compiler.arguments.CocoArgs;
+
 public class CocoPlugin implements Plugin {
 
-    private static final String PLUGIN_NAME = "Coco Plugin 1.0";
+    private static final String PLUGIN_NAME = "coco";
 
     @Override
     public String getName() {
@@ -13,7 +16,9 @@ public class CocoPlugin implements Plugin {
     }
 
     @Override
-    public void init(JavacTask javacTask, String... strings) {
-
+    public void init(JavacTask javacTask, String... args) {
+        ArgumentParser parser = new ArgumentParser();
+        CocoArgs cocoArgs = parser.parseArgs(args);
+        javacTask.addTaskListener(new InstrumentationListener(javacTask, cocoArgs));
     }
 }
