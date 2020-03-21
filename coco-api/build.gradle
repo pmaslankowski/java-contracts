@@ -9,7 +9,6 @@
 plugins {
     // Apply the java-library plugin to add support for Java Library
     id 'java-library'
-    id 'idea'
 }
 
 repositories {
@@ -35,10 +34,4 @@ dependencies {
 test {
     // Use junit platform for unit tests
     useJUnitPlatform()
-}
-
-idea {
-    module {
-        downloadSources = true
-    }
 }
