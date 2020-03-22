@@ -1,50 +1,57 @@
 package pl.coco.compiler.instrumentation;
 
-import java.util.List;
 import java.util.Optional;
 
-import javax.lang.model.element.Name;
-
-import com.sun.source.tree.ExpressionTree;
+import pl.coco.compiler.ContractType;
 
 public class ContractMethodInvocation extends SimpleMethodInvocation {
 
-    private ContractMethodInvocation(Name methodName, Name className,
-            List<? extends ExpressionTree> arguments, int pos) {
+    private final ContractType contractType;
 
-        super(methodName, className, arguments, pos);
+    private ContractMethodInvocation(SimpleMethodInvocation invocation,
+            ContractType contractType) {
+
+        super(invocation.methodName, invocation.className, invocation.arguments, invocation.pos);
+        this.contractType = contractType;
     }
 
     public static Optional<ContractMethodInvocation> of(SimpleMethodInvocation invocation) {
+        return getContractMethod(invocation)
+                .map(method -> new ContractMethodInvocation(invocation, method));
 
-        if (isContractMethodInvocation(invocation)) {
-            return Optional.of(new ContractMethodInvocation(invocation.getMethodName(),
-                    invocation.getClassName(), invocation.getArguments(),
-                    invocation.getPosition()));
-        } else {
-            return Optional.empty();
+    }
+
+    private static Optional<ContractType> getContractMethod(SimpleMethodInvocation invocation) {
+        if (isContractMethodInvocation(invocation, ContractType.REQUIRES)) {
+            return Optional.of(ContractType.REQUIRES);
         }
+        if (isContractMethodInvocation(invocation, ContractType.ENSURES)) {
+            return Optional.of(ContractType.ENSURES);
+        }
+        return Optional.empty();
     }
 
-    private static boolean isContractMethodInvocation(SimpleMethodInvocation invocation) {
-        boolean doesMethodNameMatch =
-                isEnsuresInvocation(invocation) || isRequiresInvocation(invocation);
-        return isInvocationOfContractClass(invocation) && doesMethodNameMatch;
+    private static boolean isContractMethodInvocation(SimpleMethodInvocation invocation,
+            ContractType method) {
+
+        return isMethodInvocation(invocation, method.getApiClassName(), method.getMethodName());
     }
 
-    private static boolean isRequiresInvocation(SimpleMethodInvocation invocation) {
-        return isMethodNameEqual(invocation, "requires");
+    private static boolean isMethodInvocation(SimpleMethodInvocation invocation, String className,
+            String methodName) {
+
+        return isClassNameEqual(invocation, className) && isMethodNameEqual(invocation, methodName);
     }
 
-    private static boolean isEnsuresInvocation(SimpleMethodInvocation invocation) {
-        return isMethodNameEqual(invocation, "ensures");
+    private static boolean isClassNameEqual(SimpleMethodInvocation invocation, String className) {
+        return invocation.getClassName().contentEquals(className);
     }
 
-    private static boolean isMethodNameEqual(SimpleMethodInvocation invocation, String name) {
-        return invocation.getMethodName().contentEquals(name);
+    private static boolean isMethodNameEqual(SimpleMethodInvocation invocation, String methodName) {
+        return invocation.getMethodName().contentEquals(methodName);
     }
 
-    private static boolean isInvocationOfContractClass(SimpleMethodInvocation invocation) {
-        return invocation.getClassName().contentEquals("Contract");
+    public ContractType getContractType() {
+        return contractType;
     }
 }

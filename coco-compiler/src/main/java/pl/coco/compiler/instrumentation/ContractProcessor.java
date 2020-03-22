@@ -15,7 +15,7 @@ import com.sun.tools.javac.tree.JCTree.JCStatement;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 
-import pl.coco.compiler.ContractConstants;
+import pl.coco.compiler.ContractType;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.util.MethodInvocationBuilder;
 
@@ -54,7 +54,7 @@ public class ContractProcessor {
     private JCStatement getProcessedPrecondition(
             ContractMethodInvocation contractInvocation) {
 
-        if (contractInvocation.getMethodName().contentEquals(ContractConstants.REQUIRES_METHOD_NAME)) {
+        if (contractInvocation.getContractType() == ContractType.REQUIRES) {
             return buildRequiresCall(contractInvocation);
         } else {
             throw new UnsupportedOperationException();
@@ -63,10 +63,10 @@ public class ContractProcessor {
 
     private JCStatement buildRequiresCall(ContractMethodInvocation methodInvocation) {
         return new MethodInvocationBuilder(task)
-                .withClassName(ContractConstants.CONTRACT_ENGINE_CLASS_NAME)
-                .withMethodName(ContractConstants.REQUIRES_METHOD_NAME)
+                .withClassName(ContractType.REQUIRES.getInternalClassName())
+                .withMethodName(ContractType.REQUIRES.getMethodName())
                 .withArguments(getArgumentsForContractEngine(methodInvocation.getArguments()))
-                .withPosition(methodInvocation.getPosition())
+                .withPosition(methodInvocation.getPos())
                 .build();
     }
 

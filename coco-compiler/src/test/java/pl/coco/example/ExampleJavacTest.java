@@ -17,7 +17,7 @@ class ExampleJavacTest {
             + "public class Test {\n"
             + "    public static int method(int i) {\n"
             + "        Contract.requires(i >= 0);\n"
-            + "        Contract.ensures(Contract.result(int.class) >= 0);\n"
+            + "        //Contract.ensures(Contract.result(int.class) >= 0);\n"
             + "        return i;\n"
             + "    }\n"
             + "}\n";

@@ -18,15 +18,15 @@ public class SimpleMethodInvocation {
     protected final Name methodName;
     protected final Name className;
     protected final List<? extends ExpressionTree> arguments;
-    protected final int position;
+    protected final int pos;
 
     protected SimpleMethodInvocation(Name methodName, Name className,
-            List<? extends ExpressionTree> arguments, int position) {
+            List<? extends ExpressionTree> arguments, int pos) {
 
         this.methodName = methodName;
         this.className = className;
         this.arguments = arguments;
-        this.position = position;
+        this.pos = pos;
     }
 
     public static Optional<SimpleMethodInvocation> of(MethodInvocationTree methodInvocation) {
@@ -77,7 +77,7 @@ public class SimpleMethodInvocation {
         return arguments;
     }
 
-    public int getPosition() {
-        return position;
+    public int getPos() {
+        return pos;
     }
 }
