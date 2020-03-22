@@ -1,5 +1,9 @@
 package pl.coco.compiler.instrumentation;
 
+import static com.sun.tools.javac.tree.JCTree.JCBlock;
+import static com.sun.tools.javac.tree.JCTree.JCExpression;
+import static com.sun.tools.javac.tree.JCTree.JCLiteral;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
@@ -10,7 +14,6 @@ import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.StatementTree;
 import com.sun.source.util.JavacTask;
-import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCStatement;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
@@ -48,7 +51,7 @@ public class ContractProcessor {
             processedStatements.add(processedStatement);
         }
 
-        ((JCTree.JCBlock) methodBody).stats = List.from(processedStatements);
+        ((JCBlock) methodBody).stats = List.from(processedStatements);
     }
 
     private JCStatement getProcessedPrecondition(
@@ -70,11 +73,11 @@ public class ContractProcessor {
                 .build();
     }
 
-    private List<JCTree.JCExpression> getArgumentsForContractEngine(
+    private List<JCExpression> getArgumentsForContractEngine(
             java.util.List<? extends ExpressionTree> originalArguments) {
 
-        JCTree.JCExpression precondition = (JCTree.JCExpression) originalArguments.get(0);
-        JCTree.JCLiteral preconditionAsStringLiteral = treeMaker.Literal(precondition.toString());
+        JCExpression precondition = (JCExpression) originalArguments.get(0);
+        JCLiteral preconditionAsStringLiteral = treeMaker.Literal(precondition.toString());
         return List.from(Arrays.asList(precondition, preconditionAsStringLiteral));
     }
 }
