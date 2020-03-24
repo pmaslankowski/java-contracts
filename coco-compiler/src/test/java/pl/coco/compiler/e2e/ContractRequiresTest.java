@@ -12,14 +12,12 @@ import pl.coco.util.JavacTestUtils;
 class ContractRequiresTest {
 
     private static final String QUALIFIED_CLASS_NAME = "pl.coco.compiler.Test";
-    private static final String ENTRYPOINT = "entry";
+    private static final String ENTRY_POINT = "entry";
     private static final int RESULT = 42;
 
     @DisplayName("Precondition on static method passes")
     @Test
-    void shouldNotThrowContractFailedExceptionWhenPreconditionOnStaticMethodPasses()
-            throws Throwable {
-
+    void shouldReturnResultWhenPreconditionOnStaticMethodPasses() throws Throwable {
         String code
                 = "package pl.coco.compiler;\n"
                 + "\n"
@@ -37,14 +35,14 @@ class ContractRequiresTest {
                 + "    }\n"
                 + "}\n";
 
-        Object actual = JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRYPOINT, code);
+        Object actual = JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code);
 
         assertThat(actual).isEqualTo(RESULT);
     }
 
     @DisplayName("Precondition on static method fails")
     @Test
-    void shouldThrowContractFailedFailedExceptionWhenPreconditionOnStaticMethodFails() {
+    void shouldThrowExceptionWhenPreconditionOnStaticMethodFails() {
         String code
                 = "package pl.coco.compiler;\n"
                 + "\n"
@@ -63,7 +61,7 @@ class ContractRequiresTest {
                 + "}\n";
 
         Throwable thrown = catchThrowable(
-                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRYPOINT, code));
+                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
 
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class)
@@ -72,9 +70,7 @@ class ContractRequiresTest {
 
     @DisplayName("Precondition on instance method passes")
     @Test
-    void shouldNotThrowContractFailedExceptionWhenPreconditionOnInstanceMethodPasses()
-            throws Throwable {
-
+    void shouldReturnResultWhenPreconditionOnInstanceMethodPasses() throws Throwable {
         String code
                 = "package pl.coco.compiler;\n"
                 + "\n"
@@ -94,14 +90,14 @@ class ContractRequiresTest {
                 + "\n"
                 + "}\n";
 
-        Object actual = JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRYPOINT, code);
+        Object actual = JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code);
 
         assertThat(actual).isEqualTo(RESULT);
     }
 
     @DisplayName("Precondition on instance method fails")
     @Test
-    void shouldThrowContractFailedExceptionWhenPreconditionOnInstanceMethodFails() {
+    void shouldThrowExceptionWhenPreconditionOnInstanceMethodFails() {
         String code
                 = "package pl.coco.compiler;\n"
                 + "\n"
@@ -122,7 +118,7 @@ class ContractRequiresTest {
                 + "}\n";
 
         Throwable thrown = catchThrowable(
-                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRYPOINT, code));
+                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
 
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class)
@@ -131,9 +127,7 @@ class ContractRequiresTest {
 
     @DisplayName("Precondition on instance method with generics passes")
     @Test
-    void shouldNotThrowContractFailedExceptionWhenPreconditionOnInstanceMethodWithGenericPasses()
-            throws Throwable {
-
+    void shouldReturnResultWhenPreconditionOnInstanceMethodWithGenericPasses() throws Throwable {
         String code
                 = "package pl.coco.compiler;\n"
                 + "\n"
@@ -153,14 +147,14 @@ class ContractRequiresTest {
                 + "\n"
                 + "}\n";
 
-        Object actual = JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRYPOINT, code);
+        Object actual = JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code);
 
         assertThat(actual).isEqualTo(RESULT);
     }
 
     @DisplayName("Precondition on instance method with generics fails")
     @Test
-    void shouldThrowContractFailedExceptionWhenPreconditionOnInstanceMethodWithGenericsFails() {
+    void shouldThrowExceptionWhenPreconditionOnInstanceMethodWithGenericsFails() {
         String code
                 = "package pl.coco.compiler;\n"
                 + "\n"
@@ -181,7 +175,7 @@ class ContractRequiresTest {
                 + "}\n";
 
         Throwable thrown = catchThrowable(
-                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRYPOINT, code));
+                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
 
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class)
@@ -190,9 +184,7 @@ class ContractRequiresTest {
 
     @DisplayName("Precondition as fully qualified Contract.requires passes")
     @Test
-    void shouldNotThrowContractFailedExceptionWhenFullyQualifiedPreconditionPasses()
-            throws Throwable {
-
+    void shouldReturnResultWhenFullyQualifiedPreconditionPasses() throws Throwable {
         String code
                 = "package pl.coco.compiler;\n"
                 + "\n"
@@ -208,14 +200,14 @@ class ContractRequiresTest {
                 + "    }\n"
                 + "}\n";
 
-        Object actual = JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRYPOINT, code);
+        Object actual = JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code);
 
         assertThat(actual).isEqualTo(RESULT);
     }
 
     @DisplayName("Precondition as fully qualified Contract.requires fails")
     @Test
-    void shouldThrowContractFailedExceptionWhenFullyQualifiedPreconditionFails() {
+    void shouldThrowExceptionWhenFullyQualifiedPreconditionFails() {
         String code
                 = "package pl.coco.compiler;\n"
                 + "\n"
@@ -232,7 +224,7 @@ class ContractRequiresTest {
                 + "}\n";
 
         Throwable thrown = catchThrowable(
-                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRYPOINT, code));
+                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
 
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class)
