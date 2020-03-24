@@ -5,9 +5,15 @@ public class JavacTestUtils {
     public static final String CONTRACTS_ENABLED = "-Xplugin:coco";
     public static final String CONTRACTS_DISABLED = "-Xplugin:coco --disabled";
 
-    public static Object compileAndRun(String qualifiedClassName, String methodName, String code,
-            String pluginArg)
+    public static Object compileAndRun(String qualifiedClassName, String methodName, String code)
             throws Throwable {
+
+        return compileAndRun(qualifiedClassName, methodName, code, new Class<?>[] {},
+                new Object[] {}, CONTRACTS_ENABLED);
+    }
+
+    public static Object compileAndRun(String qualifiedClassName, String methodName, String code,
+            String pluginArg) throws Throwable {
 
         return compileAndRun(qualifiedClassName, methodName, code, new Class<?>[] {},
                 new Object[] {}, pluginArg);
