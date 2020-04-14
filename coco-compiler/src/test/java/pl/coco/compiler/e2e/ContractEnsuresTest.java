@@ -72,7 +72,7 @@ class ContractEnsuresTest {
 
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class)
-                .hasMessage("Postcondition 'val == 1' is not satisfied.");
+                .hasMessage("Postcondition \"val == 1\" is not satisfied.");
     }
 
     @DisplayName("Simple postcondition on instance method passes")
@@ -97,7 +97,7 @@ class ContractEnsuresTest {
                 + "    private int testedMethod() {\n"
                 + "        Contract.ensures(this.val == 1);\n"
                 + "        this.val = 1;\n"
-                + "        return 42\n"
+                + "        return 42;\n"
                 + "    }\n"
                 + "\n"
                 + "}\n";
@@ -126,7 +126,7 @@ class ContractEnsuresTest {
                 + "\n"
                 + "    private int testedMethod() {\n"
                 + "        Contract.ensures(this.val == 1);\n"
-                + "        return 42\n"
+                + "        return 42;\n"
                 + "    }\n"
                 + "\n"
                 + "}\n";
@@ -136,7 +136,7 @@ class ContractEnsuresTest {
 
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class)
-                .hasMessage("Postcondition 'i == 1' is not satisfied.");
+                .hasMessage("Postcondition \"this.val == 1\" is not satisfied.");
     }
 
     @DisplayName("Postcondition with result call inside unary operator passes")
@@ -149,7 +149,7 @@ class ContractEnsuresTest {
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
-                + "    public static int entry() {\n"
+                + "    public static boolean entry() {\n"
                 + "        Test test = new Test();\n"
                 + "        return test.testedMethod();"
                 + "    }\n"
@@ -163,7 +163,7 @@ class ContractEnsuresTest {
 
         Object actual = JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code);
 
-        assertThat(actual).isEqualTo(true);
+        assertThat(actual).isEqualTo(false);
     }
 
     @DisplayName("Postcondition with result call inside unary operator fails")
@@ -176,7 +176,7 @@ class ContractEnsuresTest {
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
-                + "    public static int entry() {\n"
+                + "    public static boolean entry() {\n"
                 + "        Test test = new Test();\n"
                 + "        return test.testedMethod();"
                 + "    }\n"
@@ -193,7 +193,7 @@ class ContractEnsuresTest {
 
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class)
-                .hasMessage("Postcondition '!Contract.result(boolean.class)' is not satisfied.");
+                .hasMessage("Postcondition \"!Contract.result(boolean.class)\" is not satisfied.");
     }
 
     @DisplayName("Postcondition with result call inside binary operator passes")
@@ -211,7 +211,7 @@ class ContractEnsuresTest {
                 + "        return test.testedMethod();"
                 + "    }\n"
                 + "\n"
-                + "    private boolean testedMethod() {\n"
+                + "    private int testedMethod() {\n"
                 + "        Contract.ensures(Contract.result(int.class) == 42);\n"
                 + "        return 42;\n"
                 + "    }\n"
@@ -220,7 +220,7 @@ class ContractEnsuresTest {
 
         Object actual = JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code);
 
-        assertThat(actual).isEqualTo(true);
+        assertThat(actual).isEqualTo(42);
     }
 
     @DisplayName("Postcondition with result call inside binary operator fails")
@@ -238,7 +238,7 @@ class ContractEnsuresTest {
                 + "        return test.testedMethod();"
                 + "    }\n"
                 + "\n"
-                + "    private boolean testedMethod() {\n"
+                + "    private int testedMethod() {\n"
                 + "        Contract.ensures(Contract.result(int.class) == 42);\n"
                 + "        return 43;\n"
                 + "    }\n"
@@ -250,7 +250,7 @@ class ContractEnsuresTest {
 
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class)
-                .hasMessage("Postcondition '!Contract.result(int.class) == 42' is not satisfied.");
+                .hasMessage("Postcondition \"Contract.result(int.class) == 42\" is not satisfied.");
     }
 
     @DisplayName("Postcondition with result call inside ternary operator passes")
@@ -263,7 +263,7 @@ class ContractEnsuresTest {
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
-                + "    public static int entry() {\n"
+                + "    public static boolean entry() {\n"
                 + "        Test test = new Test();\n"
                 + "        return test.testedMethod();"
                 + "    }\n"
@@ -293,7 +293,7 @@ class ContractEnsuresTest {
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
-                + "    public static int entry() {\n"
+                + "    public static boolean entry() {\n"
                 + "        Test test = new Test();\n"
                 + "        return test.testedMethod();"
                 + "    }\n"
@@ -366,7 +366,7 @@ class ContractEnsuresTest {
 
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class)
-                .hasMessage("Postcondition 'val == 1' is not satisfied.");
+                .hasMessage("Postcondition \"val == 1\" is not satisfied.");
     }
 
     @DisplayName("Postcondition as fully qualified Contract.ensures with Contract.result passes")

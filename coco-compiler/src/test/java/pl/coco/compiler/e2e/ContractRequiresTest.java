@@ -65,7 +65,7 @@ class ContractRequiresTest {
 
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class)
-                .hasMessage("Precondition 'arg >= 0' is not satisfied.");
+                .hasMessage("Precondition \"arg >= 0\" is not satisfied.");
     }
 
     @DisplayName("Precondition on instance method passes")
@@ -85,7 +85,7 @@ class ContractRequiresTest {
                 + "\n"
                 + "    private int testedMethod(int i, boolean flag) {\n"
                 + "        Contract.requires(i >= 0 && flag);\n"
-                + "        return 42\n"
+                + "        return 42;\n"
                 + "    }\n"
                 + "\n"
                 + "}\n";
@@ -122,7 +122,7 @@ class ContractRequiresTest {
 
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class)
-                .hasMessage("Precondition 'i >= 0' is not satisfied.");
+                .hasMessage("Precondition \"i >= 0\" is not satisfied.");
     }
 
     @DisplayName("Precondition on instance method with generics passes")
@@ -179,7 +179,7 @@ class ContractRequiresTest {
 
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class)
-                .hasMessage("Precondition 'i != null' is not satisfied.");
+                .hasMessage("Precondition \"i != null\" is not satisfied.");
     }
 
     @DisplayName("Precondition as fully qualified Contract.requires passes")
@@ -228,6 +228,6 @@ class ContractRequiresTest {
 
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class)
-                .hasMessage("Precondition 'arg >= 0' is not satisfied.");
+                .hasMessage("Precondition \"arg >= 0\" is not satisfied.");
     }
 }
