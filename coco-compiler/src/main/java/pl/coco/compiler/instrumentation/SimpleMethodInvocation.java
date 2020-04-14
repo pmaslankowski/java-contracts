@@ -5,26 +5,24 @@ import java.util.Optional;
 
 import javax.lang.model.element.Name;
 
+import pl.coco.compiler.util.TreePasser;
+
 import com.sun.source.tree.ExpressionTree;
-import com.sun.source.tree.IdentifierTree;
-import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.tree.JCTree;
-
-import pl.coco.compiler.util.TreePasser;
 
 public class SimpleMethodInvocation {
 
     protected final Name methodName;
-    protected final Name className;
+    protected final Name fullyQualifiedClassName;
     protected final List<? extends ExpressionTree> arguments;
     protected final int pos;
 
-    protected SimpleMethodInvocation(Name methodName, Name className,
-            List<? extends ExpressionTree> arguments, int pos) {
+    protected SimpleMethodInvocation(Name methodName, Name fullyQualifiedClassName,
+                                     List<? extends ExpressionTree> arguments, int pos) {
 
         this.methodName = methodName;
-        this.className = className;
+        this.fullyQualifiedClassName = fullyQualifiedClassName;
         this.arguments = arguments;
         this.pos = pos;
     }
@@ -47,17 +45,16 @@ public class SimpleMethodInvocation {
     private static Optional<Name> getMethodName(MethodInvocationTree methodInvocation) {
         return TreePasser.of(methodInvocation)
                 .map(MethodInvocationTree::getMethodSelect)
-                .as(MemberSelectTree.class)
-                .mapAndGet(MemberSelectTree::getIdentifier);
+                .as(JCTree.JCFieldAccess.class)
+                .mapAndGet(access -> access.sym.name);
     }
 
+    //TODO: type instead of name
     private static Optional<Name> getClassName(MethodInvocationTree methodInvocation) {
         return TreePasser.of(methodInvocation)
                 .map(MethodInvocationTree::getMethodSelect)
-                .as(MemberSelectTree.class)
-                .map(MemberSelectTree::getExpression)
-                .as(IdentifierTree.class)
-                .mapAndGet(IdentifierTree::getName);
+                .as(JCTree.JCFieldAccess.class)
+                .mapAndGet(access -> access.sym.owner.getQualifiedName());
     }
 
     private static List<? extends ExpressionTree> getArguments(
@@ -69,8 +66,8 @@ public class SimpleMethodInvocation {
         return methodName;
     }
 
-    public Name getClassName() {
-        return className;
+    public Name getFullyQualifiedClassName() {
+        return fullyQualifiedClassName;
     }
 
     public List<? extends ExpressionTree> getArguments() {

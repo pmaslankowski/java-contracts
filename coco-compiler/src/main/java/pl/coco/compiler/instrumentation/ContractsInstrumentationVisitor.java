@@ -12,6 +12,7 @@ import com.sun.source.util.TreeScanner;
 import com.sun.tools.javac.api.BasicJavacTask;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Context;
+import com.sun.tools.javac.util.Names;
 
 import pl.coco.compiler.arguments.CocoArgs;
 import pl.coco.compiler.util.ContractAstUtil;
@@ -19,14 +20,17 @@ import pl.coco.compiler.util.TreePasser;
 
 public class ContractsInstrumentationVisitor extends TreeScanner<Void, Void> {
 
+    //TODO: maybe get rid of treeMaker and names from this place
     private final JavacTask task;
     private final TreeMaker treeMaker;
+    private final Names names;
     private final CocoArgs cocoArgs;
 
     public ContractsInstrumentationVisitor(JavacTask task,
             CocoArgs cocoArgs) {
         this.task = task;
         this.treeMaker = TreeMaker.instance(getContext(task));
+        this.names = Names.instance(getContext(task));
         this.cocoArgs = cocoArgs;
     }
 
@@ -51,7 +55,8 @@ public class ContractsInstrumentationVisitor extends TreeScanner<Void, Void> {
     private void processMethod(ClassTree clazz, MethodTree method) {
         List<? extends StatementTree> statements = method.getBody().getStatements();
         if (containsContractInvocation(statements)) {
-            ContractProcessor processor = new ContractProcessor(task, treeMaker, clazz, method);
+            ContractProcessor processor = new ContractProcessor(task, treeMaker, clazz, method,
+                    names);
             processor.process();
         }
     }

@@ -1,8 +1,8 @@
 package pl.coco.compiler;
 
 public enum ContractType {
-    REQUIRES("requires", "Contract", "pl.coco.internal.ContractEngine"),
-    ENSURES("ensures", "Contract", "pl.coco.internal.ContractEngine");
+    REQUIRES("requires", "pl.coco.api.Contract", "pl.coco.internal.ContractEngine"),
+    ENSURES("ensures", "pl.coco.api.Contract", "pl.coco.internal.ContractEngine");
 
     private String methodName;
     private String apiClassName;

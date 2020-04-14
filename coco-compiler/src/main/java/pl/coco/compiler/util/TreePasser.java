@@ -23,7 +23,7 @@ public class TreePasser<T extends Tree> {
             return new TreePasser<>(null);
         }
 
-        Class<? extends Tree> actualType = node.getKind().asInterface();
+        Class<? extends Tree> actualType = node.getClass();
         if (!requestedType.isAssignableFrom(actualType)) {
             return new TreePasser<>(null);
         }
@@ -45,6 +45,13 @@ public class TreePasser<T extends Tree> {
         }
 
         return Optional.ofNullable(fun.apply(node));
+    }
+
+    public <R> Optional<R> flatMapAndGet(Function<T, Optional<R>> fun) {
+        if (node == null) {
+            return Optional.empty();
+        }
+        return fun.apply(node);
     }
 
     public Optional<T> get() {

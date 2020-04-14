@@ -11,7 +11,7 @@ public class ContractMethodInvocation extends SimpleMethodInvocation {
     private ContractMethodInvocation(SimpleMethodInvocation invocation,
             ContractType contractType) {
 
-        super(invocation.methodName, invocation.className, invocation.arguments, invocation.pos);
+        super(invocation.methodName, invocation.fullyQualifiedClassName, invocation.arguments, invocation.pos);
         this.contractType = contractType;
     }
 
@@ -44,7 +44,7 @@ public class ContractMethodInvocation extends SimpleMethodInvocation {
     }
 
     private static boolean isClassNameEqual(SimpleMethodInvocation invocation, String className) {
-        return invocation.getClassName().contentEquals(className);
+        return invocation.getFullyQualifiedClassName().contentEquals(className);
     }
 
     private static boolean isMethodNameEqual(SimpleMethodInvocation invocation, String methodName) {

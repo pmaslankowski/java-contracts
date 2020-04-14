@@ -24,7 +24,7 @@ public class InstrumentationListener implements TaskListener {
 
     @Override
     public void finished(TaskEvent taskEvent) {
-        if (taskEvent.getKind() == TaskEvent.Kind.PARSE) {
+        if (taskEvent.getKind() == TaskEvent.Kind.ANALYZE) {
             taskEvent.getCompilationUnit().accept(
                     new ContractsInstrumentationVisitor(task, cocoArgs), null);
         }
