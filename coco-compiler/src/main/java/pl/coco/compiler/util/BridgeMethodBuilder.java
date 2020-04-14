@@ -2,7 +2,6 @@ package pl.coco.compiler.util;
 
 import static java.util.stream.Collectors.toList;
 
-import com.sun.source.tree.StatementTree;
 import com.sun.source.util.JavacTask;
 import com.sun.tools.javac.api.BasicJavacTask;
 import com.sun.tools.javac.code.Symbol;
@@ -29,7 +28,7 @@ public class BridgeMethodBuilder {
         JCTree.JCBlock methodBody = originalMethod.getBody();
         java.util.List<JCTree.JCStatement> otherStatements = methodBody.getStatements()
                 .stream()
-                .filter(statement -> !isContract(statement))
+                .filter(statement -> !ContractAstUtil.isContractInvocation(statement))
                 .collect(toList());
 
         JCTree.JCBlock body = treeMaker.Block(/* TODO: make sure if these flags are correct*/0,
@@ -40,9 +39,5 @@ public class BridgeMethodBuilder {
                 originalMethod.sym.type, originalMethod.sym.owner);
 
         return treeMaker.MethodDef(bridgeSymbol, body);
-    }
-
-    private boolean isContract(StatementTree statement) {
-        return ContractAstUtil.getContractInvocation(statement).isPresent();
     }
 }

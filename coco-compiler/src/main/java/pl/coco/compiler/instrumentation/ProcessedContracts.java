@@ -1,0 +1,44 @@
+package pl.coco.compiler.instrumentation;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.sun.tools.javac.tree.JCTree;
+
+import pl.coco.compiler.ContractType;
+
+public class ProcessedContracts {
+
+    private final List<JCTree.JCStatement> preconditions = new ArrayList<>();
+    private final List<JCTree.JCStatement> postconditions = new ArrayList<>();
+
+    public void add(ContractType contractType, JCTree.JCStatement statement) {
+        switch (contractType) {
+            case REQUIRES:
+                addPrecondition(statement);
+                break;
+            case ENSURES:
+                addPostcondition(statement);
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        "Contract type: " + contractType + " is not supported.");
+        }
+    }
+
+    private void addPrecondition(JCTree.JCStatement precondition) {
+        preconditions.add(precondition);
+    }
+
+    private void addPostcondition(JCTree.JCStatement postcondition) {
+        postconditions.add(postcondition);
+    }
+
+    public List<JCTree.JCStatement> getPreconditions() {
+        return preconditions;
+    }
+
+    public List<JCTree.JCStatement> getPostconditions() {
+        return postconditions;
+    }
+}

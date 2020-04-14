@@ -3,40 +3,38 @@ package pl.coco.compiler.instrumentation;
 import java.util.List;
 import java.util.Optional;
 
-import javax.lang.model.element.Name;
-
 import pl.coco.compiler.util.TreePasser;
 
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.util.Name;
 
 public class SimpleMethodInvocation {
 
     protected final Name methodName;
     protected final Name fullyQualifiedClassName;
     protected final List<? extends ExpressionTree> arguments;
-    protected final int pos;
+    protected final MethodInvocationTree expression;
 
     protected SimpleMethodInvocation(Name methodName, Name fullyQualifiedClassName,
-                                     List<? extends ExpressionTree> arguments, int pos) {
+                                     List<? extends ExpressionTree> arguments,
+                                     MethodInvocationTree expression) {
 
         this.methodName = methodName;
         this.fullyQualifiedClassName = fullyQualifiedClassName;
         this.arguments = arguments;
-        this.pos = pos;
+        this.expression = expression;
     }
 
-    public static Optional<SimpleMethodInvocation> of(MethodInvocationTree methodInvocation) {
+    public static Optional<SimpleMethodInvocation> of(MethodInvocationTree expression) {
+        Optional<Name> methodName = getMethodName(expression);
+        Optional<Name> fullyQualifiedClassName = getFullyQualifiedClassName(expression);
+        List<? extends ExpressionTree> arguments = getArguments(expression);
 
-        Optional<Name> methodName = getMethodName(methodInvocation);
-        Optional<Name> className = getClassName(methodInvocation);
-        List<? extends ExpressionTree> arguments = getArguments(methodInvocation);
-        int pos = ((JCTree.JCMethodInvocation) methodInvocation).getStartPosition();
-
-        if (methodName.isPresent() && className.isPresent()) {
-            return Optional.of(
-                    new SimpleMethodInvocation(methodName.get(), className.get(), arguments, pos));
+        if (methodName.isPresent() && fullyQualifiedClassName.isPresent()) {
+            return Optional.of(new SimpleMethodInvocation(methodName.get(),
+                    fullyQualifiedClassName.get(), arguments, expression));
         } else {
             return Optional.empty();
         }
@@ -49,8 +47,9 @@ public class SimpleMethodInvocation {
                 .mapAndGet(access -> access.sym.name);
     }
 
-    //TODO: type instead of name
-    private static Optional<Name> getClassName(MethodInvocationTree methodInvocation) {
+    private static Optional<Name> getFullyQualifiedClassName(
+            MethodInvocationTree methodInvocation) {
+
         return TreePasser.of(methodInvocation)
                 .map(MethodInvocationTree::getMethodSelect)
                 .as(JCTree.JCFieldAccess.class)
@@ -74,7 +73,7 @@ public class SimpleMethodInvocation {
         return arguments;
     }
 
-    public int getPos() {
-        return pos;
+    public MethodInvocationTree getExpression() {
+        return expression;
     }
 }

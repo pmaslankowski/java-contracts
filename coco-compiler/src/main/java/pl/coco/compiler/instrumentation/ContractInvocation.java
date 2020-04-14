@@ -4,20 +4,21 @@ import java.util.Optional;
 
 import pl.coco.compiler.ContractType;
 
-public class ContractMethodInvocation extends SimpleMethodInvocation {
+public class ContractInvocation extends SimpleMethodInvocation {
 
     private final ContractType contractType;
 
-    private ContractMethodInvocation(SimpleMethodInvocation invocation,
-            ContractType contractType) {
+    private ContractInvocation(SimpleMethodInvocation invocation,
+                               ContractType contractType) {
 
-        super(invocation.methodName, invocation.fullyQualifiedClassName, invocation.arguments, invocation.pos);
+        super(invocation.methodName, invocation.fullyQualifiedClassName, invocation.arguments,
+                invocation.expression);
         this.contractType = contractType;
     }
 
-    public static Optional<ContractMethodInvocation> of(SimpleMethodInvocation invocation) {
+    public static Optional<ContractInvocation> of(SimpleMethodInvocation invocation) {
         return getContractMethod(invocation)
-                .map(method -> new ContractMethodInvocation(invocation, method));
+                .map(method -> new ContractInvocation(invocation, method));
 
     }
 
@@ -32,13 +33,13 @@ public class ContractMethodInvocation extends SimpleMethodInvocation {
     }
 
     private static boolean isContractMethodInvocation(SimpleMethodInvocation invocation,
-            ContractType method) {
+                                                      ContractType method) {
 
         return isMethodInvocation(invocation, method.getApiClassName(), method.getMethodName());
     }
 
     private static boolean isMethodInvocation(SimpleMethodInvocation invocation, String className,
-            String methodName) {
+                                              String methodName) {
 
         return isClassNameEqual(invocation, className) && isMethodNameEqual(invocation, methodName);
     }

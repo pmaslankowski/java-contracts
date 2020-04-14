@@ -3,6 +3,10 @@ package pl.coco.compiler.instrumentation;
 import java.util.List;
 import java.util.Optional;
 
+import pl.coco.compiler.arguments.CocoArgs;
+import pl.coco.compiler.util.ContractAstUtil;
+import pl.coco.compiler.util.TreePasser;
+
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.StatementTree;
@@ -14,10 +18,6 @@ import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Context;
 import com.sun.tools.javac.util.Names;
 
-import pl.coco.compiler.arguments.CocoArgs;
-import pl.coco.compiler.util.ContractAstUtil;
-import pl.coco.compiler.util.TreePasser;
-
 public class ContractsInstrumentationVisitor extends TreeScanner<Void, Void> {
 
     //TODO: maybe get rid of treeMaker and names from this place
@@ -27,7 +27,7 @@ public class ContractsInstrumentationVisitor extends TreeScanner<Void, Void> {
     private final CocoArgs cocoArgs;
 
     public ContractsInstrumentationVisitor(JavacTask task,
-            CocoArgs cocoArgs) {
+                                           CocoArgs cocoArgs) {
         this.task = task;
         this.treeMaker = TreeMaker.instance(getContext(task));
         this.names = Names.instance(getContext(task));
@@ -63,7 +63,6 @@ public class ContractsInstrumentationVisitor extends TreeScanner<Void, Void> {
 
     private boolean containsContractInvocation(List<? extends StatementTree> statements) {
         return statements.stream()
-                .map(ContractAstUtil::getContractInvocation)
-                .anyMatch(Optional::isPresent);
+                .anyMatch(ContractAstUtil::isContractInvocation);
     }
 }
