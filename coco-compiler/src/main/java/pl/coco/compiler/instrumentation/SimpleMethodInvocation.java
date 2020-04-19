@@ -3,12 +3,12 @@ package pl.coco.compiler.instrumentation;
 import java.util.List;
 import java.util.Optional;
 
-import pl.coco.compiler.util.TreePasser;
-
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Name;
+
+import pl.coco.compiler.util.TreePasser;
 
 public class SimpleMethodInvocation {
 
@@ -18,8 +18,8 @@ public class SimpleMethodInvocation {
     protected final MethodInvocationTree expression;
 
     protected SimpleMethodInvocation(Name methodName, Name fullyQualifiedClassName,
-                                     List<? extends ExpressionTree> arguments,
-                                     MethodInvocationTree expression) {
+            List<? extends ExpressionTree> arguments,
+            MethodInvocationTree expression) {
 
         this.methodName = methodName;
         this.fullyQualifiedClassName = fullyQualifiedClassName;
@@ -59,6 +59,11 @@ public class SimpleMethodInvocation {
     private static List<? extends ExpressionTree> getArguments(
             MethodInvocationTree methodInvocation) {
         return methodInvocation.getArguments();
+    }
+
+    public boolean isMethodInvocationOf(String fullyQualifiedClassName, String methodName) {
+        return this.fullyQualifiedClassName.contentEquals(fullyQualifiedClassName)
+                && this.methodName.contentEquals(methodName);
     }
 
     public Name getMethodName() {

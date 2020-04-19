@@ -11,11 +11,12 @@ import com.sun.tools.javac.comp.AttrContext;
 import com.sun.tools.javac.comp.Env;
 import com.sun.tools.javac.comp.Resolve;
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Name;
 import com.sun.tools.javac.util.Names;
 
-import pl.coco.compiler.ContractType;
+import pl.coco.compiler.ContractMethod;
 import pl.coco.compiler.instrumentation.ContractInvocation;
 
 public class InternalInvocationBuilder {
@@ -26,6 +27,7 @@ public class InternalInvocationBuilder {
     private final JavacTaskImpl task;
     private final Resolve resolver;
     private final Names names;
+    private final TreeMaker treeMaker;
 
     private ContractInvocation contractInvocation;
     private JCTree.JCExpressionStatement statement;
@@ -35,6 +37,7 @@ public class InternalInvocationBuilder {
         this.task = (JavacTaskImpl) task;
         this.resolver = Resolve.instance(this.task.getContext());
         this.names = Names.instance(this.task.getContext());
+        this.treeMaker = TreeMaker.instance(this.task.getContext());
     }
 
     public InternalInvocationBuilder withContractInvocation(ContractInvocation contractInvocation) {
@@ -53,21 +56,24 @@ public class InternalInvocationBuilder {
     }
 
     public JCTree.JCStatement build() {
-        ContractType contractType = contractInvocation.getContractType();
-        return new MethodInvocationBuilder(task)
-                .withClassName(contractType.getInternalClassName())
-                .withMethodName(contractType.getMethodName())
+        JCTree.JCMethodInvocation methodInvocation = new MethodInvocationBuilder(task)
+                .withClassName(contractInvocation.getContractMethod().getInternalClassName())
                 .withArguments(getArgumentsForContractCall(contractInvocation))
                 .withPosition(statement.pos)
-                .withMethodSymbol(getInternalContractMethodSymbol(contractType))
+                .withMethodSymbol(getInternalContractMethodSymbol(contractInvocation))
                 .build();
+
+        return treeMaker.at(statement.pos)
+                .Call(methodInvocation);
     }
 
-    private Symbol getInternalContractMethodSymbol(ContractType contractType) {
+    private Symbol getInternalContractMethodSymbol(ContractInvocation contractInvocation) {
+        ContractMethod contractMethod = contractInvocation.getContractMethod();
         Type string = getType(STRING_TYPE_NAME);
         Type bool = getType(BOOLEAN_TYPE_NAME);
         List<Type> arguments = List.from(Arrays.asList(bool, string));
-        return getMethodSymbol(contractType.getInternalClassName(), contractType.getMethodName(),
+        return getMethodSymbol(contractMethod.getInternalClassName(),
+                contractMethod.getMethodName(),
                 arguments);
     }
 
@@ -91,7 +97,7 @@ public class InternalInvocationBuilder {
         ArgumentsProcessorFactory argumentsProcessorFactory =
                 new ArgumentsProcessorFactory(task, resultSymbol);
         ArgumentsProcessor argumentsProcessor =
-                argumentsProcessorFactory.newArgumentsProcessor(invocation.getContractType());
+                argumentsProcessorFactory.newArgumentsProcessor(invocation.getContractMethod());
         return argumentsProcessor.processArguments(invocation.getArguments());
     }
 }

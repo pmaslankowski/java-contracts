@@ -5,15 +5,15 @@ import java.util.List;
 
 import com.sun.tools.javac.tree.JCTree;
 
-import pl.coco.compiler.ContractType;
+import pl.coco.compiler.ContractMethod;
 
 public class ProcessedContracts {
 
     private final List<JCTree.JCStatement> preconditions = new ArrayList<>();
     private final List<JCTree.JCStatement> postconditions = new ArrayList<>();
 
-    public void add(ContractType contractType, JCTree.JCStatement statement) {
-        switch (contractType) {
+    public void add(ContractMethod contractMethod, JCTree.JCStatement statement) {
+        switch (contractMethod) {
             case REQUIRES:
                 addPrecondition(statement);
                 break;
@@ -22,7 +22,7 @@ public class ProcessedContracts {
                 break;
             default:
                 throw new IllegalArgumentException(
-                        "Contract type: " + contractType + " is not supported.");
+                        "Contract method: " + contractMethod + " is not supported in this class.");
         }
     }
 

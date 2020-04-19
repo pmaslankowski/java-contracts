@@ -20,8 +20,7 @@ class ContractEnsuresTest {
     void shouldReturnResultWhenPostconditionOnStaticMethodPasses()
             throws Throwable {
 
-        String code
-                = "package pl.coco.compiler;\n"
+        String code = "package pl.coco.compiler;\n"
                 + "\n"
                 + "import pl.coco.api.Contract;\n"
                 + "\n"
@@ -48,8 +47,7 @@ class ContractEnsuresTest {
     @DisplayName("Simple postcondition on static method fails")
     @Test
     void shouldThrowExceptionWhenPostconditionOnStaticMethodFails() {
-        String code
-                = "package pl.coco.compiler;\n"
+        String code = "package pl.coco.compiler;\n"
                 + "\n"
                 + "import pl.coco.api.Contract;\n"
                 + "\n"
@@ -80,8 +78,7 @@ class ContractEnsuresTest {
     void shouldReturnResultWhenPostconditionOnInstanceMethodPasses()
             throws Throwable {
 
-        String code
-                = "package pl.coco.compiler;\n"
+        String code = "package pl.coco.compiler;\n"
                 + "\n"
                 + "import pl.coco.api.Contract;\n"
                 + "\n"
@@ -110,8 +107,7 @@ class ContractEnsuresTest {
     @DisplayName("Simple postcondition on instance method fails")
     @Test
     void shouldThrowExceptionWhenPreconditionOnInstanceMethodFails() {
-        String code
-                = "package pl.coco.compiler;\n"
+        String code = "package pl.coco.compiler;\n"
                 + "\n"
                 + "import pl.coco.api.Contract;\n"
                 + "\n"
@@ -142,8 +138,7 @@ class ContractEnsuresTest {
     @DisplayName("Postcondition with result call inside unary operator passes")
     @Test
     void shouldReturnResultWhenPostconditionWithResultInsideUnaryOpPasses() throws Throwable {
-        String code
-                = "package pl.coco.compiler;\n"
+        String code = "package pl.coco.compiler;\n"
                 + "\n"
                 + "import pl.coco.api.Contract;\n"
                 + "\n"
@@ -169,8 +164,7 @@ class ContractEnsuresTest {
     @DisplayName("Postcondition with result call inside unary operator fails")
     @Test
     void shouldThrowExceptionWhenPostconditionWithResultInsideUnaryOpFails() {
-        String code
-                = "package pl.coco.compiler;\n"
+        String code = "package pl.coco.compiler;\n"
                 + "\n"
                 + "import pl.coco.api.Contract;\n"
                 + "\n"
@@ -199,8 +193,7 @@ class ContractEnsuresTest {
     @DisplayName("Postcondition with result call inside binary operator passes")
     @Test
     void shouldReturnResultWhenPostconditionWithResultInsideBinaryOpPasses() throws Throwable {
-        String code
-                = "package pl.coco.compiler;\n"
+        String code = "package pl.coco.compiler;\n"
                 + "\n"
                 + "import pl.coco.api.Contract;\n"
                 + "\n"
@@ -226,8 +219,7 @@ class ContractEnsuresTest {
     @DisplayName("Postcondition with result call inside binary operator fails")
     @Test
     void shouldThrowExceptionWhenPostconditionWithResultInsideBinaryOpFails() {
-        String code
-                = "package pl.coco.compiler;\n"
+        String code = "package pl.coco.compiler;\n"
                 + "\n"
                 + "import pl.coco.api.Contract;\n"
                 + "\n"
@@ -256,8 +248,7 @@ class ContractEnsuresTest {
     @DisplayName("Postcondition with result call inside ternary operator passes")
     @Test
     void shouldReturnResultWhenPostconditionWithResultInsideTernaryOpPasses() throws Throwable {
-        String code
-                = "package pl.coco.compiler;\n"
+        String code = "package pl.coco.compiler;\n"
                 + "\n"
                 + "import pl.coco.api.Contract;\n"
                 + "\n"
@@ -286,8 +277,7 @@ class ContractEnsuresTest {
     @DisplayName("Postcondition with result call inside ternary operator fails")
     @Test
     void shouldReturnResultWhenPostconditionWithResultInsideTernaryOpFails() {
-        String code
-                = "package pl.coco.compiler;\n"
+        String code = "package pl.coco.compiler;\n"
                 + "\n"
                 + "import pl.coco.api.Contract;\n"
                 + "\n"
@@ -318,8 +308,7 @@ class ContractEnsuresTest {
     @DisplayName("Postcondition as fully qualified Contract.ensures passes")
     @Test
     void shouldReturnResultWhenFullyQualifiedPostconditionPasses() throws Throwable {
-        String code
-                = "package pl.coco.compiler;\n"
+        String code = "package pl.coco.compiler;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -344,8 +333,7 @@ class ContractEnsuresTest {
     @DisplayName("Postcondition as fully qualified Contract.ensures fails")
     @Test
     void shouldThrowExceptionWhenFullyQualifiedPostconditionFails() {
-        String code
-                = "package pl.coco.compiler;\n"
+        String code = "package pl.coco.compiler;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -372,8 +360,7 @@ class ContractEnsuresTest {
     @DisplayName("Postcondition as fully qualified Contract.ensures with Contract.result passes")
     @Test
     void shouldReturnResultWhenFullyQualifiedPostconditionWithResultPasses() throws Throwable {
-        String code
-                = "package pl.coco.compiler;\n"
+        String code = "package pl.coco.compiler;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -398,8 +385,7 @@ class ContractEnsuresTest {
     @DisplayName("Postcondition as fully qualified Contract.ensures with Contract.result fails")
     @Test
     void shouldThrowExceptionWhenFullyQualifiedPostconditionWithResultFails() {
-        String code
-                = "package pl.coco.compiler;\n"
+        String code = "package pl.coco.compiler;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"

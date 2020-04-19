@@ -5,7 +5,7 @@ import com.sun.tools.javac.api.JavacTaskImpl;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.TreeMaker;
 
-import pl.coco.compiler.ContractType;
+import pl.coco.compiler.ContractMethod;
 
 public class ArgumentsProcessorFactory {
 
@@ -19,15 +19,15 @@ public class ArgumentsProcessorFactory {
         this.resultSymbol = resultSymbol;
     }
 
-    public ArgumentsProcessor newArgumentsProcessor(ContractType type) {
-        switch (type) {
+    public ArgumentsProcessor newArgumentsProcessor(ContractMethod method) {
+        switch (method) {
             case ENSURES:
                 return new EnsuresArgumentsProcessor(treeMaker, resultSymbol);
             case REQUIRES:
                 return new RequiresArgumentsProcessor(treeMaker);
             default:
                 throw new IllegalArgumentException(
-                        "Type: " + type + " is not currently supported.");
+                        "Contract method: " + method + " is not supported in this class.");
         }
     }
 }

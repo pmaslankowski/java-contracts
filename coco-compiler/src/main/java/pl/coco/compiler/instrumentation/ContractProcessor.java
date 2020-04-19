@@ -10,6 +10,7 @@ import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.StatementTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.JavacTask;
+import com.sun.tools.javac.api.JavacTaskImpl;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCBlock;
@@ -27,19 +28,19 @@ public class ContractProcessor {
 
     private static final String RESULT_VARIABLE_NAME = "result";
 
-    private final JavacTask task;
-    private final TreeMaker treeMaker;
+    private final JavacTaskImpl task;
     private final ClassTree clazz;
     private final MethodTree method;
+    private final TreeMaker treeMaker;
     private final Names names;
 
-    public ContractProcessor(JavacTask task, TreeMaker treeMaker,
-            ClassTree clazz, MethodTree method, Names names) {
-        this.task = task;
-        this.treeMaker = treeMaker;
+    public ContractProcessor(JavacTask task,
+            ClassTree clazz, MethodTree method) {
+        this.task = (JavacTaskImpl) task;
         this.clazz = clazz;
         this.method = method;
-        this.names = names;
+        this.treeMaker = TreeMaker.instance(this.task.getContext());
+        this.names = Names.instance(this.task.getContext());
     }
 
     // TODO: add contract inheritance
@@ -112,7 +113,7 @@ public class ContractProcessor {
                     .withResultSymbol(resultSymbol)
                     .withStatement(statement)
                     .build();
-            processed.add(invocation.getContractType(), internalContractInvocation);
+            processed.add(invocation.getContractMethod(), internalContractInvocation);
         }
         return processed;
     }
@@ -137,10 +138,9 @@ public class ContractProcessor {
 
         java.util.List<JCTree.JCIdent> parameters = getParametersForBridgeMethod(method);
         return new MethodInvocationBuilder(task)
-                .withMethodName(bridgeMethod.getName().toString())
                 .withMethodSymbol(bridgeMethod.sym)
                 .withArguments(List.from(parameters))
-                .buildAsMethodInvocation();
+                .build();
     }
 
     private java.util.List<JCTree.JCIdent> getParametersForBridgeMethod(MethodTree method) {
