@@ -4,6 +4,8 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 
+import javax.lang.model.type.TypeKind;
+
 import com.sun.source.tree.BlockTree;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.MethodTree;
@@ -83,7 +85,7 @@ public class ContractProcessor {
             JCTree.JCMethodDecl bridgeMethod) {
 
         Symbol.VarSymbol resultSymbol = getResultSymbol(bridgeMethod);
-        JCTree.JCVariableDecl bridgeInvocationStatement =
+        JCTree.JCStatement bridgeInvocationStatement =
                 generateBridgeInvocationStatement(bridgeMethod,
                         resultSymbol);
 
@@ -97,7 +99,11 @@ public class ContractProcessor {
                 new ArrayList<>(processedContracts.getPreconditions());
         processedStatements.add(bridgeInvocationStatement);
         processedStatements.addAll(processedContracts.getPostconditions());
-        processedStatements.add(returnStatement);
+
+        // TODO: refactor void type handling in this method (eliminate returnStatement)
+        if (!isVoid(bridgeMethod)) {
+            processedStatements.add(returnStatement);
+        }
         return processedStatements;
     }
 
@@ -118,12 +124,21 @@ public class ContractProcessor {
         return processed;
     }
 
-    private JCTree.JCVariableDecl generateBridgeInvocationStatement(
+    private JCTree.JCStatement generateBridgeInvocationStatement(
             JCTree.JCMethodDecl bridgeMethod, Symbol.VarSymbol resultSymbol) {
 
         JCTree.JCMethodInvocation bridgeMethodInvocation = generateBridgeMethodInvocation(
                 bridgeMethod);
+
+        if (isVoid(bridgeMethod)) {
+            return treeMaker.Call(bridgeMethodInvocation);
+        }
+
         return treeMaker.VarDef(resultSymbol, bridgeMethodInvocation);
+    }
+
+    private boolean isVoid(JCTree.JCMethodDecl bridgeMethod) {
+        return bridgeMethod.getReturnType().type.getKind().equals(TypeKind.VOID);
     }
 
     private Symbol.VarSymbol getResultSymbol(JCTree.JCMethodDecl bridgeMethod) {
