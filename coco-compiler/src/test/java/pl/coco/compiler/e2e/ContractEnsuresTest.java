@@ -1,6 +1,7 @@
 package pl.coco.compiler.e2e;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
 import org.junit.jupiter.api.DisplayName;
@@ -125,6 +126,61 @@ class ContractEnsuresTest {
                 + "        return 42;\n"
                 + "    }\n"
                 + "\n"
+                + "}\n";
+
+        Throwable thrown = catchThrowable(
+                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+
+        assertThat(thrown)
+                .isInstanceOf(ContractFailedException.class)
+                .hasMessage("Postcondition \"this.val == 1\" is not satisfied.");
+    }
+
+    @DisplayName("Simple postcondition on void method passes")
+    @Test
+    void shouldPassWhenPreconditionOnVoidMethodPasses() {
+        String code = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Test {\n"
+                + "\n"
+                + "    private int val = 0;\n"
+                + "\n"
+                + "    public static void entry() {\n"
+                + "        Test instance = new Test();\n"
+                + "        instance.testedMethod();\n"
+                + "    }\n"
+                + "\n"
+                + "    public void testedMethod() {\n"
+                + "        Contract.ensures(this.val == 1);\n"
+                + "        this.val = 1;\n"
+                + "    }\n"
+                + "}\n";
+
+        assertThatCode(() -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code))
+                .doesNotThrowAnyException();
+    }
+
+    @DisplayName("Simple postcondition on void method fails")
+    @Test
+    void shouldFailWhenPreconditionOnVoidMethodFails() {
+        String code = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Test {\n"
+                + "\n"
+                + "    private int val = 0;\n"
+                + "\n"
+                + "    public static void entry() {\n"
+                + "        Test instance = new Test();\n"
+                + "        instance.testedMethod();\n"
+                + "    }\n"
+                + "\n"
+                + "    public void testedMethod() {\n"
+                + "        Contract.ensures(this.val == 1);\n"
+                + "    }\n"
                 + "}\n";
 
         Throwable thrown = catchThrowable(

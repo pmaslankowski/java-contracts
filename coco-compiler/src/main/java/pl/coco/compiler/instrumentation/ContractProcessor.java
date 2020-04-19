@@ -92,18 +92,17 @@ public class ContractProcessor {
         ProcessedContracts processedContracts =
                 processStatements(contractStatements, resultSymbol);
 
-        JCTree.JCReturn returnStatement = treeMaker
-                .Return(treeMaker.Ident(resultSymbol));
-
         java.util.List<JCStatement> processedStatements =
                 new ArrayList<>(processedContracts.getPreconditions());
         processedStatements.add(bridgeInvocationStatement);
         processedStatements.addAll(processedContracts.getPostconditions());
 
-        // TODO: refactor void type handling in this method (eliminate returnStatement)
         if (!isVoid(bridgeMethod)) {
+            JCTree.JCReturn returnStatement = treeMaker
+                    .Return(treeMaker.Ident(resultSymbol));
             processedStatements.add(returnStatement);
         }
+
         return processedStatements;
     }
 
