@@ -8,4 +8,8 @@ public class ContractFailedException extends RuntimeException {
     public ContractFailedException(String formatString, Object... args) {
         super(MessageFormat.format(formatString, args));
     }
+
+    public ContractFailedException(String message, Exception cause) {
+        super(message, cause);
+    }
 }

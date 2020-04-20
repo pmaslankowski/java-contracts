@@ -22,7 +22,7 @@ import pl.coco.compiler.instrumentation.ContractInvocation;
 public class InternalInvocationBuilder {
 
     private static final String STRING_TYPE_NAME = "java.lang.String";
-    private static final String BOOLEAN_TYPE_NAME = "java.lang.Boolean";
+    private static final String CONDITION_SUPPLIER_TYPE = "pl.coco.internal.ConditionSupplier";
 
     private final JavacTaskImpl task;
     private final Resolve resolver;
@@ -70,8 +70,8 @@ public class InternalInvocationBuilder {
     private Symbol getInternalContractMethodSymbol(ContractInvocation contractInvocation) {
         ContractMethod contractMethod = contractInvocation.getContractMethod();
         Type string = getType(STRING_TYPE_NAME);
-        Type bool = getType(BOOLEAN_TYPE_NAME);
-        List<Type> arguments = List.from(Arrays.asList(bool, string));
+        Type conditionSupplier = getType(CONDITION_SUPPLIER_TYPE);
+        List<Type> arguments = List.from(Arrays.asList(conditionSupplier, string));
         return getMethodSymbol(contractMethod.getInternalClassName(),
                 contractMethod.getMethodName(),
                 arguments);

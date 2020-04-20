@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
+import com.sun.tools.javac.api.JavacTaskImpl;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
@@ -18,10 +19,12 @@ public class EnsuresArgumentsProcessor implements ArgumentsProcessor {
 
     private final TreeMaker treeMaker;
     private final Symbol resultSymbol;
+    private final ConditionSupplierProvider conditionSupplierProvider;
 
-    public EnsuresArgumentsProcessor(TreeMaker treeMaker, Symbol resultSymbol) {
-        this.treeMaker = treeMaker;
+    public EnsuresArgumentsProcessor(JavacTaskImpl task, Symbol resultSymbol) {
+        this.treeMaker = TreeMaker.instance(task.getContext());
         this.resultSymbol = resultSymbol;
+        this.conditionSupplierProvider = new ConditionSupplierProvider(task);
     }
 
     @Override
@@ -33,7 +36,9 @@ public class EnsuresArgumentsProcessor implements ArgumentsProcessor {
 
         postcondition.accept(new PostconditionArgumentVisitor(treeMaker, resultSymbol));
 
-        return List.from(Arrays.asList(postcondition, postconditionAsStringLiteral));
+        JCTree.JCLambda conditionSupplier = conditionSupplierProvider.getSupplier(postcondition);
+
+        return List.from(Arrays.asList(conditionSupplier, postconditionAsStringLiteral));
     }
 
     private static class PostconditionArgumentVisitor extends TreeScanner {

@@ -1,8 +1,6 @@
 package pl.coco.compiler.util;
 
-import javax.lang.model.element.Element;
-
-import com.sun.tools.javac.api.BasicJavacTask;
+import com.sun.tools.javac.api.JavacTaskImpl;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
@@ -10,13 +8,13 @@ import com.sun.tools.javac.tree.TreeMaker;
 
 public class ClassAccessBuilder {
 
-    private final BasicJavacTask task;
     private final TreeMaker treeMaker;
+    private final TypeRegistry typeRegistry;
     private final int position;
 
-    public ClassAccessBuilder(BasicJavacTask task, int position) {
-        this.task = task;
+    public ClassAccessBuilder(JavacTaskImpl task, int position) {
         this.treeMaker = TreeMaker.instance(task.getContext());
+        this.typeRegistry = new TypeRegistry(task);
         this.position = position;
     }
 
@@ -36,50 +34,30 @@ public class ClassAccessBuilder {
     }
 
     private JCTree.JCExpression getTopPackageAccess(String topPackageName) {
+        Symbol packageSymbol = typeRegistry.getPackageSymbol(topPackageName);
+        Type packageType = typeRegistry.getPackageType(topPackageName);
         JCTree.JCExpression classAccess = treeMaker.at(position)
-                .Ident(getPackageSymbol(topPackageName));
-        return classAccess.setType(getPackageType(topPackageName));
-    }
-
-    private Symbol getPackageSymbol(String packageName) {
-        return (Symbol) getPackageElement(packageName);
-    }
-
-    private Element getPackageElement(String packageName) {
-        return task.getElements().getPackageElement(packageName);
-    }
-
-    private Type getPackageType(String packageName) {
-        return (Type) getPackageElement(packageName).asType();
+                .Ident(packageSymbol);
+        return classAccess.setType(packageType);
     }
 
     private JCTree.JCExpression getInnerPackageAccess(JCTree.JCExpression previousClassAccess,
             String currentPackageName) {
 
+        Symbol packageSymbol = typeRegistry.getPackageSymbol(currentPackageName);
+        Type packageType = typeRegistry.getPackageType(currentPackageName);
         JCTree.JCExpression result = treeMaker.at(position)
-                .Select(previousClassAccess, getPackageSymbol(currentPackageName));
-        result.setType(getPackageType(currentPackageName));
-        return result;
+                .Select(previousClassAccess, packageSymbol);
+        return result.setType(packageType);
     }
 
     private JCTree.JCExpression getClassAccess(JCTree.JCExpression previousClassAccess,
             String fullyQualifiedClassName) {
 
+        Symbol classSymbol = typeRegistry.getClassSymbol(fullyQualifiedClassName);
+        Type classType = typeRegistry.getClassType(fullyQualifiedClassName);
         JCTree.JCExpression result = treeMaker.at(position)
-                .Select(previousClassAccess, getClassSymbol(fullyQualifiedClassName));
-        result.setType(getClassType(fullyQualifiedClassName));
-        return result;
-    }
-
-    private Symbol getClassSymbol(String className) {
-        return (Symbol) getClassElement(className);
-    }
-
-    private Type getClassType(String className) {
-        return (Type) getClassElement(className).asType();
-    }
-
-    private Element getClassElement(String className) {
-        return task.getElements().getTypeElement(className);
+                .Select(previousClassAccess, classSymbol);
+        return result.setType(classType);
     }
 }

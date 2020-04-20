@@ -464,4 +464,35 @@ class ContractEnsuresTest {
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class);
     }
+
+    @DisplayName("Exception thrown during postcondition evaluation fails")
+    @Test
+    void shouldThrowContractFailedExceptionWhenExceptionIsThrownDuringContractEvaluation() {
+        String code = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Test {\n"
+                + "\n"
+                + "    public static void entry() {\n"
+                + "        testedMethod();\n"
+                + "    }\n"
+                + "\n"
+                + "    public static void testedMethod() {\n"
+                + "        Contract.ensures(exception() >= 0);\n"
+                + "    }\n"
+                + "\n"
+                + "   public static int exception() {\n"
+                + "       throw new RuntimeException(\"Test exception\");\n"
+                + "   }\n"
+                + "}\n";
+
+        Throwable thrown = catchThrowable(
+                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+
+        assertThat(thrown)
+                .isInstanceOf(ContractFailedException.class)
+                .hasMessage("An exception has been thrown during contract evaluation:")
+                .hasCause(new RuntimeException("Test exception"));
+    }
 }

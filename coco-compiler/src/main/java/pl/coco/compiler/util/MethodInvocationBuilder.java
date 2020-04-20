@@ -1,7 +1,7 @@
 package pl.coco.compiler.util;
 
 import com.sun.source.util.JavacTask;
-import com.sun.tools.javac.api.BasicJavacTask;
+import com.sun.tools.javac.api.JavacTaskImpl;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
@@ -11,7 +11,7 @@ import com.sun.tools.javac.util.List;
 
 public class MethodInvocationBuilder {
 
-    private final BasicJavacTask task;
+    private final JavacTaskImpl task;
     private final TreeMaker treeMaker;
 
     private String className;
@@ -20,7 +20,7 @@ public class MethodInvocationBuilder {
     private int position;
 
     public MethodInvocationBuilder(JavacTask task) {
-        this.task = (BasicJavacTask) task;
+        this.task = (JavacTaskImpl) task;
         Context context = this.task.getContext();
         this.treeMaker = TreeMaker.instance(context);
     }

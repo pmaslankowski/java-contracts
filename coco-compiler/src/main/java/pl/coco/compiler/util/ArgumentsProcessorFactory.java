@@ -22,9 +22,9 @@ public class ArgumentsProcessorFactory {
     public ArgumentsProcessor newArgumentsProcessor(ContractMethod method) {
         switch (method) {
             case ENSURES:
-                return new EnsuresArgumentsProcessor(treeMaker, resultSymbol);
+                return new EnsuresArgumentsProcessor(task, resultSymbol);
             case REQUIRES:
-                return new RequiresArgumentsProcessor(treeMaker);
+                return new RequiresArgumentsProcessor(task);
             default:
                 throw new IllegalArgumentException(
                         "Contract method: " + method + " is not supported in this class.");

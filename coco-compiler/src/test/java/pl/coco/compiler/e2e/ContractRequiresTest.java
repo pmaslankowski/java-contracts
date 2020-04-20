@@ -299,6 +299,7 @@ class ContractRequiresTest {
 
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class)
-                .hasMessage("An exception was thrown during contract evaluation.");
+                .hasMessage("An exception has been thrown during contract evaluation:")
+                .hasCause(new RuntimeException("Test exception"));
     }
 }
