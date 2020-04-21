@@ -3,8 +3,9 @@ package pl.coco.compiler.util;
 import com.sun.source.util.JavacTask;
 import com.sun.tools.javac.api.JavacTaskImpl;
 import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
+import com.sun.tools.javac.tree.JCTree.JCIdent;
+import com.sun.tools.javac.tree.JCTree.JCMethodInvocation;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Context;
 import com.sun.tools.javac.util.List;
@@ -45,7 +46,7 @@ public class MethodInvocationBuilder {
         return this;
     }
 
-    public JCTree.JCMethodInvocation build() {
+    public JCMethodInvocation build() {
         List<JCExpression> typeParameters = List.nil();
         JCExpression methodAccess = newMethodAccess(className);
         return treeMaker.at(position)
@@ -71,7 +72,7 @@ public class MethodInvocationBuilder {
         return classAccessBuilder.build(fullyQualifiedClassName);
     }
 
-    private JCTree.JCIdent getInstanceMethodAccess(Symbol methodSymbol) {
+    private JCIdent getInstanceMethodAccess(Symbol methodSymbol) {
         return treeMaker.at(position).Ident(methodSymbol);
     }
 }

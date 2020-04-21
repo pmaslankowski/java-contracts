@@ -11,6 +11,8 @@ import com.sun.tools.javac.comp.AttrContext;
 import com.sun.tools.javac.comp.Env;
 import com.sun.tools.javac.comp.Resolve;
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.JCTree.JCMethodInvocation;
+import com.sun.tools.javac.tree.JCTree.JCStatement;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Name;
@@ -55,8 +57,8 @@ public class InternalInvocationBuilder {
         return this;
     }
 
-    public JCTree.JCStatement build() {
-        JCTree.JCMethodInvocation methodInvocation = new MethodInvocationBuilder(task)
+    public JCStatement build() {
+        JCMethodInvocation methodInvocation = new MethodInvocationBuilder(task)
                 .withClassName(contractInvocation.getContractMethod().getInternalClassName())
                 .withArguments(getArgumentsForContractCall(contractInvocation))
                 .withPosition(statement.pos)

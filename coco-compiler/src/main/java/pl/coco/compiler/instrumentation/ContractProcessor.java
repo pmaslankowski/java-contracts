@@ -1,5 +1,9 @@
 package pl.coco.compiler.instrumentation;
 
+import static com.sun.tools.javac.tree.JCTree.JCIdent;
+import static com.sun.tools.javac.tree.JCTree.JCMethodInvocation;
+import static com.sun.tools.javac.tree.JCTree.JCReturn;
+import static com.sun.tools.javac.tree.JCTree.JCVariableDecl;
 import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
@@ -13,9 +17,10 @@ import com.sun.source.tree.StatementTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.JavacTask;
 import com.sun.tools.javac.api.JavacTaskImpl;
-import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.code.Symbol.VarSymbol;
 import com.sun.tools.javac.tree.JCTree.JCBlock;
+import com.sun.tools.javac.tree.JCTree.JCClassDecl;
+import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 import com.sun.tools.javac.tree.JCTree.JCStatement;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
@@ -45,6 +50,8 @@ public class ContractProcessor {
         this.names = Names.instance(this.task.getContext());
     }
 
+    // TODO: refactor util package - divide into separate packages
+    // TODO: dependency injection
     // TODO: add contract inheritance
     // TODO: type checking for Contract.result() calls
     // TODO: check that Contract.result() calls occur only inside Contract.ensures()
@@ -55,7 +62,7 @@ public class ContractProcessor {
                 getContractStatements(methodBody);
 
         if (contractStatements.size() > 0) {
-            JCTree.JCMethodDecl bridgeMethod = createBridgeMethod();
+            JCMethodDecl bridgeMethod = createBridgeMethod();
             addMethodToThisClass(bridgeMethod);
             java.util.List<JCStatement> processedStatements = processStatements(contractStatements,
                     bridgeMethod);
@@ -69,23 +76,23 @@ public class ContractProcessor {
                 .collect(toList());
     }
 
-    private JCTree.JCMethodDecl createBridgeMethod() {
+    private JCMethodDecl createBridgeMethod() {
         BridgeMethodBuilder bridgeMethodBuilder = new BridgeMethodBuilder(task);
-        return bridgeMethodBuilder.buildBridge((JCTree.JCMethodDecl) method);
+        return bridgeMethodBuilder.buildBridge((JCMethodDecl) method);
     }
 
-    private void addMethodToThisClass(JCTree.JCMethodDecl methodDeclaration) {
-        JCTree.JCClassDecl thisClassDeclaration = (JCTree.JCClassDecl) this.clazz;
+    private void addMethodToThisClass(JCMethodDecl methodDeclaration) {
+        JCClassDecl thisClassDeclaration = (JCClassDecl) this.clazz;
         thisClassDeclaration.defs = thisClassDeclaration.getMembers().append(methodDeclaration);
         thisClassDeclaration.sym.members().enter(methodDeclaration.sym);
     }
 
     private java.util.List<JCStatement> processStatements(
             java.util.List<? extends StatementTree> contractStatements,
-            JCTree.JCMethodDecl bridgeMethod) {
+            JCMethodDecl bridgeMethod) {
 
-        Symbol.VarSymbol resultSymbol = getResultSymbol(bridgeMethod);
-        JCTree.JCStatement bridgeInvocationStatement =
+        VarSymbol resultSymbol = getResultSymbol(bridgeMethod);
+        JCStatement bridgeInvocationStatement =
                 generateBridgeInvocationStatement(bridgeMethod,
                         resultSymbol);
 
@@ -98,7 +105,7 @@ public class ContractProcessor {
         processedStatements.addAll(processedContracts.getPostconditions());
 
         if (!isVoid(bridgeMethod)) {
-            JCTree.JCReturn returnStatement = treeMaker
+            JCReturn returnStatement = treeMaker
                     .Return(treeMaker.Ident(resultSymbol));
             processedStatements.add(returnStatement);
         }
@@ -108,7 +115,7 @@ public class ContractProcessor {
 
     private ProcessedContracts processStatements(
             java.util.List<? extends StatementTree> statements,
-            Symbol.VarSymbol resultSymbol) {
+            VarSymbol resultSymbol) {
 
         ProcessedContracts processed = new ProcessedContracts();
         for (StatementTree statement : statements) {
@@ -123,10 +130,10 @@ public class ContractProcessor {
         return processed;
     }
 
-    private JCTree.JCStatement generateBridgeInvocationStatement(
-            JCTree.JCMethodDecl bridgeMethod, Symbol.VarSymbol resultSymbol) {
+    private JCStatement generateBridgeInvocationStatement(JCMethodDecl bridgeMethod,
+            VarSymbol resultSymbol) {
 
-        JCTree.JCMethodInvocation bridgeMethodInvocation = generateBridgeMethodInvocation(
+        JCMethodInvocation bridgeMethodInvocation = generateBridgeMethodInvocation(
                 bridgeMethod);
 
         if (isVoid(bridgeMethod)) {
@@ -136,35 +143,34 @@ public class ContractProcessor {
         return treeMaker.VarDef(resultSymbol, bridgeMethodInvocation);
     }
 
-    private boolean isVoid(JCTree.JCMethodDecl bridgeMethod) {
+    private boolean isVoid(JCMethodDecl bridgeMethod) {
         return bridgeMethod.getReturnType().type.getKind().equals(TypeKind.VOID);
     }
 
-    private Symbol.VarSymbol getResultSymbol(JCTree.JCMethodDecl bridgeMethod) {
-        return new Symbol.VarSymbol(0,
+    private VarSymbol getResultSymbol(JCMethodDecl bridgeMethod) {
+        return new VarSymbol(0,
                 names.fromString(RESULT_VARIABLE_NAME),
                 bridgeMethod.sym.getReturnType(),
                 bridgeMethod.sym);
     }
 
-    private JCTree.JCMethodInvocation generateBridgeMethodInvocation(
-            JCTree.JCMethodDecl bridgeMethod) {
+    private JCMethodInvocation generateBridgeMethodInvocation(JCMethodDecl bridgeMethod) {
 
-        java.util.List<JCTree.JCIdent> parameters = getParametersForBridgeMethod(method);
+        java.util.List<JCIdent> parameters = getParametersForBridgeMethod(method);
         return new MethodInvocationBuilder(task)
                 .withMethodSymbol(bridgeMethod.sym)
                 .withArguments(List.from(parameters))
                 .build();
     }
 
-    private java.util.List<JCTree.JCIdent> getParametersForBridgeMethod(MethodTree method) {
+    private java.util.List<JCIdent> getParametersForBridgeMethod(MethodTree method) {
         return method.getParameters().stream()
                 .map(this::toIdentifier)
                 .collect(toList());
     }
 
-    private JCTree.JCIdent toIdentifier(VariableTree param) {
-        JCTree.JCVariableDecl variableDec = (JCTree.JCVariableDecl) param;
+    private JCIdent toIdentifier(VariableTree param) {
+        JCVariableDecl variableDec = (JCVariableDecl) param;
         return treeMaker.Ident(variableDec.sym);
     }
 }

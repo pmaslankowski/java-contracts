@@ -7,6 +7,10 @@ import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.api.JavacTaskImpl;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.JCTree.JCExpression;
+import com.sun.tools.javac.tree.JCTree.JCIdent;
+import com.sun.tools.javac.tree.JCTree.JCLambda;
+import com.sun.tools.javac.tree.JCTree.JCLiteral;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.tree.TreeScanner;
 import com.sun.tools.javac.util.List;
@@ -28,15 +32,15 @@ public class EnsuresArgumentsProcessor implements ArgumentsProcessor {
     }
 
     @Override
-    public List<JCTree.JCExpression> processArguments(
+    public List<JCExpression> processArguments(
             java.util.List<? extends ExpressionTree> arguments) {
 
-        JCTree.JCExpression postcondition = (JCTree.JCExpression) arguments.get(0);
-        JCTree.JCLiteral postconditionAsStringLiteral = treeMaker.Literal(postcondition.toString());
+        JCExpression postcondition = (JCExpression) arguments.get(0);
+        JCLiteral postconditionAsStringLiteral = treeMaker.Literal(postcondition.toString());
 
         postcondition.accept(new PostconditionArgumentVisitor(treeMaker, resultSymbol));
 
-        JCTree.JCLambda conditionSupplier = conditionSupplierProvider.getSupplier(postcondition);
+        JCLambda conditionSupplier = conditionSupplierProvider.getSupplier(postcondition);
 
         return List.from(Arrays.asList(conditionSupplier, postconditionAsStringLiteral));
     }
@@ -59,7 +63,7 @@ public class EnsuresArgumentsProcessor implements ArgumentsProcessor {
             super.visitUnary(unary);
         }
 
-        private JCTree.JCIdent newResultReference() {
+        private JCIdent newResultReference() {
             return treeMaker.Ident(resultSymbol);
         }
 
@@ -88,7 +92,7 @@ public class EnsuresArgumentsProcessor implements ArgumentsProcessor {
             super.visitBinary(binary);
         }
 
-        private boolean isResultInvocation(JCTree.JCExpression expr) {
+        private boolean isResultInvocation(JCExpression expr) {
             return TreePasser.of(expr)
                     .as(MethodInvocationTree.class)
                     .flatMapAndGet(SimpleMethodInvocation::of)

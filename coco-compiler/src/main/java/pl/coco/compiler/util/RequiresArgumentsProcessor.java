@@ -4,7 +4,9 @@ import java.util.Arrays;
 
 import com.sun.source.tree.ExpressionTree;
 import com.sun.tools.javac.api.JavacTaskImpl;
-import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.JCTree.JCExpression;
+import com.sun.tools.javac.tree.JCTree.JCLambda;
+import com.sun.tools.javac.tree.JCTree.JCLiteral;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 
@@ -19,13 +21,13 @@ public class RequiresArgumentsProcessor implements ArgumentsProcessor {
     }
 
     @Override
-    public List<JCTree.JCExpression> processArguments(
+    public List<JCExpression> processArguments(
             java.util.List<? extends ExpressionTree> arguments) {
 
-        JCTree.JCExpression precondition = (JCTree.JCExpression) arguments.get(0);
-        JCTree.JCLiteral preconditionAsStringLiteral = treeMaker.Literal(precondition.toString());
+        JCExpression precondition = (JCExpression) arguments.get(0);
+        JCLiteral preconditionAsStringLiteral = treeMaker.Literal(precondition.toString());
 
-        JCTree.JCLambda conditionSupplier = conditionSupplierProvider.getSupplier(precondition);
+        JCLambda conditionSupplier = conditionSupplierProvider.getSupplier(precondition);
 
         return List.from(Arrays.asList(conditionSupplier, preconditionAsStringLiteral));
     }

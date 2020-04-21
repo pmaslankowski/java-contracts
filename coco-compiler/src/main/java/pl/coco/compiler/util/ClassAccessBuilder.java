@@ -3,7 +3,7 @@ package pl.coco.compiler.util;
 import com.sun.tools.javac.api.JavacTaskImpl;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
-import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.JCTree.JCExpression;
 import com.sun.tools.javac.tree.TreeMaker;
 
 public class ClassAccessBuilder {
@@ -18,11 +18,11 @@ public class ClassAccessBuilder {
         this.position = position;
     }
 
-    public JCTree.JCExpression build(String fullyQualifiedClassName) {
+    public JCExpression build(String fullyQualifiedClassName) {
         String[] classAccessPath = fullyQualifiedClassName.split("\\.");
 
         String topPackageName = classAccessPath[0];
-        JCTree.JCExpression classAccess = getTopPackageAccess(topPackageName);
+        JCExpression classAccess = getTopPackageAccess(topPackageName);
 
         String currentPackageName = topPackageName;
         for (int i = 1; i < classAccessPath.length - 1; i++) {
@@ -33,30 +33,30 @@ public class ClassAccessBuilder {
         return getClassAccess(classAccess, fullyQualifiedClassName);
     }
 
-    private JCTree.JCExpression getTopPackageAccess(String topPackageName) {
+    private JCExpression getTopPackageAccess(String topPackageName) {
         Symbol packageSymbol = typeRegistry.getPackageSymbol(topPackageName);
         Type packageType = typeRegistry.getPackageType(topPackageName);
-        JCTree.JCExpression classAccess = treeMaker.at(position)
+        JCExpression classAccess = treeMaker.at(position)
                 .Ident(packageSymbol);
         return classAccess.setType(packageType);
     }
 
-    private JCTree.JCExpression getInnerPackageAccess(JCTree.JCExpression previousClassAccess,
+    private JCExpression getInnerPackageAccess(JCExpression previousClassAccess,
             String currentPackageName) {
 
         Symbol packageSymbol = typeRegistry.getPackageSymbol(currentPackageName);
         Type packageType = typeRegistry.getPackageType(currentPackageName);
-        JCTree.JCExpression result = treeMaker.at(position)
+        JCExpression result = treeMaker.at(position)
                 .Select(previousClassAccess, packageSymbol);
         return result.setType(packageType);
     }
 
-    private JCTree.JCExpression getClassAccess(JCTree.JCExpression previousClassAccess,
+    private JCExpression getClassAccess(JCExpression previousClassAccess,
             String fullyQualifiedClassName) {
 
         Symbol classSymbol = typeRegistry.getClassSymbol(fullyQualifiedClassName);
         Type classType = typeRegistry.getClassType(fullyQualifiedClassName);
-        JCTree.JCExpression result = treeMaker.at(position)
+        JCExpression result = treeMaker.at(position)
                 .Select(previousClassAccess, classSymbol);
         return result.setType(classType);
     }

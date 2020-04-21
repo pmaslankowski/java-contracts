@@ -4,8 +4,10 @@ import static java.util.stream.Collectors.toList;
 
 import com.sun.source.util.JavacTask;
 import com.sun.tools.javac.api.BasicJavacTask;
-import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.code.Symbol.MethodSymbol;
+import com.sun.tools.javac.tree.JCTree.JCBlock;
+import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
+import com.sun.tools.javac.tree.JCTree.JCStatement;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Context;
 import com.sun.tools.javac.util.List;
@@ -24,28 +26,28 @@ public class BridgeMethodBuilder {
         this.names = Names.instance(context);
     }
 
-    public JCTree.JCMethodDecl buildBridge(JCTree.JCMethodDecl originalMethod) {
-        java.util.List<JCTree.JCStatement> nonContractStatements = getNonContractStatements(
-                originalMethod.getBody());
-        JCTree.JCBlock bridgeBody = treeMaker.Block(0, List.from(nonContractStatements));
-        Symbol.MethodSymbol bridgeSymbol = getBridgeMethodSymbol(originalMethod);
+    public JCMethodDecl buildBridge(JCMethodDecl originalMethod) {
+        java.util.List<JCStatement> nonContractStatements =
+                getNonContractStatements(originalMethod.getBody());
+        JCBlock bridgeBody = treeMaker.Block(0, List.from(nonContractStatements));
+        MethodSymbol bridgeSymbol = getBridgeMethodSymbol(originalMethod);
         return treeMaker.MethodDef(bridgeSymbol, bridgeBody);
     }
 
-    private java.util.List<JCTree.JCStatement> getNonContractStatements(JCTree.JCBlock methodBody) {
+    private java.util.List<JCStatement> getNonContractStatements(JCBlock methodBody) {
         return methodBody.getStatements()
                 .stream()
                 .filter(statement -> !ContractAstUtil.isContractInvocation(statement))
                 .collect(toList());
     }
 
-    private Symbol.MethodSymbol getBridgeMethodSymbol(JCTree.JCMethodDecl originalMethod) {
+    private MethodSymbol getBridgeMethodSymbol(JCMethodDecl originalMethod) {
         Name bridgeMethodName = getBridgeMethodName(originalMethod);
-        return new Symbol.MethodSymbol(originalMethod.sym.flags(), bridgeMethodName,
+        return new MethodSymbol(originalMethod.sym.flags(), bridgeMethodName,
                 originalMethod.sym.type, originalMethod.sym.owner);
     }
 
-    private Name getBridgeMethodName(JCTree.JCMethodDecl originalMethod) {
+    private Name getBridgeMethodName(JCMethodDecl originalMethod) {
         return originalMethod.getName().append(names.fromString(BRIDGE_METHOD_SUFFIX));
     }
 }
