@@ -18,6 +18,7 @@ dependencies {
     implementation project(':coco-api')
 
     implementation 'com.google.guava:guava:28.1-jre'
+    implementation 'com.google.inject:guice:4.1.0'
     implementation 'commons-cli:commons-cli:1.4'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'

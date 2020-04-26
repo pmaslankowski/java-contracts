@@ -1,5 +1,7 @@
 package pl.coco.compiler.util;
 
+import javax.inject.Inject;
+
 import com.sun.tools.javac.api.JavacTaskImpl;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
@@ -14,6 +16,7 @@ public class ConditionSupplierProvider {
     private final TreeMaker treeMaker;
     private final TypeRegistry typeRegistry;
 
+    @Inject
     public ConditionSupplierProvider(JavacTaskImpl task) {
         this.treeMaker = TreeMaker.instance(task.getContext());
         this.typeRegistry = new TypeRegistry(task);

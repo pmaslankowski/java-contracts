@@ -3,26 +3,24 @@ package pl.coco.compiler.instrumentation;
 import java.util.List;
 import java.util.Optional;
 
+import javax.inject.Inject;
+
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.StatementTree;
 import com.sun.source.tree.Tree;
-import com.sun.source.util.JavacTask;
 import com.sun.source.util.TreeScanner;
 
-import pl.coco.compiler.arguments.CocoArgs;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.util.TreePasser;
 
 public class ContractsInstrumentationVisitor extends TreeScanner<Void, Void> {
 
-    private final JavacTask task;
-    private final CocoArgs cocoArgs;
+    private final ContractProcessor processor;
 
-    public ContractsInstrumentationVisitor(JavacTask task,
-            CocoArgs cocoArgs) {
-        this.task = task;
-        this.cocoArgs = cocoArgs;
+    @Inject
+    public ContractsInstrumentationVisitor(ContractProcessor processor) {
+        this.processor = processor;
     }
 
     @Override
@@ -42,8 +40,11 @@ public class ContractsInstrumentationVisitor extends TreeScanner<Void, Void> {
     private void processMethod(ClassTree clazz, MethodTree method) {
         List<? extends StatementTree> statements = method.getBody().getStatements();
         if (containsContractInvocation(statements)) {
-            ContractProcessor processor = new ContractProcessor(task, clazz, method);
-            processor.process();
+            ContractProcessorInput input = new ContractProcessorInput.Builder()
+                    .withClazz(clazz)
+                    .withMethod(method)
+                    .build();
+            processor.process(input);
         }
     }
 

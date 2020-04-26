@@ -1,78 +1,50 @@
 package pl.coco.compiler.util;
 
-import com.sun.source.util.JavacTask;
-import com.sun.tools.javac.api.JavacTaskImpl;
-import com.sun.tools.javac.code.Symbol;
+import javax.inject.Inject;
+
 import com.sun.tools.javac.tree.JCTree.JCExpression;
 import com.sun.tools.javac.tree.JCTree.JCIdent;
 import com.sun.tools.javac.tree.JCTree.JCMethodInvocation;
 import com.sun.tools.javac.tree.TreeMaker;
-import com.sun.tools.javac.util.Context;
 import com.sun.tools.javac.util.List;
 
 public class MethodInvocationBuilder {
 
-    private final JavacTaskImpl task;
     private final TreeMaker treeMaker;
+    private final ClassAccessBuilder classAccessBuilder;
 
-    private String className;
-    private Symbol methodSymbol;
-    private List<JCExpression> arguments;
-    private int position;
-
-    public MethodInvocationBuilder(JavacTask task) {
-        this.task = (JavacTaskImpl) task;
-        Context context = this.task.getContext();
-        this.treeMaker = TreeMaker.instance(context);
+    @Inject
+    public MethodInvocationBuilder(TreeMaker treeMaker, ClassAccessBuilder classAccessBuilder) {
+        this.treeMaker = treeMaker;
+        this.classAccessBuilder = classAccessBuilder;
     }
 
-    public MethodInvocationBuilder withClassName(String fullyQualifiedClassName) {
-        this.className = fullyQualifiedClassName;
-        return this;
-    }
-
-    public MethodInvocationBuilder withMethodSymbol(Symbol methodSymbol) {
-        this.methodSymbol = methodSymbol;
-        return this;
-    }
-
-    public MethodInvocationBuilder withArguments(List<JCExpression> args) {
-        this.arguments = args;
-        return this;
-    }
-
-    public MethodInvocationBuilder withPosition(int position) {
-        this.position = position;
-        return this;
-    }
-
-    public JCMethodInvocation build() {
+    public JCMethodInvocation build(MethodInvocationDescription desc) {
         List<JCExpression> typeParameters = List.nil();
-        JCExpression methodAccess = newMethodAccess(className);
-        return treeMaker.at(position)
-                .Apply(typeParameters, methodAccess, arguments)
-                .setType(methodSymbol.asType().getReturnType());
+        JCExpression methodAccess = newMethodAccess(desc);
+        return treeMaker.at(desc.getPosition())
+                .Apply(typeParameters, methodAccess, desc.getArguments())
+                .setType(desc.getMethodSymbol().asType().getReturnType());
     }
 
-    private JCExpression newMethodAccess(String className) {
-        if (className != null) {
-            return getStaticMethodAccess(className);
+    private JCExpression newMethodAccess(MethodInvocationDescription desc) {
+        if (desc.getClassName() != null) {
+            return getStaticMethodAccess(desc);
         } else {
-            return getInstanceMethodAccess(methodSymbol);
+            return getInstanceMethodAccess(desc);
         }
     }
 
-    private JCExpression getStaticMethodAccess(String className) {
-        JCExpression classAccess = newClassAccess(className);
-        return treeMaker.at(position).Select(classAccess, methodSymbol);
+    private JCExpression getStaticMethodAccess(MethodInvocationDescription desc) {
+        JCExpression classAccess = newClassAccess(desc);
+        return treeMaker.at(desc.getPosition()).Select(classAccess, desc.getMethodSymbol());
     }
 
-    private JCExpression newClassAccess(String fullyQualifiedClassName) {
-        ClassAccessBuilder classAccessBuilder = new ClassAccessBuilder(task, position);
-        return classAccessBuilder.build(fullyQualifiedClassName);
+    private JCExpression newClassAccess(MethodInvocationDescription desc) {
+        return classAccessBuilder.build(desc.getClassName(), desc.getPosition());
     }
 
-    private JCIdent getInstanceMethodAccess(Symbol methodSymbol) {
-        return treeMaker.at(position).Ident(methodSymbol);
+    private JCIdent getInstanceMethodAccess(MethodInvocationDescription desc) {
+        return treeMaker.at(desc.getPosition()).Ident(desc.getMethodSymbol());
     }
 }

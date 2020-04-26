@@ -22,7 +22,7 @@ public class ProcessedContracts {
                 break;
             default:
                 throw new IllegalArgumentException(
-                        "Contract method: " + contractMethod + " is not supported in this class.");
+                        "Contract method: " + contractMethod + " is not supported in this classe.");
         }
     }
 

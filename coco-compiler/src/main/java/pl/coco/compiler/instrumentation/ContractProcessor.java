@@ -1,5 +1,6 @@
 package pl.coco.compiler.instrumentation;
 
+import static com.sun.tools.javac.tree.JCTree.JCExpressionStatement;
 import static com.sun.tools.javac.tree.JCTree.JCIdent;
 import static com.sun.tools.javac.tree.JCTree.JCMethodInvocation;
 import static com.sun.tools.javac.tree.JCTree.JCReturn;
@@ -8,6 +9,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
 import javax.lang.model.type.TypeKind;
 
 import com.sun.source.tree.BlockTree;
@@ -15,8 +17,6 @@ import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.StatementTree;
 import com.sun.source.tree.VariableTree;
-import com.sun.source.util.JavacTask;
-import com.sun.tools.javac.api.JavacTaskImpl;
 import com.sun.tools.javac.code.Symbol.VarSymbol;
 import com.sun.tools.javac.tree.JCTree.JCBlock;
 import com.sun.tools.javac.tree.JCTree.JCClassDecl;
@@ -30,24 +30,29 @@ import pl.coco.compiler.util.BridgeMethodBuilder;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.util.InternalInvocationBuilder;
 import pl.coco.compiler.util.MethodInvocationBuilder;
+import pl.coco.compiler.util.MethodInvocationDescription;
 
 public class ContractProcessor {
 
     private static final String RESULT_VARIABLE_NAME = "result";
 
-    private final JavacTaskImpl task;
-    private final ClassTree clazz;
-    private final MethodTree method;
     private final TreeMaker treeMaker;
     private final Names names;
+    private final BridgeMethodBuilder bridgeMethodBuilder;
+    private final InternalInvocationBuilder internalInvocationBuilder;
+    private final MethodInvocationBuilder methodInvocationBuilder;
 
-    public ContractProcessor(JavacTask task,
-            ClassTree clazz, MethodTree method) {
-        this.task = (JavacTaskImpl) task;
-        this.clazz = clazz;
-        this.method = method;
-        this.treeMaker = TreeMaker.instance(this.task.getContext());
-        this.names = Names.instance(this.task.getContext());
+    @Inject
+    public ContractProcessor(TreeMaker treeMaker, Names names,
+            BridgeMethodBuilder bridgeMethodBuilder,
+            InternalInvocationBuilder internalInvocationBuilder,
+            MethodInvocationBuilder methodInvocationBuilder) {
+
+        this.treeMaker = treeMaker;
+        this.names = names;
+        this.bridgeMethodBuilder = bridgeMethodBuilder;
+        this.internalInvocationBuilder = internalInvocationBuilder;
+        this.methodInvocationBuilder = methodInvocationBuilder;
     }
 
     // TODO: refactor util package - divide into separate packages
@@ -56,17 +61,17 @@ public class ContractProcessor {
     // TODO: type checking for Contract.result() calls
     // TODO: check that Contract.result() calls occur only inside Contract.ensures()
     // TODO: add positions to all treeMaker calls
-    public void process() {
-        BlockTree methodBody = method.getBody();
-        java.util.List<? extends StatementTree> contractStatements =
-                getContractStatements(methodBody);
+    public void process(ContractProcessorInput input) {
+        MethodTree method = input.getMethod();
+        BlockTree body = method.getBody();
+        java.util.List<? extends StatementTree> contractStatements = getContractStatements(body);
 
         if (contractStatements.size() > 0) {
-            JCMethodDecl bridgeMethod = createBridgeMethod();
-            addMethodToThisClass(bridgeMethod);
+            JCMethodDecl bridgeMethod = createBridgeMethod(method);
+            addMethodToClass(bridgeMethod, input.getClazz());
             java.util.List<JCStatement> processedStatements = processStatements(contractStatements,
                     bridgeMethod);
-            ((JCBlock) methodBody).stats = List.from(processedStatements);
+            ((JCBlock) body).stats = List.from(processedStatements);
         }
     }
 
@@ -76,15 +81,14 @@ public class ContractProcessor {
                 .collect(toList());
     }
 
-    private JCMethodDecl createBridgeMethod() {
-        BridgeMethodBuilder bridgeMethodBuilder = new BridgeMethodBuilder(task);
+    private JCMethodDecl createBridgeMethod(MethodTree method) {
         return bridgeMethodBuilder.buildBridge((JCMethodDecl) method);
     }
 
-    private void addMethodToThisClass(JCMethodDecl methodDeclaration) {
-        JCClassDecl thisClassDeclaration = (JCClassDecl) this.clazz;
-        thisClassDeclaration.defs = thisClassDeclaration.getMembers().append(methodDeclaration);
-        thisClassDeclaration.sym.members().enter(methodDeclaration.sym);
+    private void addMethodToClass(JCMethodDecl methodDeclaration, ClassTree clazz) {
+        JCClassDecl classDeclaration = (JCClassDecl) clazz;
+        classDeclaration.defs = classDeclaration.getMembers().append(methodDeclaration);
+        classDeclaration.sym.members().enter(methodDeclaration.sym);
     }
 
     private java.util.List<JCStatement> processStatements(
@@ -120,11 +124,8 @@ public class ContractProcessor {
         ProcessedContracts processed = new ProcessedContracts();
         for (StatementTree statement : statements) {
             ContractInvocation invocation = ContractAstUtil.getContractInvocation(statement);
-            JCStatement internalContractInvocation = new InternalInvocationBuilder(task)
-                    .withContractInvocation(invocation)
-                    .withResultSymbol(resultSymbol)
-                    .withStatement(statement)
-                    .build();
+            JCStatement internalContractInvocation = internalInvocationBuilder
+                    .build(invocation, (JCExpressionStatement) statement, resultSymbol);
             processed.add(invocation.getContractMethod(), internalContractInvocation);
         }
         return processed;
@@ -133,8 +134,7 @@ public class ContractProcessor {
     private JCStatement generateBridgeInvocationStatement(JCMethodDecl bridgeMethod,
             VarSymbol resultSymbol) {
 
-        JCMethodInvocation bridgeMethodInvocation = generateBridgeMethodInvocation(
-                bridgeMethod);
+        JCMethodInvocation bridgeMethodInvocation = generateBridgeMethodInvocation(bridgeMethod);
 
         if (isVoid(bridgeMethod)) {
             return treeMaker.Call(bridgeMethodInvocation);
@@ -156,11 +156,12 @@ public class ContractProcessor {
 
     private JCMethodInvocation generateBridgeMethodInvocation(JCMethodDecl bridgeMethod) {
 
-        java.util.List<JCIdent> parameters = getParametersForBridgeMethod(method);
-        return new MethodInvocationBuilder(task)
+        java.util.List<JCIdent> parameters = getParametersForBridgeMethod(bridgeMethod);
+        MethodInvocationDescription desc = new MethodInvocationDescription.Builder()
                 .withMethodSymbol(bridgeMethod.sym)
                 .withArguments(List.from(parameters))
                 .build();
+        return methodInvocationBuilder.build(desc);
     }
 
     private java.util.List<JCIdent> getParametersForBridgeMethod(MethodTree method) {

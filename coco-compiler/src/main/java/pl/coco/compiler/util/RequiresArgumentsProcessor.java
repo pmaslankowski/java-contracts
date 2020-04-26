@@ -2,8 +2,10 @@ package pl.coco.compiler.util;
 
 import java.util.Arrays;
 
+import javax.inject.Inject;
+
 import com.sun.source.tree.ExpressionTree;
-import com.sun.tools.javac.api.JavacTaskImpl;
+import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
 import com.sun.tools.javac.tree.JCTree.JCLambda;
 import com.sun.tools.javac.tree.JCTree.JCLiteral;
@@ -15,14 +17,17 @@ public class RequiresArgumentsProcessor implements ArgumentsProcessor {
     private final TreeMaker treeMaker;
     private final ConditionSupplierProvider conditionSupplierProvider;
 
-    public RequiresArgumentsProcessor(JavacTaskImpl task) {
-        this.treeMaker = TreeMaker.instance(task.getContext());
-        this.conditionSupplierProvider = new ConditionSupplierProvider(task);
+    @Inject
+    public RequiresArgumentsProcessor(TreeMaker treeMaker,
+            ConditionSupplierProvider conditionSupplierProvider) {
+
+        this.treeMaker = treeMaker;
+        this.conditionSupplierProvider = conditionSupplierProvider;
     }
 
     @Override
-    public List<JCExpression> processArguments(
-            java.util.List<? extends ExpressionTree> arguments) {
+    public List<JCExpression> processArguments(java.util.List<? extends ExpressionTree> arguments,
+            Symbol resultSymbol) {
 
         JCExpression precondition = (JCExpression) arguments.get(0);
         JCLiteral preconditionAsStringLiteral = treeMaker.Literal(precondition.toString());

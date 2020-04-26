@@ -1,20 +1,19 @@
 package pl.coco.compiler;
 
-import com.sun.source.util.JavacTask;
+import javax.inject.Inject;
+
 import com.sun.source.util.TaskEvent;
 import com.sun.source.util.TaskListener;
 
-import pl.coco.compiler.arguments.CocoArgs;
 import pl.coco.compiler.instrumentation.ContractsInstrumentationVisitor;
 
 public class InstrumentationListener implements TaskListener {
 
-    private final JavacTask task;
-    private final CocoArgs cocoArgs;
+    private final ContractsInstrumentationVisitor visitor;
 
-    public InstrumentationListener(JavacTask task, CocoArgs cocoArgs) {
-        this.task = task;
-        this.cocoArgs = cocoArgs;
+    @Inject
+    public InstrumentationListener(ContractsInstrumentationVisitor visitor) {
+        this.visitor = visitor;
     }
 
     @Override
@@ -25,8 +24,7 @@ public class InstrumentationListener implements TaskListener {
     @Override
     public void finished(TaskEvent taskEvent) {
         if (taskEvent.getKind() == TaskEvent.Kind.ANALYZE) {
-            taskEvent.getCompilationUnit().accept(
-                    new ContractsInstrumentationVisitor(task, cocoArgs), null);
+            taskEvent.getCompilationUnit().accept(visitor, null);
         }
     }
 }

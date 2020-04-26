@@ -1,5 +1,6 @@
 package pl.coco.compiler.util;
 
+import javax.inject.Inject;
 import javax.lang.model.element.Element;
 
 import com.sun.tools.javac.api.JavacTaskImpl;
@@ -10,6 +11,7 @@ public class TypeRegistry {
 
     private final JavacTaskImpl task;
 
+    @Inject
     public TypeRegistry(JavacTaskImpl task) {
         this.task = task;
     }

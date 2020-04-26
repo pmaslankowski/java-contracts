@@ -2,9 +2,10 @@ package pl.coco.compiler.util;
 
 import java.util.Arrays;
 
+import javax.inject.Inject;
+
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
-import com.sun.tools.javac.api.JavacTaskImpl;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
@@ -22,18 +23,19 @@ import pl.coco.compiler.instrumentation.SimpleMethodInvocation;
 public class EnsuresArgumentsProcessor implements ArgumentsProcessor {
 
     private final TreeMaker treeMaker;
-    private final Symbol resultSymbol;
     private final ConditionSupplierProvider conditionSupplierProvider;
 
-    public EnsuresArgumentsProcessor(JavacTaskImpl task, Symbol resultSymbol) {
-        this.treeMaker = TreeMaker.instance(task.getContext());
-        this.resultSymbol = resultSymbol;
-        this.conditionSupplierProvider = new ConditionSupplierProvider(task);
+    @Inject
+    public EnsuresArgumentsProcessor(TreeMaker treeMaker,
+            ConditionSupplierProvider conditionSupplierProvider) {
+
+        this.treeMaker = treeMaker;
+        this.conditionSupplierProvider = conditionSupplierProvider;
     }
 
     @Override
-    public List<JCExpression> processArguments(
-            java.util.List<? extends ExpressionTree> arguments) {
+    public List<JCExpression> processArguments(java.util.List<? extends ExpressionTree> arguments,
+            Symbol resultSymbol) {
 
         JCExpression postcondition = (JCExpression) arguments.get(0);
         JCLiteral postconditionAsStringLiteral = treeMaker.Literal(postcondition.toString());

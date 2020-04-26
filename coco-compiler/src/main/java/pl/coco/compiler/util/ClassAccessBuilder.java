@@ -1,6 +1,7 @@
 package pl.coco.compiler.util;
 
-import com.sun.tools.javac.api.JavacTaskImpl;
+import javax.inject.Inject;
+
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
@@ -10,30 +11,29 @@ public class ClassAccessBuilder {
 
     private final TreeMaker treeMaker;
     private final TypeRegistry typeRegistry;
-    private final int position;
 
-    public ClassAccessBuilder(JavacTaskImpl task, int position) {
-        this.treeMaker = TreeMaker.instance(task.getContext());
-        this.typeRegistry = new TypeRegistry(task);
-        this.position = position;
+    @Inject
+    public ClassAccessBuilder(TreeMaker treeMaker, TypeRegistry typeRegistry) {
+        this.treeMaker = treeMaker;
+        this.typeRegistry = typeRegistry;
     }
 
-    public JCExpression build(String fullyQualifiedClassName) {
+    public JCExpression build(String fullyQualifiedClassName, int position) {
         String[] classAccessPath = fullyQualifiedClassName.split("\\.");
 
         String topPackageName = classAccessPath[0];
-        JCExpression classAccess = getTopPackageAccess(topPackageName);
+        JCExpression classAccess = getTopPackageAccess(topPackageName, position);
 
         String currentPackageName = topPackageName;
         for (int i = 1; i < classAccessPath.length - 1; i++) {
             currentPackageName = currentPackageName + "." + classAccessPath[i];
-            classAccess = getInnerPackageAccess(classAccess, currentPackageName);
+            classAccess = getInnerPackageAccess(classAccess, currentPackageName, position);
         }
 
-        return getClassAccess(classAccess, fullyQualifiedClassName);
+        return getClassAccess(classAccess, fullyQualifiedClassName, position);
     }
 
-    private JCExpression getTopPackageAccess(String topPackageName) {
+    private JCExpression getTopPackageAccess(String topPackageName, int position) {
         Symbol packageSymbol = typeRegistry.getPackageSymbol(topPackageName);
         Type packageType = typeRegistry.getPackageType(topPackageName);
         JCExpression classAccess = treeMaker.at(position)
@@ -42,7 +42,7 @@ public class ClassAccessBuilder {
     }
 
     private JCExpression getInnerPackageAccess(JCExpression previousClassAccess,
-            String currentPackageName) {
+            String currentPackageName, int position) {
 
         Symbol packageSymbol = typeRegistry.getPackageSymbol(currentPackageName);
         Type packageType = typeRegistry.getPackageType(currentPackageName);
@@ -52,7 +52,7 @@ public class ClassAccessBuilder {
     }
 
     private JCExpression getClassAccess(JCExpression previousClassAccess,
-            String fullyQualifiedClassName) {
+            String fullyQualifiedClassName, int position) {
 
         Symbol classSymbol = typeRegistry.getClassSymbol(fullyQualifiedClassName);
         Type classType = typeRegistry.getClassType(fullyQualifiedClassName);

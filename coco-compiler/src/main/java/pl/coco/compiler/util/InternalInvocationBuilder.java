@@ -1,16 +1,17 @@
 package pl.coco.compiler.util;
 
+import static com.sun.tools.javac.tree.JCTree.JCExpression;
+
 import java.util.Arrays;
 
-import com.sun.source.tree.StatementTree;
-import com.sun.source.util.JavacTask;
-import com.sun.tools.javac.api.JavacTaskImpl;
+import javax.inject.Inject;
+
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.comp.AttrContext;
 import com.sun.tools.javac.comp.Env;
 import com.sun.tools.javac.comp.Resolve;
-import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.JCTree.JCExpressionStatement;
 import com.sun.tools.javac.tree.JCTree.JCMethodInvocation;
 import com.sun.tools.javac.tree.JCTree.JCStatement;
 import com.sun.tools.javac.tree.TreeMaker;
@@ -26,80 +27,67 @@ public class InternalInvocationBuilder {
     private static final String STRING_TYPE_NAME = "java.lang.String";
     private static final String CONDITION_SUPPLIER_TYPE = "pl.coco.internal.ConditionSupplier";
 
-    private final JavacTaskImpl task;
     private final Resolve resolver;
     private final Names names;
     private final TreeMaker treeMaker;
+    private final TypeRegistry typeRegistry;
+    private final MethodInvocationBuilder methodInvocationBuilder;
+    private final ArgumentsProcessorFactory argumentsProcessorFactory;
 
-    private ContractInvocation contractInvocation;
-    private JCTree.JCExpressionStatement statement;
-    private Symbol resultSymbol;
+    @Inject
+    public InternalInvocationBuilder(Resolve resolver, Names names, TreeMaker treeMaker,
+            TypeRegistry typeRegistry, MethodInvocationBuilder methodInvocationBuilder,
+            ArgumentsProcessorFactory argumentsProcessorFactory) {
 
-    public InternalInvocationBuilder(JavacTask task) {
-        this.task = (JavacTaskImpl) task;
-        this.resolver = Resolve.instance(this.task.getContext());
-        this.names = Names.instance(this.task.getContext());
-        this.treeMaker = TreeMaker.instance(this.task.getContext());
+        this.resolver = resolver;
+        this.names = names;
+        this.treeMaker = treeMaker;
+        this.typeRegistry = typeRegistry;
+        this.methodInvocationBuilder = methodInvocationBuilder;
+        this.argumentsProcessorFactory = argumentsProcessorFactory;
     }
 
-    public InternalInvocationBuilder withContractInvocation(ContractInvocation contractInvocation) {
-        this.contractInvocation = contractInvocation;
-        return this;
-    }
+    public JCStatement build(ContractInvocation invocation, JCExpressionStatement statement,
+            Symbol resultSymbol) {
 
-    public InternalInvocationBuilder withStatement(StatementTree statement) {
-        this.statement = (JCTree.JCExpressionStatement) statement;
-        return this;
-    }
-
-    public InternalInvocationBuilder withResultSymbol(Symbol resultSymbol) {
-        this.resultSymbol = resultSymbol;
-        return this;
-    }
-
-    public JCStatement build() {
-        JCMethodInvocation methodInvocation = new MethodInvocationBuilder(task)
-                .withClassName(contractInvocation.getContractMethod().getInternalClassName())
-                .withArguments(getArgumentsForContractCall(contractInvocation))
+        MethodInvocationDescription desc = new MethodInvocationDescription.Builder()
+                .withClassName(invocation.getContractMethod().getInternalClassName())
+                .withArguments(getArgumentsForContractCall(invocation, resultSymbol))
                 .withPosition(statement.pos)
-                .withMethodSymbol(getInternalContractMethodSymbol(contractInvocation))
+                .withMethodSymbol(getInternalContractMethodSymbol(invocation, statement))
                 .build();
+        JCMethodInvocation methodInvocation = methodInvocationBuilder.build(desc);
 
         return treeMaker.at(statement.pos)
                 .Call(methodInvocation);
     }
 
-    private Symbol getInternalContractMethodSymbol(ContractInvocation contractInvocation) {
+    private Symbol getInternalContractMethodSymbol(ContractInvocation contractInvocation,
+            JCExpressionStatement statement) {
+
         ContractMethod contractMethod = contractInvocation.getContractMethod();
-        Type string = getType(STRING_TYPE_NAME);
-        Type conditionSupplier = getType(CONDITION_SUPPLIER_TYPE);
+        Type string = typeRegistry.getType(STRING_TYPE_NAME);
+        Type conditionSupplier = typeRegistry.getType(CONDITION_SUPPLIER_TYPE);
         List<Type> arguments = List.from(Arrays.asList(conditionSupplier, string));
         return getMethodSymbol(contractMethod.getInternalClassName(),
-                contractMethod.getMethodName(),
-                arguments);
-    }
-
-    private Type getType(String name) {
-        return task.getElements().getTypeElement(name).asType();
+                contractMethod.getMethodName(), statement, arguments);
     }
 
     private Symbol getMethodSymbol(String fullyQualifiedClassName, String methodName,
-            List<Type> arguments) {
+            JCExpressionStatement statement, List<Type> arguments) {
 
         Env<AttrContext> env = new Env<>(statement, new AttrContext());
-        Type subject = getType(fullyQualifiedClassName);
+        Type subject = typeRegistry.getType(fullyQualifiedClassName);
         Name methodIdentifier = names.fromString(methodName);
         return resolver.resolveInternalMethod(statement.pos(), env, subject, methodIdentifier,
                 arguments, List.nil());
     }
 
-    private List<JCTree.JCExpression> getArgumentsForContractCall(
-            ContractInvocation invocation) {
+    private List<JCExpression> getArgumentsForContractCall(ContractInvocation invocation,
+            Symbol resultSymbol) {
 
-        ArgumentsProcessorFactory argumentsProcessorFactory =
-                new ArgumentsProcessorFactory(task, resultSymbol);
         ArgumentsProcessor argumentsProcessor =
                 argumentsProcessorFactory.newArgumentsProcessor(invocation.getContractMethod());
-        return argumentsProcessor.processArguments(invocation.getArguments());
+        return argumentsProcessor.processArguments(invocation.getArguments(), resultSymbol);
     }
 }
