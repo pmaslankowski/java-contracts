@@ -1,8 +1,10 @@
-package pl.coco.compiler.util;
+package pl.coco.compiler.instrumentation.bridge;
 
 import static java.util.stream.Collectors.toList;
 
 import javax.inject.Inject;
+
+import pl.coco.compiler.util.ContractAstUtil;
 
 import com.sun.tools.javac.code.Symbol.MethodSymbol;
 import com.sun.tools.javac.tree.JCTree.JCBlock;

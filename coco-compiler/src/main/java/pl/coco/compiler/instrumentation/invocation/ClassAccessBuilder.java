@@ -1,6 +1,8 @@
-package pl.coco.compiler.util;
+package pl.coco.compiler.instrumentation.invocation;
 
 import javax.inject.Inject;
+
+import pl.coco.compiler.util.TypeRegistry;
 
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;

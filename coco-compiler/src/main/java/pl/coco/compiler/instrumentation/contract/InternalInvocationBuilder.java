@@ -1,4 +1,4 @@
-package pl.coco.compiler.util;
+package pl.coco.compiler.instrumentation.contract;
 
 import static com.sun.tools.javac.tree.JCTree.JCExpression;
 
@@ -19,8 +19,13 @@ import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Name;
 import com.sun.tools.javac.util.Names;
 
-import pl.coco.compiler.ContractMethod;
-import pl.coco.compiler.instrumentation.ContractInvocation;
+import pl.coco.compiler.instrumentation.ContractMethod;
+import pl.coco.compiler.instrumentation.contract.arguments.ArgumentsProcessor;
+import pl.coco.compiler.instrumentation.contract.arguments.ArgumentsProcessorFactory;
+import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
+import pl.coco.compiler.instrumentation.invocation.MethodInvocationBuilder;
+import pl.coco.compiler.instrumentation.invocation.MethodInvocationDescription;
+import pl.coco.compiler.util.TypeRegistry;
 
 public class InternalInvocationBuilder {
 

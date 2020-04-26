@@ -1,8 +1,8 @@
-package pl.coco.compiler.instrumentation;
+package pl.coco.compiler.instrumentation.invocation;
 
 import java.util.Optional;
 
-import pl.coco.compiler.ContractMethod;
+import pl.coco.compiler.instrumentation.ContractMethod;
 
 public class ContractInvocation extends SimpleMethodInvocation {
 

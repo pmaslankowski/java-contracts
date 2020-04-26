@@ -1,8 +1,8 @@
-package pl.coco.compiler.util;
+package pl.coco.compiler.instrumentation.contract.arguments;
 
 import javax.inject.Inject;
 
-import pl.coco.compiler.ContractMethod;
+import pl.coco.compiler.instrumentation.ContractMethod;
 
 public class ArgumentsProcessorFactory {
 

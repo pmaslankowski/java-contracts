@@ -1,6 +1,8 @@
-package pl.coco.compiler.util;
+package pl.coco.compiler.instrumentation.contract;
 
 import javax.inject.Inject;
+
+import pl.coco.compiler.util.TypeRegistry;
 
 import com.sun.tools.javac.api.JavacTaskImpl;
 import com.sun.tools.javac.code.Type;

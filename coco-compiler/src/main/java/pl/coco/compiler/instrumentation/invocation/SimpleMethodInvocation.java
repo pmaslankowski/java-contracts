@@ -1,4 +1,4 @@
-package pl.coco.compiler.instrumentation;
+package pl.coco.compiler.instrumentation.invocation;
 
 import java.util.List;
 import java.util.Optional;

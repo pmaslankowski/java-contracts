@@ -2,8 +2,8 @@ package pl.coco.compiler.util;
 
 import java.util.Optional;
 
-import pl.coco.compiler.instrumentation.ContractInvocation;
-import pl.coco.compiler.instrumentation.SimpleMethodInvocation;
+import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
+import pl.coco.compiler.instrumentation.invocation.SimpleMethodInvocation;
 
 import com.sun.source.tree.ExpressionStatementTree;
 import com.sun.source.tree.MethodInvocationTree;

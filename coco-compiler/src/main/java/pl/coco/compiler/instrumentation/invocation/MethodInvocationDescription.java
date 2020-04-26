@@ -1,4 +1,4 @@
-package pl.coco.compiler.util;
+package pl.coco.compiler.instrumentation.invocation;
 
 import static com.sun.tools.javac.tree.JCTree.JCExpression;
 

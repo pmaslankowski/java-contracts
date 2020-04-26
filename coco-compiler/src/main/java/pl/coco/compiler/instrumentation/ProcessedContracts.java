@@ -5,8 +5,6 @@ import java.util.List;
 
 import com.sun.tools.javac.tree.JCTree;
 
-import pl.coco.compiler.ContractMethod;
-
 public class ProcessedContracts {
 
     private final List<JCTree.JCStatement> preconditions = new ArrayList<>();

@@ -1,4 +1,4 @@
-package pl.coco.compiler.util;
+package pl.coco.compiler.instrumentation.contract.arguments;
 
 import java.util.Arrays;
 
@@ -16,9 +16,11 @@ import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.tree.TreeScanner;
 import com.sun.tools.javac.util.List;
 
-import pl.coco.compiler.ContractMethod;
-import pl.coco.compiler.instrumentation.ContractInvocation;
-import pl.coco.compiler.instrumentation.SimpleMethodInvocation;
+import pl.coco.compiler.instrumentation.ContractMethod;
+import pl.coco.compiler.instrumentation.contract.ConditionSupplierProvider;
+import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
+import pl.coco.compiler.instrumentation.invocation.SimpleMethodInvocation;
+import pl.coco.compiler.util.TreePasser;
 
 public class EnsuresArgumentsProcessor implements ArgumentsProcessor {
 

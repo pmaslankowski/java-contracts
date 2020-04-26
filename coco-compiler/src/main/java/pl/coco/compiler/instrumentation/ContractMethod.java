@@ -1,8 +1,8 @@
-package pl.coco.compiler;
+package pl.coco.compiler.instrumentation;
 
 import java.util.Optional;
 
-import pl.coco.compiler.instrumentation.SimpleMethodInvocation;
+import pl.coco.compiler.instrumentation.invocation.SimpleMethodInvocation;
 
 public enum ContractMethod {
 

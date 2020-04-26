@@ -26,11 +26,12 @@ import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Names;
 
-import pl.coco.compiler.util.BridgeMethodBuilder;
+import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
+import pl.coco.compiler.instrumentation.bridge.BridgeMethodBuilder;
 import pl.coco.compiler.util.ContractAstUtil;
-import pl.coco.compiler.util.InternalInvocationBuilder;
-import pl.coco.compiler.util.MethodInvocationBuilder;
-import pl.coco.compiler.util.MethodInvocationDescription;
+import pl.coco.compiler.instrumentation.contract.InternalInvocationBuilder;
+import pl.coco.compiler.instrumentation.invocation.MethodInvocationBuilder;
+import pl.coco.compiler.instrumentation.invocation.MethodInvocationDescription;
 
 public class ContractProcessor {
 
@@ -55,12 +56,9 @@ public class ContractProcessor {
         this.methodInvocationBuilder = methodInvocationBuilder;
     }
 
-    // TODO: refactor util package - divide into separate packages
-    // TODO: dependency injection
     // TODO: add contract inheritance
     // TODO: type checking for Contract.result() calls
     // TODO: check that Contract.result() calls occur only inside Contract.ensures()
-    // TODO: add positions to all treeMaker calls
     public void process(ContractProcessorInput input) {
         MethodTree method = input.getMethod();
         BlockTree body = method.getBody();
