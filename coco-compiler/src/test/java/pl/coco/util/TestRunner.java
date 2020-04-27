@@ -6,20 +6,21 @@ import java.text.MessageFormat;
 
 public class TestRunner {
 
-    public Object run(byte[] byteCode, String qualifiedClassName, String methodName,
+    public Object run(CompiledClasses classes, String qualifiedClassName, String methodName,
             Class<?>[] argumentTypes, Object... args) throws Throwable {
 
-        Class<?> clazz = loadClass(byteCode, qualifiedClassName);
+        Class<?> clazz = loadClass(classes, qualifiedClassName);
         Method method = getMethod(clazz, methodName, argumentTypes);
 
         return invokeMethodWithArguments(method, args);
     }
 
-    private Class<?> loadClass(byte[] byteCode, String qualifiedClassName) {
+    private Class<?> loadClass(CompiledClasses classes, String qualifiedClassName) {
         ClassLoader classLoader = new ClassLoader() {
 
             @Override
             protected Class<?> findClass(String name) {
+                byte[] byteCode = classes.getCompiledClass(name);
                 return defineClass(name, byteCode, 0, byteCode.length);
             }
         };
@@ -53,4 +54,3 @@ public class TestRunner {
         }
     }
 }
-

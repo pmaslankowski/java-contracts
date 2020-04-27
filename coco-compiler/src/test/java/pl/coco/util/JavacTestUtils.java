@@ -32,7 +32,12 @@ public class JavacTestUtils {
         TestCompiler compiler = new TestCompiler();
         TestRunner runner = new TestRunner();
 
-        byte[] byteCode = compiler.compile(qualifiedClassName, code, pluginArg);
-        return runner.run(byteCode, qualifiedClassName, methodName, argumentTypes, arguments);
+        TestCompilerInput input = new TestCompilerInput.Builder()
+                .addCompilationUnit(qualifiedClassName, code)
+                .withPluginArg(pluginArg)
+                .build();
+        CompiledClasses compiled = compiler.compile(input);
+
+        return runner.run(compiled, qualifiedClassName, methodName, argumentTypes, arguments);
     }
 }

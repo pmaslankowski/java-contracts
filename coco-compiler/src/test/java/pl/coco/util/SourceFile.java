@@ -6,10 +6,12 @@ import javax.tools.SimpleJavaFileObject;
 
 public class SourceFile extends SimpleJavaFileObject {
 
+    private String qualifiedClassName;
     private String content;
 
     public SourceFile(String qualifiedClassName, String testSource) {
         super(getClassSourceURI(qualifiedClassName), Kind.SOURCE);
+        this.qualifiedClassName = qualifiedClassName;
         content = testSource;
     }
 
@@ -28,5 +30,9 @@ public class SourceFile extends SimpleJavaFileObject {
     @Override
     public CharSequence getCharContent(boolean ignoreEncodingErrors) {
         return content;
+    }
+
+    public String getQualifiedClassName() {
+        return qualifiedClassName;
     }
 }
