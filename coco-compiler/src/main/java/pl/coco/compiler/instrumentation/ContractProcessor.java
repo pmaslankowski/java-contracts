@@ -28,6 +28,8 @@ import pl.coco.compiler.instrumentation.contract.InternalInvocationBuilder;
 import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
 import pl.coco.compiler.instrumentation.invocation.MethodInvocationBuilder;
 import pl.coco.compiler.instrumentation.invocation.MethodInvocationDescription;
+import pl.coco.compiler.instrumentation.registry.ContractsRegistry;
+import pl.coco.compiler.instrumentation.registry.MethodKey;
 
 public class ContractProcessor {
 

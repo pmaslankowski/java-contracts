@@ -1,8 +1,10 @@
-package pl.coco.compiler.instrumentation;
+package pl.coco.compiler.instrumentation.registry;
 
 import java.util.Objects;
 
 import javax.lang.model.element.Name;
+
+import pl.coco.compiler.instrumentation.MethodInput;
 
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;

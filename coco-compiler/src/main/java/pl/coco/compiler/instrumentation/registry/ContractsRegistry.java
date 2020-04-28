@@ -1,4 +1,4 @@
-package pl.coco.compiler.instrumentation;
+package pl.coco.compiler.instrumentation.registry;
 
 import java.util.Collections;
 import java.util.HashMap;
