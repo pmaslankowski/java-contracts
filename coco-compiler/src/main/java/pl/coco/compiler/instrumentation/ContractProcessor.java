@@ -1,6 +1,5 @@
 package pl.coco.compiler.instrumentation;
 
-import static com.sun.tools.javac.tree.JCTree.JCExpressionStatement;
 import static com.sun.tools.javac.tree.JCTree.JCIdent;
 import static com.sun.tools.javac.tree.JCTree.JCMethodInvocation;
 import static com.sun.tools.javac.tree.JCTree.JCReturn;
@@ -12,10 +11,8 @@ import java.util.ArrayList;
 import javax.inject.Inject;
 import javax.lang.model.type.TypeKind;
 
-import com.sun.source.tree.BlockTree;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.MethodTree;
-import com.sun.source.tree.StatementTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.tools.javac.code.Symbol.VarSymbol;
 import com.sun.tools.javac.tree.JCTree.JCBlock;
@@ -26,10 +23,9 @@ import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Names;
 
-import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
 import pl.coco.compiler.instrumentation.bridge.BridgeMethodBuilder;
-import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.instrumentation.contract.InternalInvocationBuilder;
+import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
 import pl.coco.compiler.instrumentation.invocation.MethodInvocationBuilder;
 import pl.coco.compiler.instrumentation.invocation.MethodInvocationDescription;
 
@@ -39,44 +35,46 @@ public class ContractProcessor {
 
     private final TreeMaker treeMaker;
     private final Names names;
+    private final ContractsRegistry contractsRegistry;
     private final BridgeMethodBuilder bridgeMethodBuilder;
     private final InternalInvocationBuilder internalInvocationBuilder;
     private final MethodInvocationBuilder methodInvocationBuilder;
 
     @Inject
-    public ContractProcessor(TreeMaker treeMaker, Names names,
+    public ContractProcessor(
+            TreeMaker treeMaker,
+            Names names,
+            ContractsRegistry contractRegistry,
             BridgeMethodBuilder bridgeMethodBuilder,
             InternalInvocationBuilder internalInvocationBuilder,
             MethodInvocationBuilder methodInvocationBuilder) {
 
         this.treeMaker = treeMaker;
         this.names = names;
+        this.contractsRegistry = contractRegistry;
         this.bridgeMethodBuilder = bridgeMethodBuilder;
         this.internalInvocationBuilder = internalInvocationBuilder;
         this.methodInvocationBuilder = methodInvocationBuilder;
     }
 
     // TODO: add contract inheritance
+    // TODO: add unit test with different method argument names in subclass
     // TODO: type checking for Contract.result() calls
     // TODO: check that Contract.result() calls occur only inside Contract.ensures()
-    public void process(ContractProcessorInput input) {
-        MethodTree method = input.getMethod();
-        BlockTree body = method.getBody();
-        java.util.List<? extends StatementTree> contractStatements = getContractStatements(body);
+    public void process(MethodInput input) {
+        JCMethodDecl method = (JCMethodDecl) input.getMethod();
+        JCBlock body = method.getBody();
 
-        if (contractStatements.size() > 0) {
-            JCMethodDecl bridgeMethod = createBridgeMethod(method);
-            addMethodToClass(bridgeMethod, input.getClazz());
-            java.util.List<JCStatement> processedStatements = processStatements(contractStatements,
-                    bridgeMethod);
-            ((JCBlock) body).stats = List.from(processedStatements);
+        MethodKey methodKey = MethodKey.of(input);
+        java.util.List<ContractInvocation> contracts = contractsRegistry.getContracts(methodKey);
+
+        if (!contracts.isEmpty()) {
+            JCMethodDecl bridge = createBridgeMethod(method);
+            addMethodToClass(bridge, input.getClazz());
+            java.util.List<JCStatement> processedStatements = processStatements(contracts, method,
+                    bridge);
+            body.stats = List.from(processedStatements);
         }
-    }
-
-    private java.util.List<? extends StatementTree> getContractStatements(BlockTree methodBody) {
-        return methodBody.getStatements().stream()
-                .filter(ContractAstUtil::isContractInvocation)
-                .collect(toList());
     }
 
     private JCMethodDecl createBridgeMethod(MethodTree method) {
@@ -90,19 +88,18 @@ public class ContractProcessor {
     }
 
     private java.util.List<JCStatement> processStatements(
-            java.util.List<? extends StatementTree> contractStatements,
-            JCMethodDecl bridgeMethod) {
+            java.util.List<ContractInvocation> contracts,
+            JCMethodDecl currentMethod, JCMethodDecl bridgeMethod) {
 
         VarSymbol resultSymbol = getResultSymbol(bridgeMethod);
-        JCStatement bridgeInvocationStatement =
-                generateBridgeInvocationStatement(bridgeMethod,
-                        resultSymbol);
+        JCStatement bridgeInvocationStatement = generateBridgeInvocationStatement(bridgeMethod,
+                resultSymbol);
 
-        ProcessedContracts processedContracts =
-                processStatements(contractStatements, resultSymbol);
+        ProcessedContracts processedContracts = processContracts(contracts, currentMethod,
+                resultSymbol);
 
-        java.util.List<JCStatement> processedStatements =
-                new ArrayList<>(processedContracts.getPreconditions());
+        java.util.List<JCStatement> processedStatements = new ArrayList<>(
+                processedContracts.getPreconditions());
         processedStatements.add(bridgeInvocationStatement);
         processedStatements.addAll(processedContracts.getPostconditions());
 
@@ -115,16 +112,14 @@ public class ContractProcessor {
         return processedStatements;
     }
 
-    private ProcessedContracts processStatements(
-            java.util.List<? extends StatementTree> statements,
-            VarSymbol resultSymbol) {
+    private ProcessedContracts processContracts(java.util.List<ContractInvocation> contracts,
+            JCMethodDecl currentMethod, VarSymbol resultSymbol) {
 
         ProcessedContracts processed = new ProcessedContracts();
-        for (StatementTree statement : statements) {
-            ContractInvocation invocation = ContractAstUtil.getContractInvocation(statement);
+        for (ContractInvocation contract : contracts) {
             JCStatement internalContractInvocation = internalInvocationBuilder
-                    .build(invocation, (JCExpressionStatement) statement, resultSymbol);
-            processed.add(invocation.getContractMethod(), internalContractInvocation);
+                    .build(contract, currentMethod, resultSymbol);
+            processed.add(contract.getContractMethod(), internalContractInvocation);
         }
         return processed;
     }

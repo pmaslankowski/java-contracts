@@ -6,6 +6,7 @@ import pl.coco.compiler.instrumentation.ContractMethod;
 
 public class ContractInvocation extends SimpleMethodInvocation {
 
+    //TODO: get rid of this type marker - change it to other subclass
     private final ContractMethod contractMethod;
 
     private ContractInvocation(SimpleMethodInvocation invocation,

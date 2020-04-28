@@ -11,7 +11,7 @@ import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.comp.AttrContext;
 import com.sun.tools.javac.comp.Env;
 import com.sun.tools.javac.comp.Resolve;
-import com.sun.tools.javac.tree.JCTree.JCExpressionStatement;
+import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 import com.sun.tools.javac.tree.JCTree.JCMethodInvocation;
 import com.sun.tools.javac.tree.JCTree.JCStatement;
 import com.sun.tools.javac.tree.TreeMaker;
@@ -52,39 +52,39 @@ public class InternalInvocationBuilder {
         this.argumentsProcessorFactory = argumentsProcessorFactory;
     }
 
-    public JCStatement build(ContractInvocation invocation, JCExpressionStatement statement,
+    public JCStatement build(ContractInvocation invocation, JCMethodDecl currentMethod,
             Symbol resultSymbol) {
 
         MethodInvocationDescription desc = new MethodInvocationDescription.Builder()
                 .withClassName(invocation.getContractMethod().getInternalClassName())
                 .withArguments(getArgumentsForContractCall(invocation, resultSymbol))
-                .withPosition(statement.pos)
-                .withMethodSymbol(getInternalContractMethodSymbol(invocation, statement))
+                .withPosition(currentMethod.pos)
+                .withMethodSymbol(getInternalContractMethodSymbol(invocation, currentMethod))
                 .build();
         JCMethodInvocation methodInvocation = methodInvocationBuilder.build(desc);
 
-        return treeMaker.at(statement.pos)
+        return treeMaker.at(currentMethod.pos)
                 .Call(methodInvocation);
     }
 
     private Symbol getInternalContractMethodSymbol(ContractInvocation contractInvocation,
-            JCExpressionStatement statement) {
+            JCMethodDecl currentMethod) {
 
         ContractMethod contractMethod = contractInvocation.getContractMethod();
         Type string = typeRegistry.getType(STRING_TYPE_NAME);
         Type conditionSupplier = typeRegistry.getType(CONDITION_SUPPLIER_TYPE);
         List<Type> arguments = List.from(Arrays.asList(conditionSupplier, string));
         return getMethodSymbol(contractMethod.getInternalClassName(),
-                contractMethod.getMethodName(), statement, arguments);
+                contractMethod.getMethodName(), currentMethod, arguments);
     }
 
     private Symbol getMethodSymbol(String fullyQualifiedClassName, String methodName,
-            JCExpressionStatement statement, List<Type> arguments) {
+            JCMethodDecl currentMethod, List<Type> arguments) {
 
-        Env<AttrContext> env = new Env<>(statement, new AttrContext());
+        Env<AttrContext> env = new Env<>(currentMethod, new AttrContext());
         Type subject = typeRegistry.getType(fullyQualifiedClassName);
         Name methodIdentifier = names.fromString(methodName);
-        return resolver.resolveInternalMethod(statement.pos(), env, subject, methodIdentifier,
+        return resolver.resolveInternalMethod(currentMethod.pos(), env, subject, methodIdentifier,
                 arguments, List.nil());
     }
 

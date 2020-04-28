@@ -6,14 +6,19 @@ import com.sun.source.util.TaskEvent;
 import com.sun.source.util.TaskListener;
 
 import pl.coco.compiler.instrumentation.ContractsInstrumentationVisitor;
+import pl.coco.compiler.instrumentation.ContractsScanningVisitor;
 
 public class InstrumentationListener implements TaskListener {
 
-    private final ContractsInstrumentationVisitor visitor;
+    private final ContractsScanningVisitor scanningVisitor;
+    private final ContractsInstrumentationVisitor instrumentationVisitor;
 
     @Inject
-    public InstrumentationListener(ContractsInstrumentationVisitor visitor) {
-        this.visitor = visitor;
+    public InstrumentationListener(ContractsScanningVisitor scanningVisitor,
+            ContractsInstrumentationVisitor instrumentationVisitor) {
+
+        this.scanningVisitor = scanningVisitor;
+        this.instrumentationVisitor = instrumentationVisitor;
     }
 
     @Override
@@ -24,7 +29,8 @@ public class InstrumentationListener implements TaskListener {
     @Override
     public void finished(TaskEvent taskEvent) {
         if (taskEvent.getKind() == TaskEvent.Kind.ANALYZE) {
-            taskEvent.getCompilationUnit().accept(visitor, null);
+            taskEvent.getCompilationUnit().accept(scanningVisitor, null);
+            taskEvent.getCompilationUnit().accept(instrumentationVisitor, null);
         }
     }
 }

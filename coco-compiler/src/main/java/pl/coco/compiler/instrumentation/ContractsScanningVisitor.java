@@ -14,13 +14,13 @@ import com.sun.source.util.TreeScanner;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.util.TreePasser;
 
-public class ContractsInstrumentationVisitor extends TreeScanner<Void, Void> {
+public class ContractsScanningVisitor extends TreeScanner<Void, Void> {
 
-    private final ContractProcessor processor;
+    private final ContractScanner scanner;
 
     @Inject
-    public ContractsInstrumentationVisitor(ContractProcessor processor) {
-        this.processor = processor;
+    public ContractsScanningVisitor(ContractScanner scanner) {
+        this.scanner = scanner;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class ContractsInstrumentationVisitor extends TreeScanner<Void, Void> {
                     .withClazz(clazz)
                     .withMethod(method)
                     .build();
-            processor.process(input);
+            scanner.scan(input);
         }
     }
 

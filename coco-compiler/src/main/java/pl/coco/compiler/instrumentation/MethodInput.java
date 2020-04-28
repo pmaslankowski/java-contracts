@@ -3,7 +3,7 @@ package pl.coco.compiler.instrumentation;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.MethodTree;
 
-public class ContractProcessorInput {
+public class MethodInput {
 
     private ClassTree clazz;
     private MethodTree method;
@@ -26,7 +26,7 @@ public class ContractProcessorInput {
 
     public static class Builder {
 
-        private final ContractProcessorInput input = new ContractProcessorInput();
+        private final MethodInput input = new MethodInput();
 
         public Builder withClazz(ClassTree clazz) {
             input.setClazz(clazz);
@@ -38,7 +38,7 @@ public class ContractProcessorInput {
             return this;
         }
 
-        public ContractProcessorInput build() {
+        public MethodInput build() {
             return input;
         }
     }
