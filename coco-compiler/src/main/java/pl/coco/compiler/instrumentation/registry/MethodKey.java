@@ -4,10 +4,10 @@ import java.util.Objects;
 
 import javax.lang.model.element.Name;
 
-import pl.coco.compiler.instrumentation.MethodInput;
-
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
+
+import pl.coco.compiler.instrumentation.MethodInput;
 
 public class MethodKey {
 
@@ -44,6 +44,12 @@ public class MethodKey {
         return type;
     }
 
+    /*
+     * There is a little hack in equals and hashCode methods: class MethodType doesn't implement
+     * equals and hashCode methods but as this class is designed to be used as a key in map we would
+     * like to implement correct equals and hashCode methods. Therefore instead of comparing type
+     * field itself, we compare its string representation.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -53,12 +59,12 @@ public class MethodKey {
         MethodKey methodKey = (MethodKey) o;
         return className.equals(methodKey.className) &&
                 methodName.equals(methodKey.methodName) &&
-                type.equals(methodKey.type);
+                type.toString().equals(methodKey.type.toString());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(className, methodName, type);
+        return Objects.hash(className, methodName, type.toString());
     }
 
     @Override

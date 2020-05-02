@@ -13,7 +13,7 @@ import pl.coco.util.TestCompiler;
 import pl.coco.util.TestCompilerInput;
 import pl.coco.util.TestRunner;
 
-public class PreconditionInheritanceTest {
+class PreconditionInheritanceTest {
 
     private static final String ENTRY_CLASS_NAME = "pl.coco.compiler.Entry";
     private static final String ENTRY_METHOD_NAME = "entry";
@@ -172,7 +172,7 @@ public class PreconditionInheritanceTest {
 
     @DisplayName("Precondition on subclass method only fails")
     @Test
-    void methodShouldThrowExceptionWhenSubclassPreconditionIsNotSatisfied() {
+    void methodShouldThrowExceptionWhenSubclassPreconditionFailsAndItsTheOnlyPrecondition() {
 
         String entry = "package pl.coco.compiler;\n"
                 + "\n"
@@ -220,9 +220,9 @@ public class PreconditionInheritanceTest {
                 .hasMessage("Precondition \"arg >= 0\" is not satisfied.");
     }
 
-    @DisplayName("2 preconditions, base precondition passes")
+    @DisplayName("2 preconditions, subclass precondition passes")
     @Test
-    void methodShouldReturnResultWhenBasePreconditionIsSatisfied() throws Throwable {
+    void methodShouldReturnResultWhenSubclassPreconditionIsSatisfied() throws Throwable {
 
         String entry = "package pl.coco.compiler;\n"
                 + "\n"
@@ -269,9 +269,61 @@ public class PreconditionInheritanceTest {
         assertThat(actual).isEqualTo(42);
     }
 
-    @DisplayName("2 preconditions, subclass precondition passes")
+    @DisplayName("2 preconditions, subclass precondition fails")
     @Test
-    void methodShouldReturnResultWhenSubclassPreconditionIsSatisfied() throws Throwable {
+    void methodShouldThrowExceptionWhenSubclassPreconditionFails() {
+
+        String entry = "package pl.coco.compiler;\n"
+                + "\n"
+                + "public class Entry {\n"
+                + "\n"
+                + "    public static int entry() {\n"
+                + "        Base instance = new Subclass();\n"
+                + "        return instance.testedMethod(1);\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        String base = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Base {\n"
+                + "\n"
+                + "    public int testedMethod(int arg) {\n"
+                + "        Contract.requires(arg > 0);\n"
+                + "        return 42;\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        String subclass = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Subclass extends Base {\n"
+                + "\n"
+                + "    @Override\n"
+                + "    public int testedMethod(int arg) {\n"
+                + "        Contract.requires(arg > 5);\n"
+                + "        return 42;\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        CompiledClasses compiled = compile(entry, base, subclass);
+
+        Throwable thrown = catchThrowable(() -> run(compiled));
+
+        // TODO: check message
+        assertThat(thrown)
+                .isInstanceOf(ContractFailedException.class);
+    }
+
+    @DisplayName("2 preconditions, base precondition fails")
+    @Test
+    void methodShouldReturnResultWhenBasePreconditionFailsButSubclassPreconditionDoesnt()
+            throws Throwable {
 
         String entry = "package pl.coco.compiler;\n"
                 + "\n"
@@ -318,9 +370,9 @@ public class PreconditionInheritanceTest {
         assertThat(actual).isEqualTo(42);
     }
 
-    @DisplayName("2 preconditions, both fail")
+    @DisplayName("Base precondition on static field passes")
     @Test
-    void methodShouldThrowExceptionWhenNeitherBaseNorSubclassPreconditionIsSatisfied() {
+    void methodShouldReturnResultWhenBasePreconditionOnStaticFieldPasses() throws Throwable {
 
         String entry = "package pl.coco.compiler;\n"
                 + "\n"
@@ -328,7 +380,310 @@ public class PreconditionInheritanceTest {
                 + "\n"
                 + "    public static int entry() {\n"
                 + "        Base instance = new Subclass();\n"
-                + "        return instance.testedMethod(-1);\n"
+                + "        return instance.testedMethod();\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        String base = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Base {\n"
+                + "\n"
+                + "    protected static int field = 5;\n"
+                + "\n"
+                + "    public int testedMethod() {\n"
+                + "        Contract.requires(field > 0);\n"
+                + "        return 42;\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        String subclass = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Subclass extends Base {\n"
+                + "\n"
+                + "    @Override\n"
+                + "    public int testedMethod() {\n"
+                + "        return 42;\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        CompiledClasses compiled = compile(entry, base, subclass);
+
+        Object actual = run(compiled);
+
+        assertThat(actual).isEqualTo(42);
+    }
+
+    @DisplayName("Base precondition on static field fails")
+    @Test
+    void methodShouldThrowExceptionWhenBasePreconditionOnStaticFieldFails() {
+
+        String entry = "package pl.coco.compiler;\n"
+                + "\n"
+                + "public class Entry {\n"
+                + "\n"
+                + "    public static int entry() {\n"
+                + "        Base instance = new Subclass();\n"
+                + "        return instance.testedMethod();\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        String base = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Base {\n"
+                + "\n"
+                + "    protected static int field = 0;\n"
+                + "\n"
+                + "    public int testedMethod() {\n"
+                + "        Contract.requires(field > 0);\n"
+                + "        return 42;\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        String subclass = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Subclass extends Base {\n"
+                + "\n"
+                + "    @Override\n"
+                + "    public int testedMethod() {\n"
+                + "        return 42;\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        CompiledClasses compiled = compile(entry, base, subclass);
+
+        Throwable thrown = catchThrowable(() -> run(compiled));
+
+        // TODO: check message
+        assertThat(thrown)
+                .isInstanceOf(ContractFailedException.class);
+    }
+
+    @DisplayName("Base precondition on instance field passes")
+    @Test
+    void methodShouldReturnResultWhenBasePreconditionOnInstanceFieldPasses() throws Throwable {
+        String entry = "package pl.coco.compiler;\n"
+                + "\n"
+                + "public class Entry {\n"
+                + "\n"
+                + "    public static int entry() {\n"
+                + "        Base instance = new Subclass();\n"
+                + "        return instance.testedMethod();\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        String base = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Base {\n"
+                + "\n"
+                + "    protected static int field = 5;\n"
+                + "\n"
+                + "    public int testedMethod() {\n"
+                + "        Contract.requires(field > 0);\n"
+                + "        return 42;\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        String subclass = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Subclass extends Base {\n"
+                + "\n"
+                + "    @Override\n"
+                + "    public int testedMethod() {\n"
+                + "        return 42;\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        CompiledClasses compiled = compile(entry, base, subclass);
+
+        Object actual = run(compiled);
+
+        assertThat(actual).isEqualTo(42);
+    }
+
+    @DisplayName("Base precondition on instance field fails")
+    @Test
+    void methodShouldThrowExceptionWhenBasePreconditionOnInstanceFieldFails() {
+
+        String entry = "package pl.coco.compiler;\n"
+                + "\n"
+                + "public class Entry {\n"
+                + "\n"
+                + "    public static int entry() {\n"
+                + "        Base instance = new Subclass();\n"
+                + "        return instance.testedMethod();\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        String base = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Base {\n"
+                + "\n"
+                + "    protected int field = 0;\n"
+                + "\n"
+                + "    public int testedMethod() {\n"
+                + "        Contract.requires(field > 0);\n"
+                + "        return 42;\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        String subclass = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Subclass extends Base {\n"
+                + "\n"
+                + "    @Override\n"
+                + "    public int testedMethod() {\n"
+                + "        return 42;\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        CompiledClasses compiled = compile(entry, base, subclass);
+
+        Throwable thrown = catchThrowable(() -> run(compiled));
+
+        // TODO: check message
+        assertThat(thrown)
+                .isInstanceOf(ContractFailedException.class);
+    }
+
+    @DisplayName("Base precondition on private instance field fails but subclass contract passes")
+    @Test
+    void methodShouldReturnResultWhenBasePreconditionOnPrivateFieldFails() throws Throwable {
+        //TODO: this test fails because coco copies precondition from base class to subclass but
+        // we can't access private field from the base class
+        String entry = "package pl.coco.compiler;\n"
+                + "\n"
+                + "public class Entry {\n"
+                + "\n"
+                + "    public static int entry() {\n"
+                + "        Base instance = new Subclass();\n"
+                + "        return instance.testedMethod();\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        String base = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Base {\n"
+                + "\n"
+                + "    private int field = 0;\n"
+                + "\n"
+                + "    public int testedMethod() {\n"
+                + "        Contract.requires(field > 0);\n"
+                + "        return 42;\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        String subclass = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Subclass extends Base {\n"
+                + "\n"
+                + "    @Override\n"
+                + "    public int testedMethod() {\n"
+                + "        return 42;\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        CompiledClasses compiled = compile(entry, base, subclass);
+
+        Object actual = run(compiled);
+
+        assertThat(actual).isEqualTo(42);
+    }
+
+    @DisplayName("Base precondition with different argument names passes")
+    @Test
+    void methodShouldReturnResultWhenBasePreconditionWithDifferentArgumentNamesPasses()
+            throws Throwable {
+
+        String entry = "package pl.coco.compiler;\n"
+                + "\n"
+                + "public class Entry {\n"
+                + "\n"
+                + "    public static int entry() {\n"
+                + "        Base instance = new Subclass();\n"
+                + "        return instance.testedMethod(0);\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        String base = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Base {\n"
+                + "\n"
+                + "    public int testedMethod(int arg) {\n"
+                + "        Contract.requires(arg >= 0);\n"
+                + "        return 42;\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        String subclass = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Subclass extends Base {\n"
+                + "\n"
+                + "    @Override\n"
+                + "    public int testedMethod(int different) {\n"
+                + "        return 42;\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        CompiledClasses compiled = compile(entry, base, subclass);
+
+        Object actual = run(compiled);
+
+        assertThat(actual).isEqualTo(42);
+    }
+
+    @DisplayName("Base precondition with different argument names fails")
+    @Test
+    void methodShouldThrowExceptionWhenBasePreconditionWithDifferentArgumentNamesFails() {
+
+        String entry = "package pl.coco.compiler;\n"
+                + "\n"
+                + "public class Entry {\n"
+                + "\n"
+                + "    public static int entry() {\n"
+                + "        Base instance = new Subclass();\n"
+                + "        return instance.testedMethod(0);\n"
                 + "    }\n"
                 + "\n"
                 + "}\n";
@@ -353,8 +708,7 @@ public class PreconditionInheritanceTest {
                 + "public class Subclass extends Base {\n"
                 + "\n"
                 + "    @Override\n"
-                + "    public int testedMethod(int arg) {\n"
-                + "        Contract.requires(arg >= 0);\n"
+                + "    public int testedMethod(int different) {\n"
                 + "        return 42;\n"
                 + "    }\n"
                 + "\n"
@@ -364,7 +718,6 @@ public class PreconditionInheritanceTest {
 
         Throwable thrown = catchThrowable(() -> run(compiled));
 
-        // TODO: check message
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class);
     }

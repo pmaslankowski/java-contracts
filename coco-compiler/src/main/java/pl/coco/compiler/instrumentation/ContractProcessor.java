@@ -28,8 +28,6 @@ import pl.coco.compiler.instrumentation.contract.InternalInvocationBuilder;
 import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
 import pl.coco.compiler.instrumentation.invocation.MethodInvocationBuilder;
 import pl.coco.compiler.instrumentation.invocation.MethodInvocationDescription;
-import pl.coco.compiler.instrumentation.registry.ContractsRegistry;
-import pl.coco.compiler.instrumentation.registry.MethodKey;
 
 public class ContractProcessor {
 
@@ -37,7 +35,7 @@ public class ContractProcessor {
 
     private final TreeMaker treeMaker;
     private final Names names;
-    private final ContractsRegistry contractsRegistry;
+    private final ContractProvider contractProvider;
     private final BridgeMethodBuilder bridgeMethodBuilder;
     private final InternalInvocationBuilder internalInvocationBuilder;
     private final MethodInvocationBuilder methodInvocationBuilder;
@@ -46,29 +44,32 @@ public class ContractProcessor {
     public ContractProcessor(
             TreeMaker treeMaker,
             Names names,
-            ContractsRegistry contractRegistry,
+            ContractProvider contractProvider,
             BridgeMethodBuilder bridgeMethodBuilder,
             InternalInvocationBuilder internalInvocationBuilder,
             MethodInvocationBuilder methodInvocationBuilder) {
 
         this.treeMaker = treeMaker;
         this.names = names;
-        this.contractsRegistry = contractRegistry;
+        this.contractProvider = contractProvider;
         this.bridgeMethodBuilder = bridgeMethodBuilder;
         this.internalInvocationBuilder = internalInvocationBuilder;
         this.methodInvocationBuilder = methodInvocationBuilder;
     }
 
     // TODO: add contract inheritance
-    // TODO: add unit test with different method argument names in subclass
+    // TODO: add unit test with contract in constructors
+    // TODO: add Contract.ForAll and Contract.Exists methods for array and Collections
+    // TODO: add synthetic marker to bridge methods
+    // TODO: rename bridge method to javac synthetic method naming convention with $
     // TODO: type checking for Contract.result() calls
     // TODO: check that Contract.result() calls occur only inside Contract.ensures()
     public void process(MethodInput input) {
+        JCClassDecl clazz = (JCClassDecl) input.getClazz();
         JCMethodDecl method = (JCMethodDecl) input.getMethod();
         JCBlock body = method.getBody();
 
-        MethodKey methodKey = MethodKey.of(input);
-        java.util.List<ContractInvocation> contracts = contractsRegistry.getContracts(methodKey);
+        java.util.List<ContractInvocation> contracts = contractProvider.getContracts(clazz, method);
 
         if (!contracts.isEmpty()) {
             JCMethodDecl bridge = createBridgeMethod(method);

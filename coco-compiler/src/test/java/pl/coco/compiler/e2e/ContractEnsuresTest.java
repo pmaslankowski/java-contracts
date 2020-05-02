@@ -105,6 +105,69 @@ class ContractEnsuresTest {
         assertThat(actual).isEqualTo(RESULT);
     }
 
+    @DisplayName("Simple postcondition on instance method without this passes")
+    @Test
+    void shouldReturnResultWhenPostconditionOnInstanceMethodWithoutThisPasses()
+            throws Throwable {
+
+        String code = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Test {\n"
+                + "\n"
+                + "    private int val = 0;\n"
+                + "\n"
+                + "    public static int entry() {\n"
+                + "        Test test = new Test();\n"
+                + "        return test.testedMethod();"
+                + "    }\n"
+                + "\n"
+                + "    private int testedMethod() {\n"
+                + "        Contract.ensures(val == 1);\n"
+                + "        val = 1;\n"
+                + "        return 42;\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        Object actual = JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code);
+
+        assertThat(actual).isEqualTo(RESULT);
+    }
+
+    @DisplayName("Simple postcondition on instance method without this passes")
+    @Test
+    void shouldThrowExceptionWhenPostconditionOnInstanceMethodWithoutThisFails() {
+
+        String code = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Test {\n"
+                + "\n"
+                + "    private int val = 0;\n"
+                + "\n"
+                + "    public static int entry() {\n"
+                + "        Test test = new Test();\n"
+                + "        return test.testedMethod();"
+                + "    }\n"
+                + "\n"
+                + "    private int testedMethod() {\n"
+                + "        Contract.ensures(val == 1);\n"
+                + "        return 42;\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        Throwable thrown = catchThrowable(
+                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+
+        assertThat(thrown)
+                .isInstanceOf(ContractFailedException.class)
+                .hasMessage("Postcondition \"val == 1\" is not satisfied.");
+    }
+
     @DisplayName("Simple postcondition on instance method fails")
     @Test
     void shouldThrowExceptionWhenPreconditionOnInstanceMethodFails() {
