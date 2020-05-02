@@ -60,8 +60,6 @@ public class ContractProcessor {
     // TODO: add contract inheritance
     // TODO: add unit test with contract in constructors
     // TODO: add Contract.ForAll and Contract.Exists methods for array and Collections
-    // TODO: add synthetic marker to bridge methods
-    // TODO: rename bridge method to javac synthetic method naming convention with $
     // TODO: type checking for Contract.result() calls
     // TODO: check that Contract.result() calls occur only inside Contract.ensures()
     public void process(MethodInput input) {
