@@ -24,12 +24,10 @@ import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Names;
 
 import pl.coco.compiler.instrumentation.bridge.BridgeMethodBuilder;
-import pl.coco.compiler.instrumentation.contract.InternalInvocationBuilder;
+import pl.coco.compiler.instrumentation.contract.PostconditionMethodGenerator;
 import pl.coco.compiler.instrumentation.contract.PreconditionMethodGenerator;
 import pl.coco.compiler.instrumentation.invocation.MethodInvocationBuilder;
 import pl.coco.compiler.instrumentation.invocation.MethodInvocationDescription;
-import pl.coco.compiler.instrumentation.registry.ContractsRegistry;
-import pl.coco.compiler.util.TypeRegistry;
 
 public class ContractProcessor {
 
@@ -37,39 +35,36 @@ public class ContractProcessor {
 
     private final TreeMaker treeMaker;
     private final Names names;
-    private final ContractsRegistry contractRegistry;
     private final ContractAnalyzer contractAnalyzer;
     private final BridgeMethodBuilder bridgeMethodBuilder;
     private final PreconditionMethodGenerator preconditionMethodGenerator;
-    private final TypeRegistry typeRegistry;
-    private final InternalInvocationBuilder internalInvocationBuilder;
+    private final PostconditionMethodGenerator postconditionMethodGenerator;
     private final MethodInvocationBuilder methodInvocationBuilder;
 
     @Inject
     public ContractProcessor(
             TreeMaker treeMaker,
             Names names,
-            ContractsRegistry contractRegistry,
             ContractAnalyzer contractAnalyzer,
             BridgeMethodBuilder bridgeMethodBuilder,
             PreconditionMethodGenerator preconditionMethodGenerator,
-            TypeRegistry typeRegistry, InternalInvocationBuilder internalInvocationBuilder,
+            PostconditionMethodGenerator postconditionMethodGenerator,
             MethodInvocationBuilder methodInvocationBuilder) {
 
         this.treeMaker = treeMaker;
         this.names = names;
-        this.contractRegistry = contractRegistry;
         this.contractAnalyzer = contractAnalyzer;
         this.bridgeMethodBuilder = bridgeMethodBuilder;
         this.preconditionMethodGenerator = preconditionMethodGenerator;
-        this.typeRegistry = typeRegistry;
-        this.internalInvocationBuilder = internalInvocationBuilder;
+        this.postconditionMethodGenerator = postconditionMethodGenerator;
         this.methodInvocationBuilder = methodInvocationBuilder;
     }
 
     // TODO: add contract inheritance
     // TODO: change naming - Bridge method to target method
     // TODO: add unit test with contract in constructors
+    // TODO: check that Contract.result() calls occur only inside Contract.ensures() in non void
+    // method
     // TODO: add Contract.ForAll and Contract.Exists methods for array and Collections
     // TODO: type checking for Contract.result() calls
     // TODO: check that Contract.result() calls occur only inside Contract.ensures()
@@ -80,14 +75,16 @@ public class ContractProcessor {
 
         if (contractAnalyzer.hasContracts(clazz, method)) {
             JCMethodDecl bridge = createBridgeMethod(method);
-            addMethodToClass(bridge, input.getClazz());
+            addMethodToClass(bridge, clazz);
 
-            JCMethodDecl preconditionWrapper =
-                    preconditionMethodGenerator.buildPreconditionWrapper(clazz, method);
-            addMethodToClass(preconditionWrapper, input.getClazz());
+            JCMethodDecl preconditionMethod = preconditionMethodGenerator.generate(clazz, method);
+            addMethodToClass(preconditionMethod, clazz);
+
+            JCMethodDecl postconditionMethod = postconditionMethodGenerator.generate(clazz, method);
+            addMethodToClass(postconditionMethod, clazz);
 
             java.util.List<JCStatement> processedStatements =
-                    processStatements(bridge, preconditionWrapper);
+                    processStatements(bridge, preconditionMethod, postconditionMethod);
 
             body.stats = List.from(processedStatements);
         }
@@ -104,18 +101,19 @@ public class ContractProcessor {
     }
 
     private java.util.List<JCStatement> processStatements(JCMethodDecl bridgeMethod,
-            JCMethodDecl preconditionWrapper) {
+            JCMethodDecl preconditionMethod, JCMethodDecl postconditionMethod) {
 
         java.util.List<JCStatement> processedStatements = new ArrayList<>();
 
         VarSymbol resultSymbol = getResultSymbol(bridgeMethod);
-        JCStatement bridgeInvocationStatement = generateBridgeInvocationStatement(bridgeMethod,
+        JCStatement bridgeMethodStmt = generateBridgeInvocationStatement(bridgeMethod,
                 resultSymbol);
+        JCStatement preconditionMethodStmt = generateInvocationStatement(preconditionMethod);
+        JCStatement postconditionMethodStmt = generateInvocationStatement(postconditionMethod);
 
-        JCStatement preconditionWrapperStatement = generateInvocationStatement(preconditionWrapper);
-
-        processedStatements.add(preconditionWrapperStatement);
-        processedStatements.add(bridgeInvocationStatement);
+        processedStatements.add(preconditionMethodStmt);
+        processedStatements.add(bridgeMethodStmt);
+        processedStatements.add(postconditionMethodStmt);
 
         if (!isVoid(bridgeMethod)) {
             JCReturn returnStatement = treeMaker

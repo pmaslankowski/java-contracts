@@ -52,4 +52,38 @@ public class ContractAnalyzer {
 
         return false;
     }
+
+    // TODO: refactor
+    public boolean isFirstClassInInheritanceHierarchyWithContracts(JCClassDecl clazz,
+            JCMethodDecl method) {
+
+        Type objectType = typeRegistry.getClassType(JAVA_LANG_OBJECT);
+
+        Name methodName = method.getName();
+        Type methodType = method.type;
+        ClassType classType = (ClassType) clazz.type;
+
+        Name thisClassName = classType.tsym.getQualifiedName();
+        MethodKey thisMethodKey = new MethodKey(thisClassName, methodName, methodType);
+        List<ContractInvocation> thisClassContracts = contractsRegistry.getContracts(thisMethodKey);
+        if (thisClassContracts.isEmpty()) {
+            return false;
+        }
+
+        classType = (ClassType) classType.supertype_field;
+
+        while (!classType.equals(objectType)) {
+            Name className = classType.tsym.getQualifiedName();
+            MethodKey methodKey = new MethodKey(className, methodName, methodType);
+
+            List<ContractInvocation> contracts = contractsRegistry.getContracts(methodKey);
+            if (!contracts.isEmpty()) {
+                return false;
+            }
+
+            classType = (ClassType) classType.supertype_field;
+        }
+
+        return true;
+    }
 }
