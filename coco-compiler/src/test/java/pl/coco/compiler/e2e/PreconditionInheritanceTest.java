@@ -595,7 +595,7 @@ class PreconditionInheritanceTest {
                 + "\n"
                 + "public class Base {\n"
                 + "\n"
-                + "    private int field = 0;\n"
+                + "    private int field = 1;\n"
                 + "\n"
                 + "    public int testedMethod() {\n"
                 + "        Contract.requires(field > 0);\n"
