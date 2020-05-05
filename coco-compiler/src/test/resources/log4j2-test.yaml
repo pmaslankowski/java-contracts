@@ -1,0 +1,23 @@
+Configuration:
+  status: warn
+  name: Unit test config
+  thresholdFilter:
+    level: debug
+  appenders:
+    Console:
+      name: STDOUT
+      target: SYSTEM_OUT
+      PatternLayout:
+        Pattern: "%m%n"
+
+  Loggers:
+    logger:
+      - name: pl.coco.compiler.instrumentation.ContractProcessor
+        level: debug
+        additivity: false
+        AppenderRef:
+          ref: STDOUT
+    Root:
+      level: error
+      AppenderRef:
+        ref: STDOUT

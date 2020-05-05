@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import javax.inject.Inject;
 import javax.lang.model.type.TypeKind;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.VariableTree;
@@ -32,6 +35,8 @@ import pl.coco.compiler.instrumentation.invocation.MethodInvocationDescription;
 public class ContractProcessor {
 
     private static final String RESULT_VARIABLE_NAME = "result";
+
+    private static final Logger log = LoggerFactory.getLogger(ContractProcessor.class);
 
     private final TreeMaker treeMaker;
     private final Names names;
@@ -74,6 +79,9 @@ public class ContractProcessor {
         JCBlock body = method.getBody();
 
         if (contractAnalyzer.hasContracts(clazz, method)) {
+            log.debug("Detected contracts in method {}.{}", clazz.sym.getQualifiedName(),
+                    method.getName());
+
             JCMethodDecl bridge = createBridgeMethod(method);
             addMethodToClass(bridge, clazz);
 
@@ -87,6 +95,8 @@ public class ContractProcessor {
                     processStatements(bridge, preconditionMethod, postconditionMethod);
 
             body.stats = List.from(processedStatements);
+
+            log.debug("Instrumented class code: {}", clazz);
         }
     }
 
