@@ -15,26 +15,26 @@ import com.sun.tools.javac.util.Names;
 
 import pl.coco.compiler.util.ContractAstUtil;
 
-public class BridgeMethodBuilder {
+public class TargetMethodBuilder {
 
-    public static final String BRIDGE_METHOD_PREFIX = "coco$bridge$";
+    public static final String TARGET_METHOD_PREFIX = "coco$target$";
     public static final long SYNTHETIC_METHOD_FLAG = 4096;
 
     private final TreeMaker treeMaker;
     private final Names names;
 
     @Inject
-    public BridgeMethodBuilder(TreeMaker treeMaker, Names names) {
+    public TargetMethodBuilder(TreeMaker treeMaker, Names names) {
         this.treeMaker = treeMaker;
         this.names = names;
     }
 
-    public JCMethodDecl buildBridge(JCMethodDecl originalMethod) {
+    public JCMethodDecl buildTarget(JCMethodDecl originalMethod) {
         java.util.List<JCStatement> nonContractStatements =
                 getNonContractStatements(originalMethod.getBody());
-        JCBlock bridgeBody = treeMaker.Block(0, List.from(nonContractStatements));
-        MethodSymbol bridgeSymbol = getBridgeMethodSymbol(originalMethod);
-        return treeMaker.MethodDef(bridgeSymbol, originalMethod.type, bridgeBody);
+        JCBlock targetBody = treeMaker.Block(0, List.from(nonContractStatements));
+        MethodSymbol targetSymbol = getTargetMethodSymbol(originalMethod);
+        return treeMaker.MethodDef(targetSymbol, originalMethod.type, targetBody);
     }
 
     private java.util.List<JCStatement> getNonContractStatements(JCBlock methodBody) {
@@ -44,10 +44,10 @@ public class BridgeMethodBuilder {
                 .collect(toList());
     }
 
-    private MethodSymbol getBridgeMethodSymbol(JCMethodDecl originalMethod) {
-        Name bridgeMethodName = getBridgeMethodName(originalMethod);
+    private MethodSymbol getTargetMethodSymbol(JCMethodDecl originalMethod) {
+        Name bridgeMethodName = getTargetMethodName(originalMethod);
 
-        long flags = getBridgeFlags(originalMethod);
+        long flags = getTargetFlags(originalMethod);
 
         MethodSymbol result = new MethodSymbol(flags, bridgeMethodName,
                 originalMethod.sym.type, originalMethod.sym.owner);
@@ -55,11 +55,11 @@ public class BridgeMethodBuilder {
         return result;
     }
 
-    private long getBridgeFlags(JCMethodDecl originalMethod) {
+    private long getTargetFlags(JCMethodDecl originalMethod) {
         return originalMethod.sym.flags() | SYNTHETIC_METHOD_FLAG;
     }
 
-    private Name getBridgeMethodName(JCMethodDecl originalMethod) {
-        return names.fromString(BRIDGE_METHOD_PREFIX).append(originalMethod.getName());
+    private Name getTargetMethodName(JCMethodDecl originalMethod) {
+        return names.fromString(TARGET_METHOD_PREFIX).append(originalMethod.getName());
     }
 }

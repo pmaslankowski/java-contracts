@@ -9,12 +9,10 @@ import static java.util.stream.Collectors.toList;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
-import javax.lang.model.type.TypeKind;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.tools.javac.code.Symbol.VarSymbol;
@@ -26,11 +24,9 @@ import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Names;
 
-import pl.coco.compiler.instrumentation.bridge.BridgeMethodBuilder;
-import pl.coco.compiler.instrumentation.contract.PostconditionMethodGenerator;
-import pl.coco.compiler.instrumentation.contract.PreconditionMethodGenerator;
 import pl.coco.compiler.instrumentation.invocation.MethodInvocationBuilder;
 import pl.coco.compiler.instrumentation.invocation.MethodInvocationDescription;
+import pl.coco.compiler.util.AstUtil;
 
 public class ContractProcessor {
 
@@ -41,9 +37,7 @@ public class ContractProcessor {
     private final TreeMaker treeMaker;
     private final Names names;
     private final ContractAnalyzer contractAnalyzer;
-    private final BridgeMethodBuilder bridgeMethodBuilder;
-    private final PreconditionMethodGenerator preconditionMethodGenerator;
-    private final PostconditionMethodGenerator postconditionMethodGenerator;
+    private final ContractSyntheticMethodsGenerator syntheticGenerator;
     private final MethodInvocationBuilder methodInvocationBuilder;
 
     @Inject
@@ -51,17 +45,13 @@ public class ContractProcessor {
             TreeMaker treeMaker,
             Names names,
             ContractAnalyzer contractAnalyzer,
-            BridgeMethodBuilder bridgeMethodBuilder,
-            PreconditionMethodGenerator preconditionMethodGenerator,
-            PostconditionMethodGenerator postconditionMethodGenerator,
+            ContractSyntheticMethodsGenerator syntheticGenerator,
             MethodInvocationBuilder methodInvocationBuilder) {
 
         this.treeMaker = treeMaker;
         this.names = names;
         this.contractAnalyzer = contractAnalyzer;
-        this.bridgeMethodBuilder = bridgeMethodBuilder;
-        this.preconditionMethodGenerator = preconditionMethodGenerator;
-        this.postconditionMethodGenerator = postconditionMethodGenerator;
+        this.syntheticGenerator = syntheticGenerator;
         this.methodInvocationBuilder = methodInvocationBuilder;
     }
 
@@ -75,90 +65,79 @@ public class ContractProcessor {
     // TODO: check that Contract.result() calls occur only inside Contract.ensures()
     public void process(MethodInput input) {
         JCClassDecl clazz = (JCClassDecl) input.getClazz();
-        JCMethodDecl method = (JCMethodDecl) input.getMethod();
-        JCBlock body = method.getBody();
+        JCMethodDecl originalMethod = (JCMethodDecl) input.getMethod();
+        JCBlock body = originalMethod.getBody();
 
-        if (contractAnalyzer.hasContracts(clazz, method)) {
+        if (contractAnalyzer.hasContracts(clazz, originalMethod)) {
+
             log.debug("Detected contracts in method {}.{}", clazz.sym.getQualifiedName(),
-                    method.getName());
+                    originalMethod.getName());
 
-            JCMethodDecl bridge = createBridgeMethod(method);
-            addMethodToClass(bridge, clazz);
+            ContractSyntheticMethods methods =
+                    syntheticGenerator.generateMethods(clazz, originalMethod);
+            addSyntheticMethodsToClass(methods, clazz);
 
-            JCMethodDecl preconditionMethod = preconditionMethodGenerator.generate(clazz, method);
-            addMethodToClass(preconditionMethod, clazz);
+            java.util.List<JCStatement> instrumentedStmts =
+                    generateInstrumentedMethodBody(methods);
 
-            JCMethodDecl postconditionMethod = postconditionMethodGenerator.generate(clazz, method);
-            addMethodToClass(postconditionMethod, clazz);
-
-            java.util.List<JCStatement> processedStatements =
-                    processStatements(bridge, preconditionMethod, postconditionMethod);
-
-            body.stats = List.from(processedStatements);
+            body.stats = List.from(instrumentedStmts);
 
             log.debug("Instrumented class code: {}", clazz);
         }
     }
 
-    private JCMethodDecl createBridgeMethod(MethodTree method) {
-        return bridgeMethodBuilder.buildBridge((JCMethodDecl) method);
+    private void addSyntheticMethodsToClass(ContractSyntheticMethods methods, JCClassDecl clazz) {
+        AstUtil.addMethodToClass(methods.getTarget(), clazz);
+        AstUtil.addMethodToClass(methods.getPreconditions(), clazz);
+        AstUtil.addMethodToClass(methods.getPostconditions(), clazz);
     }
 
-    private void addMethodToClass(JCMethodDecl methodDeclaration, ClassTree clazz) {
-        JCClassDecl classDeclaration = (JCClassDecl) clazz;
-        classDeclaration.defs = classDeclaration.getMembers().append(methodDeclaration);
-        classDeclaration.sym.members().enter(methodDeclaration.sym);
-    }
+    private java.util.List<JCStatement> generateInstrumentedMethodBody(
+            ContractSyntheticMethods syntheticMethods) {
 
-    private java.util.List<JCStatement> processStatements(JCMethodDecl bridgeMethod,
-            JCMethodDecl preconditionMethod, JCMethodDecl postconditionMethod) {
+        JCMethodDecl target = syntheticMethods.getTarget();
+        JCMethodDecl preconditions = syntheticMethods.getPreconditions();
+        JCMethodDecl postconditions = syntheticMethods.getPostconditions();
+
+        VarSymbol resultSymbol = getResultSymbol(target);
+        JCStatement targetInvocation = generateTargetInvocationStatement(target, resultSymbol);
+        JCStatement preconditionInvocation = generateInvocationStatement(preconditions);
+        JCStatement postconditionInvocation = generateInvocationStatement(postconditions);
 
         java.util.List<JCStatement> processedStatements = new ArrayList<>();
 
-        VarSymbol resultSymbol = getResultSymbol(bridgeMethod);
-        JCStatement bridgeMethodStmt = generateBridgeInvocationStatement(bridgeMethod,
-                resultSymbol);
-        JCStatement preconditionMethodStmt = generateInvocationStatement(preconditionMethod);
-        JCStatement postconditionMethodStmt = generateInvocationStatement(postconditionMethod);
+        processedStatements.add(preconditionInvocation);
+        processedStatements.add(targetInvocation);
+        processedStatements.add(postconditionInvocation);
 
-        processedStatements.add(preconditionMethodStmt);
-        processedStatements.add(bridgeMethodStmt);
-        processedStatements.add(postconditionMethodStmt);
-
-        if (!isVoid(bridgeMethod)) {
-            JCReturn returnStatement = treeMaker
-                    .Return(treeMaker.Ident(resultSymbol));
+        if (!AstUtil.isVoid(target)) {
+            JCReturn returnStatement = treeMaker.Return(treeMaker.Ident(resultSymbol));
             processedStatements.add(returnStatement);
         }
 
         return processedStatements;
     }
 
-    private JCStatement generateInvocationStatement(JCMethodDecl method) {
-        return treeMaker.Call(generateMethodInvocation(method));
+    private VarSymbol getResultSymbol(JCMethodDecl target) {
+        return new VarSymbol(0,
+                names.fromString(RESULT_VARIABLE_NAME),
+                target.sym.getReturnType(),
+                target.sym);
     }
 
-    private JCStatement generateBridgeInvocationStatement(JCMethodDecl bridgeMethod,
-            VarSymbol resultSymbol) {
+    private JCStatement generateTargetInvocationStatement(JCMethodDecl target, VarSymbol result) {
 
-        JCMethodInvocation bridgeMethodInvocation = generateMethodInvocation(bridgeMethod);
+        JCMethodInvocation bridgeMethodInvocation = generateMethodInvocation(target);
 
-        if (isVoid(bridgeMethod)) {
+        if (AstUtil.isVoid(target)) {
             return treeMaker.Call(bridgeMethodInvocation);
         }
 
-        return treeMaker.VarDef(resultSymbol, bridgeMethodInvocation);
+        return treeMaker.VarDef(result, bridgeMethodInvocation);
     }
 
-    private boolean isVoid(JCMethodDecl bridgeMethod) {
-        return bridgeMethod.getReturnType().type.getKind().equals(TypeKind.VOID);
-    }
-
-    private VarSymbol getResultSymbol(JCMethodDecl bridgeMethod) {
-        return new VarSymbol(0,
-                names.fromString(RESULT_VARIABLE_NAME),
-                bridgeMethod.sym.getReturnType(),
-                bridgeMethod.sym);
+    private JCStatement generateInvocationStatement(JCMethodDecl method) {
+        return treeMaker.Call(generateMethodInvocation(method));
     }
 
     private JCMethodInvocation generateMethodInvocation(JCMethodDecl method) {
