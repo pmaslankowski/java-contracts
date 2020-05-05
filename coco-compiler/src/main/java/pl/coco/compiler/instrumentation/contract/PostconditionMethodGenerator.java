@@ -1,13 +1,8 @@
 package pl.coco.compiler.instrumentation.contract;
 
-import java.util.stream.Collectors;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.lang.model.type.TypeKind;
 
-import com.sun.tools.javac.code.Flags;
-import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Symbol.MethodSymbol;
 import com.sun.tools.javac.code.Symbol.VarSymbol;
 import com.sun.tools.javac.code.Type;
@@ -30,6 +25,7 @@ import pl.coco.compiler.instrumentation.invocation.MethodInvocationBuilder;
 import pl.coco.compiler.instrumentation.invocation.MethodInvocationDescription;
 import pl.coco.compiler.instrumentation.registry.ContractsRegistry;
 import pl.coco.compiler.instrumentation.registry.MethodKey;
+import pl.coco.compiler.util.AstUtil;
 
 @Singleton
 public class PostconditionMethodGenerator extends AbstractMethodGenerator {
@@ -37,7 +33,6 @@ public class PostconditionMethodGenerator extends AbstractMethodGenerator {
     private static final String POSTCONDITION_PREFIX = "coco$postconditions$";
     private static final JCVoidType VOID_TYPE = new JCVoidType();
 
-    private final InternalInvocationBuilder internalInvocationBuilder;
     private final MethodInvocationBuilder methodInvocationBuilder;
     private final ContractsRegistry contractsRegistry;
     private final ContractAnalyzer contractAnalyzer;
@@ -48,8 +43,7 @@ public class PostconditionMethodGenerator extends AbstractMethodGenerator {
             MethodInvocationBuilder methodInvocationBuilder, Names names,
             ContractsRegistry contractsRegistry, ContractAnalyzer contractAnalyzer) {
 
-        super(treeMaker, names);
-        this.internalInvocationBuilder = internalInvocationBuilder;
+        super(treeMaker, names, internalInvocationBuilder);
         this.methodInvocationBuilder = methodInvocationBuilder;
         this.contractsRegistry = contractsRegistry;
         this.contractAnalyzer = contractAnalyzer;
@@ -64,48 +58,37 @@ public class PostconditionMethodGenerator extends AbstractMethodGenerator {
     }
 
     private MethodSymbol getMethodSymbol(JCMethodDecl originalMethod) {
-        Name bridgeMethodName = getMethodName(originalMethod);
-        long flags = getMethodFlags(originalMethod);
+        Name methodName = getMethodNameWithPrefix(POSTCONDITION_PREFIX, originalMethod);
+        long flags = getProtectedMethodFlags(originalMethod);
         MethodType type = getMethodType(originalMethod);
 
-        MethodSymbol result =
-                new MethodSymbol(flags, bridgeMethodName, type, originalMethod.sym.owner);
+        MethodSymbol result = new MethodSymbol(flags, methodName, type, originalMethod.sym.owner);
 
         result.params = originalMethod.sym.params;
-        if (isVoid(originalMethod)) {
+        if (AstUtil.isVoid(originalMethod)) {
             return result;
         } else {
-            VarSymbol resultSymbol = new VarSymbol(0, names.fromString("result"),
-                    originalMethod.getReturnType().type, result);
-
-            if (originalMethod.sym.isStatic()) {
-                resultSymbol.adr = result.params.length();
-            } else {
-                resultSymbol.adr = result.params.length() + 1;
-            }
-
+            VarSymbol resultSymbol = createResultSymbol(originalMethod, result);
             result.params = result.params.append(resultSymbol);
+            return result;
         }
-
-        return result;
     }
 
-    private Name getMethodName(JCMethodDecl originalMethod) {
-        return names.fromString(POSTCONDITION_PREFIX).append(originalMethod.getName());
-    }
+    private VarSymbol createResultSymbol(JCMethodDecl originalMethod, MethodSymbol result) {
+        VarSymbol resultSymbol = new VarSymbol(0, names.fromString("result"),
+                originalMethod.getReturnType().type, result);
 
-    private long getMethodFlags(JCMethodDecl originalMethod) {
-        long result = originalMethod.sym.flags();
-        result &= ~Flags.PRIVATE;
-        result &= ~Flags.PUBLIC;
-        result |= Flags.PROTECTED;
-        result |= Flags.SYNTHETIC;
-        return result;
+        if (originalMethod.sym.isStatic()) {
+            resultSymbol.adr = result.params.length();
+        } else {
+            resultSymbol.adr = result.params.length() + 1;
+        }
+        return resultSymbol;
     }
 
     private MethodType getMethodType(JCMethodDecl originalMethod) {
         List<Type> originalParamTypes = originalMethod.sym.type.getParameterTypes();
-        if (!isVoid(originalMethod)) {
+        if (!AstUtil.isVoid(originalMethod)) {
             Type returnType = originalMethod.sym.getReturnType();
             List<Type> paramTypes = originalParamTypes.append(returnType);
             return new MethodType(paramTypes, VOID_TYPE, List.nil(), null);
@@ -114,11 +97,6 @@ public class PostconditionMethodGenerator extends AbstractMethodGenerator {
         }
     }
 
-    private boolean isVoid(JCMethodDecl method) {
-        return method.getReturnType().type.getKind().equals(TypeKind.VOID);
-    }
-
-    // TODO: refactor
     private JCBlock generateMethodBody(JCMethodDecl wrapper, JCClassDecl clazz,
             JCMethodDecl method) {
 
@@ -161,11 +139,11 @@ public class PostconditionMethodGenerator extends AbstractMethodGenerator {
             JCMethodDecl wrapper, java.util.List<ContractInvocation> postconditions,
             JCMethodDecl method) {
 
-        if (isVoid(method)) {
-            return convertPostconditionsToStatements(wrapper, postconditions, null);
+        if (AstUtil.isVoid(method)) {
+            return convertContractsToStatements(wrapper, postconditions, null);
         } else {
             VarSymbol resultSymbol = getResultSymbol(wrapper);
-            return convertPostconditionsToStatements(wrapper, postconditions, resultSymbol);
+            return convertContractsToStatements(wrapper, postconditions, resultSymbol);
         }
     }
 
@@ -173,14 +151,5 @@ public class PostconditionMethodGenerator extends AbstractMethodGenerator {
         List<VarSymbol> parameters = wrapper.sym.getParameters();
         int paramLen = parameters.length();
         return parameters.get(paramLen - 1);
-    }
-
-    private java.util.List<JCStatement> convertPostconditionsToStatements(JCMethodDecl wrapper,
-            java.util.List<ContractInvocation> postconditions, Symbol resultSymbol) {
-
-        // TODO: change that ugly null
-        return postconditions.stream()
-                .map(contract -> internalInvocationBuilder.build(contract, wrapper, resultSymbol))
-                .collect(Collectors.toList());
     }
 }

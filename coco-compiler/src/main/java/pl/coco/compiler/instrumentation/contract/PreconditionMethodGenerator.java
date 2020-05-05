@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 import com.sun.tools.javac.code.Symbol.MethodSymbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.Type.ClassType;
+import com.sun.tools.javac.code.Type.MethodType;
 import com.sun.tools.javac.tree.JCTree.JCBlock;
 import com.sun.tools.javac.tree.JCTree.JCClassDecl;
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
@@ -41,7 +42,7 @@ public class PreconditionMethodGenerator extends AbstractMethodGenerator {
             MethodInvocationBuilder methodInvocationBuilder, Names names,
             ContractsRegistry contractsRegistry, ContractAnalyzer contractAnalyzer) {
 
-        super(treeMaker, names);
+        super(treeMaker, names, internalInvocationBuilder);
         this.internalInvocationBuilder = internalInvocationBuilder;
         this.methodInvocationBuilder = methodInvocationBuilder;
         this.contractsRegistry = contractsRegistry;
@@ -50,23 +51,41 @@ public class PreconditionMethodGenerator extends AbstractMethodGenerator {
 
     @Override
     public JCMethodDecl generate(JCClassDecl clazz, JCMethodDecl method) {
-        MethodSymbol wrapperSymbol = getMethodSymbolMirroring(PRECONDITION_PREFIX, method);
+        MethodSymbol wrapperSymbol = getPreconditionSymbol(PRECONDITION_PREFIX, method);
         JCMethodDecl wrapper = treeMaker.MethodDef(wrapperSymbol, wrapperSymbol.type, null);
         wrapper.body = generateMethodBody(wrapper, clazz, method);
         return wrapper;
     }
 
-    // TODO: trochę refactor
+    private MethodSymbol getPreconditionSymbol(String prefix, JCMethodDecl originalMethod) {
+        Name bridgeMethodName = getMethodNameWithPrefix(prefix, originalMethod);
+        long flags = getProtectedMethodFlags(originalMethod);
+        MethodType type = getPreconditionMethodType(originalMethod);
+
+        MethodSymbol result =
+                new MethodSymbol(flags, bridgeMethodName, type, originalMethod.sym.owner);
+
+        result.params = originalMethod.sym.params;
+
+        return result;
+    }
+
+    private MethodType getPreconditionMethodType(JCMethodDecl originalMethod) {
+        return new MethodType(originalMethod.sym.type.getParameterTypes(),
+                new Type.JCVoidType(), List.nil(), null);
+    }
+
     private JCBlock generateMethodBody(JCMethodDecl wrapper, JCClassDecl clazz,
             JCMethodDecl method) {
 
         MethodKey key = new MethodKey(clazz.sym.getQualifiedName(), method.getName(), method.type);
         java.util.List<ContractInvocation> preconditions = contractsRegistry.getPreconditions(key);
 
-        if (preconditions.isEmpty()
-                && !contractAnalyzer.isFirstClassInInheritanceHierarchyWithContracts(clazz,
-                        method)) {
+        boolean doesThisClassHavePreconditions = preconditions.isEmpty();
+        boolean isThisClassFirstInInheritanceHierarchyWithContracts =
+                !contractAnalyzer.isFirstClassInInheritanceHierarchyWithContracts(clazz, method);
 
+        if (doesThisClassHavePreconditions && isThisClassFirstInInheritanceHierarchyWithContracts) {
             return generateSuperPreconditionMethodCall(wrapper, clazz, method);
         } else {
             return generateBodyFromThisClassPreconditions(wrapper, preconditions);
@@ -102,7 +121,6 @@ public class PreconditionMethodGenerator extends AbstractMethodGenerator {
     private java.util.List<JCStatement> convertPreconditionsToStatements(JCMethodDecl wrapper,
             java.util.List<ContractInvocation> preconditions) {
 
-        // TODO: get id of that ugly null
         return preconditions.stream()
                 .map(contract -> internalInvocationBuilder.build(contract, wrapper, null))
                 .collect(Collectors.toList());
