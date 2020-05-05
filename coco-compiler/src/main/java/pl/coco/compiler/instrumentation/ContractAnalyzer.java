@@ -31,12 +31,12 @@ public class ContractAnalyzer {
     }
 
     public boolean hasContracts(JCClassDecl clazz, JCMethodDecl method) {
+        return hasContractsInHierarchy((ClassType) clazz.type, method.getName(), method.type);
+    }
+
+    private boolean hasContractsInHierarchy(ClassType classType, Name methodName, Type methodType) {
 
         Type objectType = typeRegistry.getClassType(JAVA_LANG_OBJECT);
-
-        Name methodName = method.getName();
-        Type methodType = method.type;
-        ClassType classType = (ClassType) clazz.type;
 
         while (!classType.equals(objectType)) {
             Name className = classType.tsym.getQualifiedName();
@@ -53,37 +53,22 @@ public class ContractAnalyzer {
         return false;
     }
 
-    // TODO: refactor
     public boolean isFirstClassInInheritanceHierarchyWithContracts(JCClassDecl clazz,
             JCMethodDecl method) {
 
-        Type objectType = typeRegistry.getClassType(JAVA_LANG_OBJECT);
-
-        Name methodName = method.getName();
-        Type methodType = method.type;
-        ClassType classType = (ClassType) clazz.type;
-
-        Name thisClassName = classType.tsym.getQualifiedName();
-        MethodKey thisMethodKey = new MethodKey(thisClassName, methodName, methodType);
-        List<ContractInvocation> thisClassContracts = contractsRegistry.getContracts(thisMethodKey);
-        if (thisClassContracts.isEmpty()) {
+        if (!doesThisMethodContainContracts(clazz, method)) {
             return false;
         }
 
-        classType = (ClassType) classType.supertype_field;
+        ClassType superType = (ClassType) ((ClassType) clazz.type).supertype_field;
 
-        while (!classType.equals(objectType)) {
-            Name className = classType.tsym.getQualifiedName();
-            MethodKey methodKey = new MethodKey(className, methodName, methodType);
+        return !hasContractsInHierarchy(superType, method.getName(), method.type);
+    }
 
-            List<ContractInvocation> contracts = contractsRegistry.getContracts(methodKey);
-            if (!contracts.isEmpty()) {
-                return false;
-            }
-
-            classType = (ClassType) classType.supertype_field;
-        }
-
-        return true;
+    private boolean doesThisMethodContainContracts(JCClassDecl clazz, JCMethodDecl method) {
+        Name className = clazz.type.tsym.getQualifiedName();
+        MethodKey methodKey = new MethodKey(className, method.getName(), method.type);
+        List<ContractInvocation> contracts = contractsRegistry.getContracts(methodKey);
+        return !contracts.isEmpty();
     }
 }
