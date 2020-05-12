@@ -1,4 +1,4 @@
-package pl.coco.compiler.instrumentation.bridge;
+package pl.coco.compiler.instrumentation.synthetic;
 
 import static java.util.stream.Collectors.toList;
 
@@ -15,7 +15,7 @@ import com.sun.tools.javac.util.Names;
 
 import pl.coco.compiler.util.ContractAstUtil;
 
-public class TargetMethodBuilder {
+public class TargetMethodGenerator {
 
     public static final String TARGET_METHOD_PREFIX = "coco$target$";
     public static final long SYNTHETIC_METHOD_FLAG = 4096;
@@ -24,12 +24,12 @@ public class TargetMethodBuilder {
     private final Names names;
 
     @Inject
-    public TargetMethodBuilder(TreeMaker treeMaker, Names names) {
+    public TargetMethodGenerator(TreeMaker treeMaker, Names names) {
         this.treeMaker = treeMaker;
         this.names = names;
     }
 
-    public JCMethodDecl buildTarget(JCMethodDecl originalMethod) {
+    public JCMethodDecl generate(JCMethodDecl originalMethod) {
         java.util.List<JCStatement> nonContractStatements =
                 getNonContractStatements(originalMethod.getBody());
         JCBlock targetBody = treeMaker.Block(0, List.from(nonContractStatements));

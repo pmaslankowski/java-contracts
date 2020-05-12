@@ -1,4 +1,4 @@
-package pl.coco.compiler.instrumentation.contract.arguments;
+package pl.coco.compiler.instrumentation.invocation.arguments;
 
 import com.sun.source.tree.ExpressionTree;
 import com.sun.tools.javac.code.Symbol;

@@ -1,4 +1,4 @@
-package pl.coco.compiler.instrumentation.contract;
+package pl.coco.compiler.instrumentation.synthetic;
 
 import static java.util.stream.Collectors.toList;
 
@@ -19,6 +19,7 @@ import com.sun.tools.javac.util.Name;
 import com.sun.tools.javac.util.Names;
 
 import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
+import pl.coco.compiler.instrumentation.invocation.InternalInvocationBuilder;
 
 public abstract class AbstractMethodGenerator {
 

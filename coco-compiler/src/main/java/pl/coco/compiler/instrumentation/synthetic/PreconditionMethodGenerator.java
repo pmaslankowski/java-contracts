@@ -1,4 +1,4 @@
-package pl.coco.compiler.instrumentation.contract;
+package pl.coco.compiler.instrumentation.synthetic;
 
 import java.util.stream.Collectors;
 
@@ -21,6 +21,7 @@ import com.sun.tools.javac.util.Names;
 
 import pl.coco.compiler.instrumentation.ContractAnalyzer;
 import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
+import pl.coco.compiler.instrumentation.invocation.InternalInvocationBuilder;
 import pl.coco.compiler.instrumentation.invocation.MethodInvocationBuilder;
 import pl.coco.compiler.instrumentation.invocation.MethodInvocationDescription;
 import pl.coco.compiler.instrumentation.registry.ContractsRegistry;

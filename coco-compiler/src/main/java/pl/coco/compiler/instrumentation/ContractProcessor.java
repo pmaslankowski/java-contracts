@@ -26,6 +26,9 @@ import com.sun.tools.javac.util.Names;
 
 import pl.coco.compiler.instrumentation.invocation.MethodInvocationBuilder;
 import pl.coco.compiler.instrumentation.invocation.MethodInvocationDescription;
+import pl.coco.compiler.instrumentation.synthetic.ContractSyntheticMethods;
+import pl.coco.compiler.instrumentation.synthetic.ContractSyntheticMethodsGenerator;
+import pl.coco.compiler.instrumentation.synthetic.MethodInput;
 import pl.coco.compiler.util.AstUtil;
 
 public class ContractProcessor {

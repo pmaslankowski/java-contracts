@@ -1,4 +1,4 @@
-package pl.coco.compiler.instrumentation.contract;
+package pl.coco.compiler.instrumentation.invocation;
 
 import javax.inject.Inject;
 

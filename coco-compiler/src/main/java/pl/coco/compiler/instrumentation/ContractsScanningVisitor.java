@@ -11,6 +11,7 @@ import com.sun.source.tree.StatementTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.util.TreeScanner;
 
+import pl.coco.compiler.instrumentation.synthetic.MethodInput;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.util.TreePasser;
 

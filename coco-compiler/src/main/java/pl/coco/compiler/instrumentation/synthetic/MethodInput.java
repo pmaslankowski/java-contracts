@@ -1,4 +1,4 @@
-package pl.coco.compiler.instrumentation;
+package pl.coco.compiler.instrumentation.synthetic;
 
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.MethodTree;

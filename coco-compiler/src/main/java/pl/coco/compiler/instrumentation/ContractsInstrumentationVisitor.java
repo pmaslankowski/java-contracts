@@ -10,6 +10,7 @@ import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.util.TreeScanner;
 
+import pl.coco.compiler.instrumentation.synthetic.MethodInput;
 import pl.coco.compiler.util.TreePasser;
 
 public class ContractsInstrumentationVisitor extends TreeScanner<Void, Void> {

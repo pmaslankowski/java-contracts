@@ -1,4 +1,4 @@
-package pl.coco.compiler.instrumentation.contract.arguments;
+package pl.coco.compiler.instrumentation.invocation.arguments;
 
 import java.util.Arrays;
 
@@ -17,7 +17,7 @@ import com.sun.tools.javac.tree.TreeScanner;
 import com.sun.tools.javac.util.List;
 
 import pl.coco.compiler.instrumentation.ContractMethod;
-import pl.coco.compiler.instrumentation.contract.ConditionSupplierProvider;
+import pl.coco.compiler.instrumentation.invocation.ConditionSupplierProvider;
 import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
 import pl.coco.compiler.instrumentation.invocation.SimpleMethodInvocation;
 import pl.coco.compiler.util.TreePasser;

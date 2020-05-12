@@ -1,4 +1,4 @@
-package pl.coco.compiler.instrumentation;
+package pl.coco.compiler.instrumentation.synthetic;
 
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 

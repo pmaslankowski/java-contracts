@@ -7,7 +7,7 @@ import javax.lang.model.element.Name;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 
-import pl.coco.compiler.instrumentation.MethodInput;
+import pl.coco.compiler.instrumentation.synthetic.MethodInput;
 
 public class MethodKey {
 

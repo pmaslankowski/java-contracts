@@ -1,10 +1,10 @@
-package pl.coco.compiler.instrumentation.contract.arguments;
+package pl.coco.compiler.instrumentation.invocation.arguments;
 
 import java.util.Arrays;
 
 import javax.inject.Inject;
 
-import pl.coco.compiler.instrumentation.contract.ConditionSupplierProvider;
+import pl.coco.compiler.instrumentation.invocation.ConditionSupplierProvider;
 
 import com.sun.source.tree.ExpressionTree;
 import com.sun.tools.javac.code.Symbol;
