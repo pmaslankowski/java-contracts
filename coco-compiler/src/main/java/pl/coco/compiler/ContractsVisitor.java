@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.sun.source.tree.ClassTree;
+import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.util.TreeScanner;
@@ -15,19 +16,32 @@ import pl.coco.compiler.instrumentation.ContractProcessor;
 import pl.coco.compiler.instrumentation.ContractScanner;
 import pl.coco.compiler.instrumentation.synthetic.MethodInput;
 import pl.coco.compiler.util.TreePasser;
+import pl.coco.compiler.validation.ContractValidator;
 
 @Singleton
 public class ContractsVisitor extends TreeScanner<Void, Void> {
 
+    private final ContractValidator validator;
     private final ContractScanner scanner;
     private final ContractProcessor processor;
 
+    private CompilationUnitTree compilationUnit;
+
     @Inject
-    public ContractsVisitor(ContractScanner scanner, ContractProcessor processor) {
+    public ContractsVisitor(ContractValidator validator, ContractScanner scanner,
+            ContractProcessor processor) {
+        this.validator = validator;
         this.scanner = scanner;
         this.processor = processor;
     }
 
+    @Override
+    public Void visitCompilationUnit(CompilationUnitTree compilationUnitTree, Void aVoid) {
+        compilationUnit = compilationUnitTree;
+        return super.visitCompilationUnit(compilationUnitTree, aVoid);
+    }
+
+    // TODO: przerobić, żeby zbierał dane o klasie tak jak zbiera dane o jednostce kompilacji
     @Override
     public Void visitClass(ClassTree clazz, Void aVoid) {
         List<? extends Tree> members = clazz.getMembers();
@@ -44,10 +58,12 @@ public class ContractsVisitor extends TreeScanner<Void, Void> {
 
     private void processMethod(ClassTree clazz, MethodTree method) {
         MethodInput input = new MethodInput.Builder()
+                .withCompilationUnit(compilationUnit)
                 .withClazz(clazz)
                 .withMethod(method)
                 .build();
 
+        validator.validate(input);
         scanner.scan(input);
         processor.process(input);
     }

@@ -2,12 +2,13 @@ package pl.coco.compiler.util;
 
 import java.util.Optional;
 
-import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
-import pl.coco.compiler.instrumentation.invocation.SimpleMethodInvocation;
-
 import com.sun.source.tree.ExpressionStatementTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.StatementTree;
+
+import pl.coco.compiler.instrumentation.ContractMethod;
+import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
+import pl.coco.compiler.instrumentation.invocation.SimpleMethodInvocation;
 
 public class ContractAstUtil {
 

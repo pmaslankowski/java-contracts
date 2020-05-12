@@ -6,14 +6,13 @@ import pl.coco.compiler.instrumentation.ContractMethod;
 
 public class ContractInvocation extends SimpleMethodInvocation {
 
-    //TODO: get rid of this type marker - change it to other subclass
+    // TODO: get rid of this type marker - change it to other subclass
     private final ContractMethod contractMethod;
 
     private ContractInvocation(SimpleMethodInvocation invocation,
             ContractMethod contractMethod) {
 
-        super(invocation.methodName, invocation.fullyQualifiedClassName, invocation.arguments,
-                invocation.expression);
+        super(invocation.methodName, invocation.fullyQualifiedClassName, invocation.arguments, invocation.expression);
         this.contractMethod = contractMethod;
     }
 
@@ -25,5 +24,10 @@ public class ContractInvocation extends SimpleMethodInvocation {
 
     public ContractMethod getContractMethod() {
         return contractMethod;
+    }
+
+    public boolean canOccurAtTheBeginningOfTheMethodOnly() {
+        return contractMethod == ContractMethod.ENSURES
+                || contractMethod == ContractMethod.REQUIRES;
     }
 }

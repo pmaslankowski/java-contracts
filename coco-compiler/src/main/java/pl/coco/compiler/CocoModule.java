@@ -3,6 +3,7 @@ package pl.coco.compiler;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.sun.source.util.JavacTask;
+import com.sun.source.util.Trees;
 import com.sun.tools.javac.api.JavacTaskImpl;
 import com.sun.tools.javac.comp.Resolve;
 import com.sun.tools.javac.tree.TreeMaker;
@@ -48,5 +49,10 @@ public class CocoModule extends AbstractModule {
     @Provides
     Resolve resolver(JavacTaskImpl taskImpl) {
         return Resolve.instance(taskImpl.getContext());
+    }
+
+    @Provides
+    Trees trees(JavacTaskImpl taskImpl) {
+        return Trees.instance(taskImpl);
     }
 }

@@ -1,12 +1,22 @@
 package pl.coco.compiler.instrumentation.synthetic;
 
 import com.sun.source.tree.ClassTree;
+import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.MethodTree;
 
 public class MethodInput {
 
+    private CompilationUnitTree compilationUnit;
     private ClassTree clazz;
     private MethodTree method;
+
+    public CompilationUnitTree getCompilationUnit() {
+        return compilationUnit;
+    }
+
+    public void setCompilationUnit(CompilationUnitTree compilationUnit) {
+        this.compilationUnit = compilationUnit;
+    }
 
     public ClassTree getClazz() {
         return clazz;
@@ -27,6 +37,11 @@ public class MethodInput {
     public static class Builder {
 
         private final MethodInput input = new MethodInput();
+
+        public Builder withCompilationUnit(CompilationUnitTree compilationUnit) {
+            input.setCompilationUnit(compilationUnit);
+            return this;
+        }
 
         public Builder withClazz(ClassTree clazz) {
             input.setClazz(clazz);
