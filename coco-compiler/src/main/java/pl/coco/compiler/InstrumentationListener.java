@@ -5,20 +5,13 @@ import javax.inject.Inject;
 import com.sun.source.util.TaskEvent;
 import com.sun.source.util.TaskListener;
 
-import pl.coco.compiler.instrumentation.ContractsInstrumentationVisitor;
-import pl.coco.compiler.instrumentation.ContractsScanningVisitor;
-
 public class InstrumentationListener implements TaskListener {
 
-    private final ContractsScanningVisitor scanningVisitor;
-    private final ContractsInstrumentationVisitor instrumentationVisitor;
+    private final ContractsVisitor contractsVisitor;
 
     @Inject
-    public InstrumentationListener(ContractsScanningVisitor scanningVisitor,
-            ContractsInstrumentationVisitor instrumentationVisitor) {
-
-        this.scanningVisitor = scanningVisitor;
-        this.instrumentationVisitor = instrumentationVisitor;
+    public InstrumentationListener(ContractsVisitor contractsVisitor) {
+        this.contractsVisitor = contractsVisitor;
     }
 
     @Override
@@ -29,8 +22,7 @@ public class InstrumentationListener implements TaskListener {
     @Override
     public void finished(TaskEvent taskEvent) {
         if (taskEvent.getKind() == TaskEvent.Kind.ANALYZE) {
-            taskEvent.getCompilationUnit().accept(scanningVisitor, null);
-            taskEvent.getCompilationUnit().accept(instrumentationVisitor, null);
+            taskEvent.getCompilationUnit().accept(contractsVisitor, null);
         }
     }
 }

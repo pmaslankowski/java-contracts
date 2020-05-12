@@ -1,4 +1,4 @@
-package pl.coco.compiler.instrumentation;
+package pl.coco.compiler;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,22 +8,24 @@ import javax.inject.Singleton;
 
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.MethodTree;
-import com.sun.source.tree.StatementTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.util.TreeScanner;
 
+import pl.coco.compiler.instrumentation.ContractProcessor;
+import pl.coco.compiler.instrumentation.ContractScanner;
 import pl.coco.compiler.instrumentation.synthetic.MethodInput;
-import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.util.TreePasser;
 
 @Singleton
-public class ContractsScanningVisitor extends TreeScanner<Void, Void> {
+public class ContractsVisitor extends TreeScanner<Void, Void> {
 
     private final ContractScanner scanner;
+    private final ContractProcessor processor;
 
     @Inject
-    public ContractsScanningVisitor(ContractScanner scanner) {
+    public ContractsVisitor(ContractScanner scanner, ContractProcessor processor) {
         this.scanner = scanner;
+        this.processor = processor;
     }
 
     @Override
@@ -41,18 +43,12 @@ public class ContractsScanningVisitor extends TreeScanner<Void, Void> {
     }
 
     private void processMethod(ClassTree clazz, MethodTree method) {
-        List<? extends StatementTree> statements = method.getBody().getStatements();
-        if (containsContractInvocation(statements)) {
-            MethodInput input = new MethodInput.Builder()
-                    .withClazz(clazz)
-                    .withMethod(method)
-                    .build();
-            scanner.scan(input);
-        }
-    }
+        MethodInput input = new MethodInput.Builder()
+                .withClazz(clazz)
+                .withMethod(method)
+                .build();
 
-    private boolean containsContractInvocation(List<? extends StatementTree> statements) {
-        return statements.stream()
-                .anyMatch(ContractAstUtil::isContractInvocation);
+        scanner.scan(input);
+        processor.process(input);
     }
 }
