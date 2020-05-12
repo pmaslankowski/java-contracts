@@ -15,7 +15,6 @@ import com.sun.tools.javac.tree.JCTree.JCIdent;
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 import com.sun.tools.javac.tree.JCTree.JCVariableDecl;
 import com.sun.tools.javac.tree.TreeMaker;
-import com.sun.tools.javac.util.Name;
 import com.sun.tools.javac.util.Names;
 
 import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
@@ -35,10 +34,6 @@ public abstract class AbstractMethodGenerator {
     }
 
     public abstract JCMethodDecl generate(JCClassDecl clazz, JCMethodDecl method);
-
-    protected Name getMethodNameWithPrefix(String prefix, JCMethodDecl originalMethod) {
-        return names.fromString(prefix).append(originalMethod.getName());
-    }
 
     protected long getProtectedMethodFlags(JCMethodDecl originalMethod) {
         long result = originalMethod.sym.flags();

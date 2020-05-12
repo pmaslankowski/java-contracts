@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.MethodTree;
@@ -15,6 +16,7 @@ import pl.coco.compiler.instrumentation.synthetic.MethodInput;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.util.TreePasser;
 
+@Singleton
 public class ContractsScanningVisitor extends TreeScanner<Void, Void> {
 
     private final ContractScanner scanner;

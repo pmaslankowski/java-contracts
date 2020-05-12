@@ -30,41 +30,42 @@ import pl.coco.compiler.instrumentation.registry.MethodKey;
 @Singleton
 public class PreconditionMethodGenerator extends AbstractMethodGenerator {
 
-    public static final String PRECONDITION_PREFIX = "coco$preconditions$";
-
     private final InternalInvocationBuilder internalInvocationBuilder;
     private final MethodInvocationBuilder methodInvocationBuilder;
     private final ContractsRegistry contractsRegistry;
     private final ContractAnalyzer contractAnalyzer;
+    private final SyntheticMethodNameGenerator nameGenerator;
 
     @Inject
     public PreconditionMethodGenerator(TreeMaker treeMaker,
             InternalInvocationBuilder internalInvocationBuilder,
             MethodInvocationBuilder methodInvocationBuilder, Names names,
-            ContractsRegistry contractsRegistry, ContractAnalyzer contractAnalyzer) {
+            ContractsRegistry contractsRegistry, ContractAnalyzer contractAnalyzer,
+            SyntheticMethodNameGenerator nameGenerator) {
 
         super(treeMaker, names, internalInvocationBuilder);
         this.internalInvocationBuilder = internalInvocationBuilder;
         this.methodInvocationBuilder = methodInvocationBuilder;
         this.contractsRegistry = contractsRegistry;
         this.contractAnalyzer = contractAnalyzer;
+        this.nameGenerator = nameGenerator;
     }
 
     @Override
     public JCMethodDecl generate(JCClassDecl clazz, JCMethodDecl method) {
-        MethodSymbol wrapperSymbol = getPreconditionSymbol(PRECONDITION_PREFIX, method);
+        MethodSymbol wrapperSymbol = getPreconditionSymbol(method);
         JCMethodDecl wrapper = treeMaker.MethodDef(wrapperSymbol, wrapperSymbol.type, null);
         wrapper.body = generateMethodBody(wrapper, clazz, method);
         return wrapper;
     }
 
-    private MethodSymbol getPreconditionSymbol(String prefix, JCMethodDecl originalMethod) {
-        Name bridgeMethodName = getMethodNameWithPrefix(prefix, originalMethod);
+    private MethodSymbol getPreconditionSymbol(JCMethodDecl originalMethod) {
+        Name preconditionMethodName = nameGenerator.getPreconditionsMethodName(originalMethod);
         long flags = getProtectedMethodFlags(originalMethod);
         MethodType type = getPreconditionMethodType(originalMethod);
 
         MethodSymbol result =
-                new MethodSymbol(flags, bridgeMethodName, type, originalMethod.sym.owner);
+                new MethodSymbol(flags, preconditionMethodName, type, originalMethod.sym.owner);
 
         result.params = originalMethod.sym.params;
 

@@ -1,12 +1,14 @@
 package pl.coco.compiler.util;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.lang.model.element.Element;
 
 import com.sun.tools.javac.api.JavacTaskImpl;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 
+@Singleton
 public class TypeRegistry {
 
     private final JavacTaskImpl task;

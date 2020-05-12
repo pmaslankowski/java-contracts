@@ -31,23 +31,25 @@ import pl.coco.compiler.util.AstUtil;
 @Singleton
 public class PostconditionMethodGenerator extends AbstractMethodGenerator {
 
-    private static final String POSTCONDITION_PREFIX = "coco$postconditions$";
     private static final JCVoidType VOID_TYPE = new JCVoidType();
 
     private final MethodInvocationBuilder methodInvocationBuilder;
     private final ContractsRegistry contractsRegistry;
     private final ContractAnalyzer contractAnalyzer;
+    private final SyntheticMethodNameGenerator nameGenerator;
 
     @Inject
     public PostconditionMethodGenerator(TreeMaker treeMaker,
             InternalInvocationBuilder internalInvocationBuilder,
             MethodInvocationBuilder methodInvocationBuilder, Names names,
-            ContractsRegistry contractsRegistry, ContractAnalyzer contractAnalyzer) {
+            ContractsRegistry contractsRegistry, ContractAnalyzer contractAnalyzer,
+            SyntheticMethodNameGenerator nameGenerator) {
 
         super(treeMaker, names, internalInvocationBuilder);
         this.methodInvocationBuilder = methodInvocationBuilder;
         this.contractsRegistry = contractsRegistry;
         this.contractAnalyzer = contractAnalyzer;
+        this.nameGenerator = nameGenerator;
     }
 
     @Override
@@ -59,7 +61,7 @@ public class PostconditionMethodGenerator extends AbstractMethodGenerator {
     }
 
     private MethodSymbol getMethodSymbol(JCMethodDecl originalMethod) {
-        Name methodName = getMethodNameWithPrefix(POSTCONDITION_PREFIX, originalMethod);
+        Name methodName = nameGenerator.getPostconditionMethodName(originalMethod);
         long flags = getProtectedMethodFlags(originalMethod);
         MethodType type = getMethodType(originalMethod);
 

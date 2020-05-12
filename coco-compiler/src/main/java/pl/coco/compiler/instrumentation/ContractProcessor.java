@@ -9,6 +9,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,7 @@ import pl.coco.compiler.instrumentation.synthetic.ContractSyntheticMethodsGenera
 import pl.coco.compiler.instrumentation.synthetic.MethodInput;
 import pl.coco.compiler.util.AstUtil;
 
+@Singleton
 public class ContractProcessor {
 
     private static final String RESULT_VARIABLE_NAME = "result";
@@ -79,7 +81,7 @@ public class ContractProcessor {
             addSyntheticMethodsToClass(methods, clazz);
 
             java.util.List<JCStatement> instrumentedStmts =
-                    generateInstrumentedMethodBody(methods);
+                    generateInstrumentedMethodBody(originalMethod, methods);
 
             body.stats = List.from(instrumentedStmts);
 
@@ -93,7 +95,7 @@ public class ContractProcessor {
         AstUtil.addMethodToClass(methods.getPostconditions(), clazz);
     }
 
-    private java.util.List<JCStatement> generateInstrumentedMethodBody(
+    private java.util.List<JCStatement> generateInstrumentedMethodBody(JCMethodDecl originalMethod,
             ContractSyntheticMethods syntheticMethods) {
 
         JCMethodDecl target = syntheticMethods.getTarget();
@@ -107,11 +109,16 @@ public class ContractProcessor {
 
         java.util.List<JCStatement> processedStatements = new ArrayList<>();
 
+        if (AstUtil.isConstructor(originalMethod)) {
+            JCStatement superStmt = originalMethod.getBody().getStatements().get(0);
+            processedStatements.add(superStmt);
+        }
+
         processedStatements.add(preconditionInvocation);
         processedStatements.add(targetInvocation);
         processedStatements.add(postconditionInvocation);
 
-        if (!AstUtil.isVoid(target)) {
+        if (!AstUtil.isConstructor(originalMethod) && !AstUtil.isVoid(target)) {
             JCReturn returnStatement = treeMaker.Return(treeMaker.Ident(resultSymbol));
             processedStatements.add(returnStatement);
         }
