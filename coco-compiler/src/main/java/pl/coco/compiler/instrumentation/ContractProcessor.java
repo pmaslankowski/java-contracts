@@ -62,7 +62,6 @@ public class ContractProcessor {
 
     // TODO: check that Contract.result() calls occur only inside Contract.ensures() in non void
     // method
-    // TODO: add Contract.ForAll and Contract.Exists methods for array and Collections
     // TODO: type checking for Contract.result() calls
     // TODO: check that Contract.result() calls occur only inside Contract.ensures()
     public void process(MethodInput input) {

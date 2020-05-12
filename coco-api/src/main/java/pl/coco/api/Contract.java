@@ -1,5 +1,9 @@
 package pl.coco.api;
 
+import java.util.Arrays;
+import java.util.function.Predicate;
+import java.util.stream.StreamSupport;
+
 /**
  * Class providing the imperative API for specifying contracts.
  *
@@ -39,5 +43,58 @@ public class Contract {
      */
     public static <T> T result(Class<T> type) {
         throw new IllegalStateException(MESSAGE);
+    }
+
+    /**
+     * Specifies that given predicate must be true for all objects in given array.
+     * 
+     * @param objects array of objects that the predicate will be tested on
+     * @param predicate predicate
+     * @param <T> type of values in array
+     * @return <i>true</i> if predicate is true for all objects in given array, <i>false</i>
+     *         otherwise
+     */
+    public static <T> boolean forAll(T[] objects, Predicate<? super T> predicate) {
+        return Arrays.stream(objects).allMatch(predicate);
+    }
+
+    /**
+     * Specifies that given predicate must be true for all objects in given iterable.
+     *
+     * @param objects iterable of objects that the predicate will be tested on
+     * @param predicate predicate
+     * @param <T> type of values in iterable
+     * @return <i>true</i> if predicate is true for all objects in given array, <i>false</i>
+     *         otherwise
+     */
+    public static <T> boolean forAll(Iterable<T> objects, Predicate<? super T> predicate) {
+        return StreamSupport.stream(objects.spliterator(), false).allMatch(predicate);
+    }
+
+    /**
+     * Specifies that given predicate must be true for at least one of the objects in given array.
+     *
+     * @param objects array of objects that the predicate will be tested on
+     * @param predicate predicate
+     * @param <T> type of values in array
+     * @return <i>true</i> if predicate is true for at least one of the objects in given array,
+     *         <i>false</i> otherwise
+     */
+    public static <T> boolean exists(T[] objects, Predicate<? super T> predicate) {
+        return Arrays.stream(objects).anyMatch(predicate);
+    }
+
+    /**
+     * Specifies that given predicate must be true for at least one of the objects in given
+     * iterable.
+     *
+     * @param objects iterable of objects that the predicate will be tested on
+     * @param predicate predicate
+     * @param <T> type of values in iterable
+     * @return <i>true</i> if predicate is true for at least one of the objects in given iterable,
+     *         <i>false</i> otherwise
+     */
+    public static <T> boolean exists(Iterable<T> objects, Predicate<? super T> predicate) {
+        return StreamSupport.stream(objects.spliterator(), false).anyMatch(predicate);
     }
 }
