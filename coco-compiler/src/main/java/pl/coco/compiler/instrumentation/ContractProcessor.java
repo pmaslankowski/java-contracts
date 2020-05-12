@@ -60,7 +60,6 @@ public class ContractProcessor {
         this.methodInvocationBuilder = methodInvocationBuilder;
     }
 
-    // TODO: add unit test with contract in constructors
     // TODO: check that Contract.result() calls occur only inside Contract.ensures() in non void
     // method
     // TODO: add Contract.ForAll and Contract.Exists methods for array and Collections

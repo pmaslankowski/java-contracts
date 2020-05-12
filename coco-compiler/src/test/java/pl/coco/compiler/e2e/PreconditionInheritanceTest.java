@@ -576,8 +576,7 @@ class PreconditionInheritanceTest {
     @DisplayName("Base precondition on private instance field fails but subclass contract passes")
     @Test
     void methodShouldReturnResultWhenBasePreconditionOnPrivateFieldFails() throws Throwable {
-        //TODO: this test fails because coco copies precondition from base class to subclass but
-        // we can't access private field from the base class
+
         String entry = "package pl.coco.compiler;\n"
                 + "\n"
                 + "public class Entry {\n"
