@@ -18,8 +18,7 @@ class ContractEnsuresTest {
 
     @DisplayName("Simple postcondition on static method passes")
     @Test
-    void shouldReturnResultWhenPostconditionOnStaticMethodPasses()
-            throws Throwable {
+    void shouldReturnResultWhenPostconditionOnStaticMethodPasses() throws Throwable {
 
         String code = "package pl.coco.compiler;\n"
                 + "\n"
@@ -76,8 +75,7 @@ class ContractEnsuresTest {
 
     @DisplayName("Simple postcondition on instance method passes")
     @Test
-    void shouldReturnResultWhenPostconditionOnInstanceMethodPasses()
-            throws Throwable {
+    void shouldReturnResultWhenPostconditionOnInstanceMethodPasses() throws Throwable {
 
         String code = "package pl.coco.compiler;\n"
                 + "\n"
@@ -107,8 +105,7 @@ class ContractEnsuresTest {
 
     @DisplayName("Simple postcondition on instance method without this passes")
     @Test
-    void shouldReturnResultWhenPostconditionOnInstanceMethodWithoutThisPasses()
-            throws Throwable {
+    void shouldReturnResultWhenPostconditionOnInstanceMethodWithoutThisPasses() throws Throwable {
 
         String code = "package pl.coco.compiler;\n"
                 + "\n"

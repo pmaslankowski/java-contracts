@@ -17,20 +17,21 @@ import pl.coco.compiler.instrumentation.ContractScanner;
 import pl.coco.compiler.instrumentation.synthetic.MethodInput;
 import pl.coco.compiler.util.TreePasser;
 import pl.coco.compiler.validation.ContractValidator;
+import pl.coco.compiler.validation.ContractValidatorFactory;
 
 @Singleton
 public class ContractsVisitor extends TreeScanner<Void, Void> {
 
-    private final ContractValidator validator;
+    private final ContractValidatorFactory validatorFactory;
     private final ContractScanner scanner;
     private final ContractProcessor processor;
 
     private CompilationUnitTree compilationUnit;
 
     @Inject
-    public ContractsVisitor(ContractValidator validator, ContractScanner scanner,
+    public ContractsVisitor(ContractValidatorFactory validatorFactory, ContractScanner scanner,
             ContractProcessor processor) {
-        this.validator = validator;
+        this.validatorFactory = validatorFactory;
         this.scanner = scanner;
         this.processor = processor;
     }
@@ -63,7 +64,12 @@ public class ContractsVisitor extends TreeScanner<Void, Void> {
                 .withMethod(method)
                 .build();
 
-        validator.validate(input);
+        ContractValidator validator = validatorFactory.create(input);
+
+        if (validator.validate(input) > 0) {
+            return;
+        }
+
         scanner.scan(input);
         processor.process(input);
     }

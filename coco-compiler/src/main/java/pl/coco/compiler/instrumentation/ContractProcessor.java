@@ -60,10 +60,8 @@ public class ContractProcessor {
         this.methodInvocationBuilder = methodInvocationBuilder;
     }
 
-    // TODO: check that Contract.result() calls occur only inside Contract.ensures() in non void
-    // method
+
     // TODO: type checking for Contract.result() calls
-    // TODO: check that Contract.result() calls occur only inside Contract.ensures()
     public void process(MethodInput input) {
         JCClassDecl clazz = (JCClassDecl) input.getClazz();
         JCMethodDecl originalMethod = (JCMethodDecl) input.getMethod();

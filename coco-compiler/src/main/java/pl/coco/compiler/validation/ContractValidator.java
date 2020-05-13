@@ -3,11 +3,8 @@ package pl.coco.compiler.validation;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.tools.Diagnostic;
 
 import com.sun.source.tree.StatementTree;
-import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 
 import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
@@ -16,27 +13,26 @@ import pl.coco.compiler.util.AstUtil;
 import pl.coco.compiler.util.CollectionUtils;
 import pl.coco.compiler.util.ContractAstUtil;
 
-@Singleton
 public class ContractValidator {
 
-    public static final String CONTRACT_CALL_CAN_OCCUR_IN_BLOCK_AT_THE_BEGINNING_OF_THE_METHOD_MSG =
-            "This contract call can occur in the contracts block at the beginning of the method only.";
-    public static final String CONTRACT_BLOCK_CAN_CONTAIN_ONLY_CONTRACTS = "" +
-            "Contract block at the beginning of the method can contain only contracts " +
-            "and cannot be interspersed with any other statements.";
-
-    private final Trees trees;
+    private final ErrorProducer errorProducer;
+    private final ContractResultValidator resultValidator;
 
     @Inject
-    public ContractValidator(Trees trees) {
-        this.trees = trees;
+    public ContractValidator(ErrorProducer errorProducer, ContractResultValidator resultValidator) {
+        this.errorProducer = errorProducer;
+        this.resultValidator = resultValidator;
     }
 
-    public void validate(MethodInput input) {
+    public int validate(MethodInput input) {
+
         JCMethodDecl method = (JCMethodDecl) input.getMethod();
         if (doesContainContracts(method)) {
             checkIfAllContractsAreInOneBlockAtTheBeginningOfMethod(input);
+            checkIfResultOccursInsideEnsuresInNonVoidMethodsOnly(input);
+            return errorProducer.getErrorCount();
         }
+        return 0;
     }
 
     private boolean doesContainContracts(JCMethodDecl method) {
@@ -53,28 +49,28 @@ public class ContractValidator {
         int lastContractIdx = CollectionUtils.getIndexOfLastElementMatchingPredicate(
                 stmts, this::isContractThatMustBeAtTheMethodBeginning);
 
-        checkIfFirstContractIsAtTheBeginningOfAMethod(input, method, stmts, firstContractIdx);
-        checkIfContractBlockContainContractsOnly(input, stmts, firstContractIdx, lastContractIdx);
+        checkIfFirstContractIsAtTheBeginningOfAMethod(method, stmts, firstContractIdx);
+        checkIfContractBlockContainContractsOnly(stmts, firstContractIdx, lastContractIdx);
     }
 
-    private void checkIfFirstContractIsAtTheBeginningOfAMethod(MethodInput input,
-            JCMethodDecl method, List<? extends StatementTree> stmts, int firstContractIdx) {
+    private void checkIfFirstContractIsAtTheBeginningOfAMethod(JCMethodDecl method,
+            List<? extends StatementTree> statements, int firstContractIdx) {
+
         if (firstContractIdx != 0 && !(AstUtil.isConstructor(method) && firstContractIdx == 1)) {
-            trees.printMessage(Diagnostic.Kind.ERROR,
-                    CONTRACT_CALL_CAN_OCCUR_IN_BLOCK_AT_THE_BEGINNING_OF_THE_METHOD_MSG,
-                    stmts.get(firstContractIdx),
-                    input.getCompilationUnit());
+            errorProducer.raiseError(
+                    ContractError.CONTRACT_CAN_OCCUR_IN_BLOCK_AT_THE_BEGINNING_OF_THE_METHOD,
+                    statements.get(firstContractIdx));
         }
     }
 
-    private void checkIfContractBlockContainContractsOnly(MethodInput input,
-            List<? extends StatementTree> statements, int firstContractIdx, int lastContractIdx) {
+    private void checkIfContractBlockContainContractsOnly(List<? extends StatementTree> statements,
+            int firstContractIdx, int lastContractIdx) {
 
         for (int i = firstContractIdx; i < lastContractIdx; i++) {
             StatementTree statement = statements.get(i);
             if (!isContractThatMustBeAtTheMethodBeginning(statement)) {
-                trees.printMessage(Diagnostic.Kind.ERROR, CONTRACT_BLOCK_CAN_CONTAIN_ONLY_CONTRACTS,
-                        statement, input.getCompilationUnit());
+                errorProducer.raiseError(ContractError.CONTRACT_BLOCK_CAN_CONTAIN_ONLY_CONTRACTS,
+                        statement);
             }
         }
     }
@@ -85,5 +81,10 @@ public class ContractValidator {
             return contract.canOccurAtTheBeginningOfTheMethodOnly();
         }
         return false;
+    }
+
+    private void checkIfResultOccursInsideEnsuresInNonVoidMethodsOnly(MethodInput input) {
+        JCMethodDecl method = (JCMethodDecl) input.getMethod();
+        method.accept(resultValidator);
     }
 }
