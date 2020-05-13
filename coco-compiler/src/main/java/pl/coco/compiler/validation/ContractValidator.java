@@ -17,11 +17,14 @@ public class ContractValidator {
 
     private final ErrorProducer errorProducer;
     private final ContractResultValidator resultValidator;
+    private final ResultTypeValidator resultTypeValidator;
 
     @Inject
-    public ContractValidator(ErrorProducer errorProducer, ContractResultValidator resultValidator) {
+    public ContractValidator(ErrorProducer errorProducer, ContractResultValidator resultValidator,
+            ResultTypeValidator resultTypeValidator) {
         this.errorProducer = errorProducer;
         this.resultValidator = resultValidator;
+        this.resultTypeValidator = resultTypeValidator;
     }
 
     public int validate(MethodInput input) {
@@ -30,6 +33,7 @@ public class ContractValidator {
         if (doesContainContracts(method)) {
             checkIfAllContractsAreInOneBlockAtTheBeginningOfMethod(input);
             checkIfResultOccursInsideEnsuresInNonVoidMethodsOnly(input);
+            checkIfResultTypeMatchesMethodType(input);
             return errorProducer.getErrorCount();
         }
         return 0;
@@ -86,5 +90,10 @@ public class ContractValidator {
     private void checkIfResultOccursInsideEnsuresInNonVoidMethodsOnly(MethodInput input) {
         JCMethodDecl method = (JCMethodDecl) input.getMethod();
         method.accept(resultValidator);
+    }
+
+    private void checkIfResultTypeMatchesMethodType(MethodInput input) {
+        JCMethodDecl method = (JCMethodDecl) input.getMethod();
+        method.accept(resultTypeValidator);
     }
 }

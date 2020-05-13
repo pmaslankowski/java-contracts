@@ -26,6 +26,7 @@ public class ContractValidatorFactory {
         ErrorProducer errorProducer = new ErrorProducer(compilationUnit, trees);
         ContractResultValidator resultValidator =
                 new ContractResultValidator(errorProducer, method);
-        return new ContractValidator(errorProducer, resultValidator);
+        ResultTypeValidator resultTypeValidator = new ResultTypeValidator(errorProducer, method);
+        return new ContractValidator(errorProducer, resultValidator, resultTypeValidator);
     }
 }

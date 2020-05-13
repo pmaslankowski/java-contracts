@@ -60,8 +60,6 @@ public class ContractProcessor {
         this.methodInvocationBuilder = methodInvocationBuilder;
     }
 
-
-    // TODO: type checking for Contract.result() calls
     public void process(MethodInput input) {
         JCClassDecl clazz = (JCClassDecl) input.getClazz();
         JCMethodDecl originalMethod = (JCMethodDecl) input.getMethod();

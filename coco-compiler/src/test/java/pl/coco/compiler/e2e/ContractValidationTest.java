@@ -205,4 +205,34 @@ class ContractValidationTest {
                         ContractError.RESULT_CAN_BE_PLACED_INSIDE_ENSURES_IN_NON_VOID_METHODS_ONLY
                                 .getMessage());
     }
+
+    @DisplayName("Compilation error when Contract.result type does not match method type")
+    @Test
+    void shouldProduceErrorWhenResultTypeDoesNotMatchMethodType() {
+
+        String code = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Test {\n"
+                + "\n"
+                + "    public static int entry() {\n"
+                + "        return testedMethod(1, true);\n"
+                + "    }\n"
+                + "\n"
+                + "    public static int testedMethod(int arg, boolean flag) {\n"
+                + "        Contract.ensures(Contract.result(Character.class) == 'a');\n"
+                + "        return 42;\n"
+                + "    }\n"
+                + "}\n";
+
+        Throwable thrown = catchThrowable(
+                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+
+        assertThat(thrown)
+                .isInstanceOf(CompilationFailedException.class)
+                .hasMessageStartingWith("/coco/compiler/Test.java:12: error")
+                .hasMessageContaining(
+                        ContractError.RESULT_TYPE_MUST_MATCH_METHOD_TYPE.getMessage());
+    }
 }

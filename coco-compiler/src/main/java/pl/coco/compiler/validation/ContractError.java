@@ -11,7 +11,10 @@ public enum ContractError {
 
     RESULT_CAN_BE_PLACED_INSIDE_ENSURES_IN_NON_VOID_METHODS_ONLY(
             "Contract.result() can occur only inside postcondition specification" +
-                    " (Contract.ensures(...)) in non-void methods");
+                    " (Contract.ensures(...)) in non-void methods"),
+
+    RESULT_TYPE_MUST_MATCH_METHOD_TYPE(
+            "Contract.result(...) type must match containing method return type");
 
     private final String message;
 
