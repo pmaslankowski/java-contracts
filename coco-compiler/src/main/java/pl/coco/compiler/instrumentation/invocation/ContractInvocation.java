@@ -26,8 +26,19 @@ public class ContractInvocation extends SimpleMethodInvocation {
         return contractMethod;
     }
 
+    // TODO: przenieść wszystkie te metody do enuma ContractMethod
     public boolean canOccurAtTheBeginningOfTheMethodOnly() {
         return contractMethod == ContractMethod.ENSURES
-                || contractMethod == ContractMethod.REQUIRES;
+                || contractMethod == ContractMethod.REQUIRES
+                || contractMethod == ContractMethod.INVARIANT;
+    }
+
+    public boolean isContractSpecification() {
+        return contractMethod == ContractMethod.ENSURES || contractMethod == ContractMethod.REQUIRES
+                || contractMethod == ContractMethod.INVARIANT;
+    }
+
+    public boolean canOccurInsideContractSpecificationOnly() {
+        return contractMethod == ContractMethod.FORALL || contractMethod == ContractMethod.EXISTS;
     }
 }

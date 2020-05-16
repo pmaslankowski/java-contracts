@@ -3,6 +3,7 @@ package pl.coco.compiler.e2e;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -261,6 +262,7 @@ class ContractValidationTest {
         assertThat(actual).isEqualTo(42);
     }
 
+    @Disabled
     @DisplayName("Compilation error when Contract.invariant is used outside of invariant method")
     @Test
     void shouldProduceErrorWhenInvariantIsUsedOutsideInvariantMethod() {
@@ -290,6 +292,7 @@ class ContractValidationTest {
                         ContractError.INVARIANT_CAN_OCCUR_IN_INVARIANT_METHODS_ONLY.getMessage());
     }
 
+    @Disabled
     @DisplayName("Compilation error when there are multiple invariant methods in the class")
     @Test
     void shouldProduceErrorWhenThereIsMoreThanOneInvariantMethodInClass() {
@@ -321,6 +324,7 @@ class ContractValidationTest {
                         ContractError.MULTIPLE_INVARIANT_METHODS_IN_THE_SAME_CLASS.getMessage());
     }
 
+    @Disabled
     @DisplayName("Compilation error when invariant method has wrong signature")
     @Test
     void shouldProduceErrorWhenInvariantMethodHasWrongSignature() {
@@ -361,7 +365,7 @@ class ContractValidationTest {
                 + "public class Test {\n"
                 + "\n"
                 + "    public static void entry() {\n"
-                + "        Contract.forAll(new Object[0] {}, x -> true);\n"
+                + "        Contract.forAll(new Object[] {}, x -> true);\n"
                 + "    }\n"
                 + "\n"
                 + "}\n";
@@ -412,7 +416,7 @@ class ContractValidationTest {
                 + "public class Test {\n"
                 + "\n"
                 + "    public static void entry() {\n"
-                + "        Contract.exists(new Object[0] {}, x -> true);\n"
+                + "        Contract.exists(new Object[] {}, x -> true);\n"
                 + "    }\n"
                 + "\n"
                 + "}\n";

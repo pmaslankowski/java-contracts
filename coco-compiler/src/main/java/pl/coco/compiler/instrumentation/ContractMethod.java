@@ -6,7 +6,8 @@ import pl.coco.compiler.instrumentation.invocation.SimpleMethodInvocation;
 
 public enum ContractMethod {
 
-    REQUIRES("requires"), ENSURES("ensures"), RESULT("result"), INVARIANT("invariant");
+    REQUIRES("requires"), ENSURES("ensures"), RESULT("result"), INVARIANT("invariant"), FORALL(
+            "forAll"), EXISTS("exists");
 
     private static final String API_CLASS_NAME = "pl.coco.api.Contract";
     private static final String INTERNAL_CLASS_NAME = "pl.coco.internal.ContractEngine";
@@ -17,6 +18,7 @@ public enum ContractMethod {
         this.methodName = methodName;
     }
 
+    // TODO: przerobić, żeby dodawanie kolejnych wartości nie wymuszało zmiany tej metody
     public static Optional<ContractMethod> of(SimpleMethodInvocation invocation) {
         if (isContractMethodInvocation(invocation, REQUIRES)) {
             return Optional.of(REQUIRES);
@@ -29,6 +31,12 @@ public enum ContractMethod {
         }
         if (isContractMethodInvocation(invocation, INVARIANT)) {
             return Optional.of(INVARIANT);
+        }
+        if (isContractMethodInvocation(invocation, FORALL)) {
+            return Optional.of(FORALL);
+        }
+        if (isContractMethodInvocation(invocation, EXISTS)) {
+            return Optional.of(EXISTS);
         }
         return Optional.empty();
     }

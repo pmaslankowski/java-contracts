@@ -1,5 +1,7 @@
 package pl.coco.compiler.validation;
 
+import java.util.Optional;
+
 import javax.inject.Inject;
 
 import com.sun.source.tree.CompilationUnitTree;
@@ -10,6 +12,8 @@ import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
 import pl.coco.compiler.util.AstUtil;
 import pl.coco.compiler.util.CollectionUtils;
 import pl.coco.compiler.util.ContractAstUtil;
+import pl.coco.compiler.validation.forallexists.ForAllExistsValidator;
+import pl.coco.compiler.validation.forallexists.ForAllExistsValidatorFactory;
 import pl.coco.compiler.validation.result.ContractResultValidator;
 import pl.coco.compiler.validation.result.ContractResultValidatorFactory;
 import pl.coco.compiler.validation.result.ResultTypeValidator;
@@ -20,14 +24,17 @@ public class ContractValidator {
     private final ErrorProducer errorProducer;
     private final ContractResultValidatorFactory resultValidatorFactory;
     private final ResultTypeValidatorFactory resultTypeValidatorFactory;
+    private final ForAllExistsValidatorFactory forAllExistsValidatorFactory;
 
     @Inject
     public ContractValidator(ErrorProducer errorProducer,
             ContractResultValidatorFactory resultValidatorFactory,
-            ResultTypeValidatorFactory resultTypeValidatorFactory) {
+            ResultTypeValidatorFactory resultTypeValidatorFactory,
+            ForAllExistsValidatorFactory forAllExistsValidatorFactory) {
         this.errorProducer = errorProducer;
         this.resultValidatorFactory = resultValidatorFactory;
         this.resultTypeValidatorFactory = resultTypeValidatorFactory;
+        this.forAllExistsValidatorFactory = forAllExistsValidatorFactory;
     }
 
     public boolean isValid(ValidationInput input) {
@@ -42,6 +49,7 @@ public class ContractValidator {
             checkIfAllContractsAreInOneBlockAtTheBeginningOfMethod(input);
             checkIfResultOccursInsideEnsuresInNonVoidMethodsOnly(input);
             checkIfResultTypeMatchesMethodType(input);
+            checkIfForAllAndExistsOccursInsideContractSpecificationsOnly(input);
             return true;
         } catch (ContractValidationException e) {
             return false;
@@ -55,13 +63,18 @@ public class ContractValidator {
 
     private void checkIfAllContractsAreInOneBlockAtTheBeginningOfMethod(ValidationInput input) {
 
-        int firstContractIdx = CollectionUtils.getIndexOfFirstElementMatchingPredicate(
-                input.getStatements(), this::isContractThatMustBeAtTheMethodBeginning);
-        int lastContractIdx = CollectionUtils.getIndexOfLastElementMatchingPredicate(
-                input.getStatements(), this::isContractThatMustBeAtTheMethodBeginning);
+        Optional<Integer> firstContractIdx =
+                CollectionUtils.getIndexOfFirstElementMatchingPredicate(input.getStatements(),
+                        this::isContractThatMustBeAtTheMethodBeginning);
+        Optional<Integer> lastContractIdx =
+                CollectionUtils.getIndexOfLastElementMatchingPredicate(input.getStatements(),
+                        this::isContractThatMustBeAtTheMethodBeginning);
 
-        checkIfFirstContractIsAtTheBeginningOfAMethod(input, firstContractIdx);
-        checkIfContractBlockContainContractsOnly(input, firstContractIdx, lastContractIdx);
+        if (firstContractIdx.isPresent() && lastContractIdx.isPresent()) {
+            checkIfFirstContractIsAtTheBeginningOfAMethod(input, firstContractIdx.get());
+            checkIfContractBlockContainContractsOnly(input, firstContractIdx.get(),
+                    lastContractIdx.get());
+        }
     }
 
     private void checkIfFirstContractIsAtTheBeginningOfAMethod(ValidationInput input,
@@ -110,6 +123,14 @@ public class ContractValidator {
     private void checkIfResultTypeMatchesMethodType(ValidationInput input) {
         JCMethodDecl method = input.getMethod();
         ResultTypeValidator validator = resultTypeValidatorFactory.create(input);
+        method.accept(validator);
+    }
+
+    private void checkIfForAllAndExistsOccursInsideContractSpecificationsOnly(
+            ValidationInput input) {
+
+        JCMethodDecl method = input.getMethod();
+        ForAllExistsValidator validator = forAllExistsValidatorFactory.create(input);
         method.accept(validator);
     }
 }
