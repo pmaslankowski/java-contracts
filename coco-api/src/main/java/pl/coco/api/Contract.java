@@ -45,6 +45,18 @@ public class Contract {
         throw new IllegalStateException(MESSAGE);
     }
 
+    // TODO: add validation that ensures that this method is used inside invariants only
+    /**
+     * Specifies class invariant. Can be used inside invariant methods only.
+     * 
+     * @param condition condition
+     * @see Invariant
+     */
+    public static void invariant(boolean condition) {
+        throw new IllegalStateException(MESSAGE);
+    }
+
+    // TODO: add validation that those methods are called only in contract context
     /**
      * Specifies that given predicate must be true for all objects in given array.
      * 

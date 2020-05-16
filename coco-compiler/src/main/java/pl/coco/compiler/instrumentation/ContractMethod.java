@@ -6,21 +6,15 @@ import pl.coco.compiler.instrumentation.invocation.SimpleMethodInvocation;
 
 public enum ContractMethod {
 
-    REQUIRES("requires", ContractMethod.API_CLASS_NAME, ContractMethod.INTERNAL_CLASS_NAME),
-    ENSURES("ensures", ContractMethod.API_CLASS_NAME, ContractMethod.INTERNAL_CLASS_NAME),
-    RESULT("result", ContractMethod.API_CLASS_NAME, ContractMethod.INTERNAL_CLASS_NAME);
+    REQUIRES("requires"), ENSURES("ensures"), RESULT("result"), INVARIANT("invariant");
 
     private static final String API_CLASS_NAME = "pl.coco.api.Contract";
     private static final String INTERNAL_CLASS_NAME = "pl.coco.internal.ContractEngine";
 
     private String methodName;
-    private String apiClassName;
-    private String internalClassName;
 
-    ContractMethod(String methodName, String apiClassName, String internalClassName) {
+    ContractMethod(String methodName) {
         this.methodName = methodName;
-        this.apiClassName = apiClassName;
-        this.internalClassName = internalClassName;
     }
 
     public static Optional<ContractMethod> of(SimpleMethodInvocation invocation) {
@@ -33,24 +27,23 @@ public enum ContractMethod {
         if (isContractMethodInvocation(invocation, RESULT)) {
             return Optional.of(RESULT);
         }
+        if (isContractMethodInvocation(invocation, INVARIANT)) {
+            return Optional.of(INVARIANT);
+        }
         return Optional.empty();
     }
 
     private static boolean isContractMethodInvocation(SimpleMethodInvocation invocation,
             ContractMethod method) {
 
-        return invocation.isMethodInvocationOf(method.getApiClassName(), method.getMethodName());
+        return invocation.isMethodInvocationOf(API_CLASS_NAME, method.getMethodName());
     }
 
     public String getMethodName() {
         return methodName;
     }
 
-    public String getApiClassName() {
-        return apiClassName;
-    }
-
     public String getInternalClassName() {
-        return internalClassName;
+        return INTERNAL_CLASS_NAME;
     }
 }
