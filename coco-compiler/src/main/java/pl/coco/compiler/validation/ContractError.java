@@ -14,7 +14,19 @@ public enum ContractError {
                     " (Contract.ensures(...)) in non-void methods"),
 
     RESULT_TYPE_MUST_MATCH_METHOD_TYPE(
-            "Contract.result(...) type must match containing method return type");
+            "Contract.result(...) type must match containing method return type"),
+
+    INVARIANT_CAN_OCCUR_IN_INVARIANT_METHODS_ONLY(
+            "Contract.invariant(...) can occur in invariant methods only"),
+
+    MULTIPLE_INVARIANT_METHODS_IN_THE_SAME_CLASS(
+            "There can be at most one invariant method in a class"),
+
+    BAD_INVARIANT_METHOD_TYPE(
+            "Invariant type must have the following signature: void()"),
+
+    CONTRACT_STATEMENT_OUTSIDE_OF_CONTRACTS(
+            "This statement can be used inside other contract statements only");
 
     private final String message;
 

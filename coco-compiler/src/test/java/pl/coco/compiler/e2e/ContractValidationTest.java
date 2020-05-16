@@ -260,4 +260,195 @@ class ContractValidationTest {
 
         assertThat(actual).isEqualTo(42);
     }
+
+    @DisplayName("Compilation error when Contract.invariant is used outside of invariant method")
+    @Test
+    void shouldProduceErrorWhenInvariantIsUsedOutsideInvariantMethod() {
+
+        String code = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Test {\n"
+                + "\n"
+                + "    public static int entry() {\n"
+                + "        return testedMethod(1, true);\n"
+                + "    }\n"
+                + "\n"
+                + "    public static int testedMethod(int arg, boolean flag) {\n"
+                + "        Contract.invariant(arg == 1);\n"
+                + "        return 42;\n"
+                + "    }\n"
+                + "}\n";
+
+        Throwable thrown = catchThrowable(
+                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+
+        assertThat(thrown)
+                .isInstanceOf(CompilationFailedException.class)
+                .hasMessageContaining(
+                        ContractError.INVARIANT_CAN_OCCUR_IN_INVARIANT_METHODS_ONLY.getMessage());
+    }
+
+    @DisplayName("Compilation error when there are multiple invariant methods in the class")
+    @Test
+    void shouldProduceErrorWhenThereIsMoreThanOneInvariantMethodInClass() {
+
+        String code = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Invariant;\n"
+                + "\n"
+                + "public class Test {\n"
+                + "\n"
+                + "    public static void entry() {\n"
+                + "    }\n"
+                + "\n"
+                + "    @Invariant\n"
+                + "    private void invariant1() {\n"
+                + "    }\n"
+                + "\n"
+                + "    @Invariant\n"
+                + "    private void invariant2() {\n"
+                + "    }\n"
+                + "}\n";
+
+        Throwable thrown = catchThrowable(
+                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+
+        assertThat(thrown)
+                .isInstanceOf(CompilationFailedException.class)
+                .hasMessageContaining(
+                        ContractError.MULTIPLE_INVARIANT_METHODS_IN_THE_SAME_CLASS.getMessage());
+    }
+
+    @DisplayName("Compilation error when invariant method has wrong signature")
+    @Test
+    void shouldProduceErrorWhenInvariantMethodHasWrongSignature() {
+
+        String code = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Invariant;\n"
+                + "\n"
+                + "public class Test {\n"
+                + "\n"
+                + "    public static void entry() {\n"
+                + "    }\n"
+                + "\n"
+                + "    @Invariant\n"
+                + "    private void invariant1(String arg) {\n"
+                + "    }\n"
+                + "\n"
+
+                + "}\n";
+
+        Throwable thrown = catchThrowable(
+                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+
+        assertThat(thrown)
+                .isInstanceOf(CompilationFailedException.class)
+                .hasMessageContaining(
+                        ContractError.BAD_INVARIANT_METHOD_TYPE.getMessage());
+    }
+
+    @DisplayName("Compilation error when Contract.forAll(array, pred) is used outside of contracts")
+    @Test
+    void shouldProduceErrorWhenForAllArrayIsUsedOutsideOfContract() {
+
+        String code = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Test {\n"
+                + "\n"
+                + "    public static void entry() {\n"
+                + "        Contract.forAll(new Object[0] {}, x -> true);\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        Throwable thrown = catchThrowable(
+                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+
+        assertThat(thrown)
+                .isInstanceOf(CompilationFailedException.class)
+                .hasMessageContaining(
+                        ContractError.CONTRACT_STATEMENT_OUTSIDE_OF_CONTRACTS.getMessage());
+    }
+
+    @DisplayName("Compilation error when Contract.forAll(iter, pred) is used outside of contracts")
+    @Test
+    void shouldProduceErrorWhenForAllIterIsUsedOutsideOfContract() {
+
+        String code = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import java.util.Collections;\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Test {\n"
+                + "\n"
+                + "    public static void entry() {\n"
+                + "        Contract.forAll(Collections.emptyList(), x -> true);\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        Throwable thrown = catchThrowable(
+                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+
+        assertThat(thrown)
+                .isInstanceOf(CompilationFailedException.class)
+                .hasMessageContaining(
+                        ContractError.CONTRACT_STATEMENT_OUTSIDE_OF_CONTRACTS.getMessage());
+    }
+
+    @DisplayName("Compilation error when Contract.exists(arr, pred) is used outside of contracts")
+    @Test
+    void shouldProduceErrorWhenExistsArrayIsUsedOutsideOfContracts() {
+
+        String code = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Test {\n"
+                + "\n"
+                + "    public static void entry() {\n"
+                + "        Contract.exists(new Object[0] {}, x -> true);\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        Throwable thrown = catchThrowable(
+                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+
+        assertThat(thrown)
+                .isInstanceOf(CompilationFailedException.class)
+                .hasMessageContaining(
+                        ContractError.CONTRACT_STATEMENT_OUTSIDE_OF_CONTRACTS.getMessage());
+    }
+
+    @DisplayName("Compilation error when Contract.exists(iter, pred) is used outside of contracts")
+    @Test
+    void shouldProduceErrorWhenExistsIterIsUsedOutsideOfContracts() {
+
+        String code = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import java.util.Collections;\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Test {\n"
+                + "\n"
+                + "    public static void entry() {\n"
+                + "        Contract.exists(Collections.emptyList(), x -> true);\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        Throwable thrown = catchThrowable(
+                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+
+        assertThat(thrown)
+                .isInstanceOf(CompilationFailedException.class)
+                .hasMessageContaining(
+                        ContractError.CONTRACT_STATEMENT_OUTSIDE_OF_CONTRACTS.getMessage());
+    }
 }
