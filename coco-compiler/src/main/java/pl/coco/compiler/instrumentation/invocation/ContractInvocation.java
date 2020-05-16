@@ -39,6 +39,6 @@ public class ContractInvocation extends SimpleMethodInvocation {
     }
 
     public boolean canOccurInsideContractSpecificationOnly() {
-        return contractMethod == ContractMethod.FORALL || contractMethod == ContractMethod.EXISTS;
+        return contractMethod == ContractMethod.FOR_ALL || contractMethod == ContractMethod.EXISTS;
     }
 }
