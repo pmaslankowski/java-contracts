@@ -1,6 +1,5 @@
-package pl.coco.compiler.validation;
+package pl.coco.compiler.validation.result;
 
-import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 import com.sun.tools.javac.tree.JCTree.JCMethodInvocation;
 import com.sun.tools.javac.tree.TreeScanner;
 
@@ -8,17 +7,20 @@ import pl.coco.compiler.instrumentation.ContractMethod;
 import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
 import pl.coco.compiler.util.AstUtil;
 import pl.coco.compiler.util.ContractAstUtil;
+import pl.coco.compiler.validation.ContractError;
+import pl.coco.compiler.validation.ErrorProducer;
+import pl.coco.compiler.validation.ValidationInput;
 
 public class ContractResultValidator extends TreeScanner {
 
     private final ErrorProducer errorProducer;
+    private final ValidationInput input;
 
     private boolean isInsideEnsuresCall = false;
-    private boolean isNonVoidMethod;
 
-    public ContractResultValidator(ErrorProducer errorProducer, JCMethodDecl method) {
+    public ContractResultValidator(ErrorProducer errorProducer, ValidationInput input) {
         this.errorProducer = errorProducer;
-        this.isNonVoidMethod = !AstUtil.isVoid(method);
+        this.input = input;
     }
 
     @Override
@@ -39,7 +41,7 @@ public class ContractResultValidator extends TreeScanner {
         if (!isResultCallAllowed()) {
             errorProducer.raiseError(
                     ContractError.RESULT_CAN_BE_PLACED_INSIDE_ENSURES_IN_NON_VOID_METHODS_ONLY,
-                    invocation);
+                    invocation, input.getCompilationUnit());
         }
         super.visitApply(invocation);
     }
@@ -51,6 +53,6 @@ public class ContractResultValidator extends TreeScanner {
     }
 
     private boolean isResultCallAllowed() {
-        return isNonVoidMethod && isInsideEnsuresCall;
+        return !AstUtil.isVoid(input.getMethod()) && isInsideEnsuresCall;
     }
 }

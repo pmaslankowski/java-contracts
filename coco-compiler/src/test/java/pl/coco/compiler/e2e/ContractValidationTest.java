@@ -235,4 +235,29 @@ class ContractValidationTest {
                 .hasMessageContaining(
                         ContractError.RESULT_TYPE_MUST_MATCH_METHOD_TYPE.getMessage());
     }
+
+    @DisplayName("No compilation errors when Contract.result matches boxed method type")
+    @Test
+    void shouldNotProduceErrorWhenResultTypeMatchesBoxedType() throws Throwable {
+
+        String code = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Contract;\n"
+                + "\n"
+                + "public class Test {\n"
+                + "\n"
+                + "    public static int entry() {\n"
+                + "        return testedMethod(1, true);\n"
+                + "    }\n"
+                + "\n"
+                + "    public static int testedMethod(int arg, boolean flag) {\n"
+                + "        Contract.ensures(Contract.result(Integer.class) == 42);\n"
+                + "        return 42;\n"
+                + "    }\n"
+                + "}\n";
+
+        Object actual = JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code);
+
+        assertThat(actual).isEqualTo(42);
+    }
 }

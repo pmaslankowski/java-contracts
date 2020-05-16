@@ -5,6 +5,7 @@ import com.google.inject.Provides;
 import com.sun.source.util.JavacTask;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.api.JavacTaskImpl;
+import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.comp.Resolve;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Names;
@@ -54,5 +55,10 @@ public class CocoModule extends AbstractModule {
     @Provides
     Trees trees(JavacTaskImpl taskImpl) {
         return Trees.instance(taskImpl);
+    }
+
+    @Provides
+    Types types(JavacTaskImpl taskImpl) {
+        return Types.instance(taskImpl.getContext());
     }
 }

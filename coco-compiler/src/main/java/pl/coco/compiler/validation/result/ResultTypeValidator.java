@@ -1,26 +1,32 @@
-package pl.coco.compiler.validation;
+package pl.coco.compiler.validation.result;
 
 import java.util.List;
 
 import com.sun.source.tree.ExpressionTree;
 import com.sun.tools.javac.code.Type;
+import com.sun.tools.javac.code.Type.ClassType;
+import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
-import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 import com.sun.tools.javac.tree.JCTree.JCMethodInvocation;
 import com.sun.tools.javac.tree.TreeScanner;
 
 import pl.coco.compiler.instrumentation.ContractMethod;
 import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
 import pl.coco.compiler.util.ContractAstUtil;
+import pl.coco.compiler.validation.ContractError;
+import pl.coco.compiler.validation.ErrorProducer;
+import pl.coco.compiler.validation.ValidationInput;
 
 public class ResultTypeValidator extends TreeScanner {
 
     private final ErrorProducer errorProducer;
-    private final JCMethodDecl containingMethod;
+    private final ValidationInput input;
+    private final Types types;
 
-    public ResultTypeValidator(ErrorProducer errorProducer, JCMethodDecl containingMethod) {
+    public ResultTypeValidator(ErrorProducer errorProducer, ValidationInput input, Types types) {
         this.errorProducer = errorProducer;
-        this.containingMethod = containingMethod;
+        this.input = input;
+        this.types = types;
     }
 
     @Override
@@ -34,7 +40,7 @@ public class ResultTypeValidator extends TreeScanner {
                 if (doesResultTypeMatchMethodType(resultType)) {
 
                     errorProducer.raiseError(ContractError.RESULT_TYPE_MUST_MATCH_METHOD_TYPE,
-                            resultType);
+                            resultType, input.getCompilationUnit());
                 }
             }
         }
@@ -42,8 +48,15 @@ public class ResultTypeValidator extends TreeScanner {
     }
 
     private boolean doesResultTypeMatchMethodType(JCExpression typeMarker) {
-        Type.ClassType classType = (Type.ClassType) typeMarker.type;
-        Type actualType = classType.getTypeArguments().get(0);
-        return !actualType.equals(containingMethod.getReturnType().type);
+        ClassType classType = (ClassType) typeMarker.type;
+        Type resultType = classType.getTypeArguments().get(0);
+        Type methodType = input.getMethod().getReturnType().type;
+        Type boxedMethodType = types.boxedTypeOrType(methodType);
+        return !typesEqual(resultType, boxedMethodType);
     }
+
+    private boolean typesEqual(Type type1, Type type2) {
+        return type1.tsym.flatName().contentEquals(type2.tsym.flatName());
+    }
+
 }

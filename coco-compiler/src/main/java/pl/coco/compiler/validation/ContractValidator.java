@@ -1,42 +1,51 @@
 package pl.coco.compiler.validation;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
+import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.StatementTree;
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 
 import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
-import pl.coco.compiler.instrumentation.synthetic.MethodInput;
 import pl.coco.compiler.util.AstUtil;
 import pl.coco.compiler.util.CollectionUtils;
 import pl.coco.compiler.util.ContractAstUtil;
+import pl.coco.compiler.validation.result.ContractResultValidator;
+import pl.coco.compiler.validation.result.ContractResultValidatorFactory;
+import pl.coco.compiler.validation.result.ResultTypeValidator;
+import pl.coco.compiler.validation.result.ResultTypeValidatorFactory;
 
 public class ContractValidator {
 
     private final ErrorProducer errorProducer;
-    private final ContractResultValidator resultValidator;
-    private final ResultTypeValidator resultTypeValidator;
+    private final ContractResultValidatorFactory resultValidatorFactory;
+    private final ResultTypeValidatorFactory resultTypeValidatorFactory;
 
     @Inject
-    public ContractValidator(ErrorProducer errorProducer, ContractResultValidator resultValidator,
-            ResultTypeValidator resultTypeValidator) {
+    public ContractValidator(ErrorProducer errorProducer,
+            ContractResultValidatorFactory resultValidatorFactory,
+            ResultTypeValidatorFactory resultTypeValidatorFactory) {
         this.errorProducer = errorProducer;
-        this.resultValidator = resultValidator;
-        this.resultTypeValidator = resultTypeValidator;
+        this.resultValidatorFactory = resultValidatorFactory;
+        this.resultTypeValidatorFactory = resultTypeValidatorFactory;
     }
 
-    public int validate(MethodInput input) {
+    public boolean isValid(ValidationInput input) {
+        if (doesContainContracts(input.getMethod())) {
+            return areContractsValid(input);
+        }
+        return true;
+    }
 
-        JCMethodDecl method = (JCMethodDecl) input.getMethod();
-        if (doesContainContracts(method)) {
+    private boolean areContractsValid(ValidationInput input) {
+        try {
             checkIfAllContractsAreInOneBlockAtTheBeginningOfMethod(input);
             checkIfResultOccursInsideEnsuresInNonVoidMethodsOnly(input);
             checkIfResultTypeMatchesMethodType(input);
-            return errorProducer.getErrorCount();
+            return true;
+        } catch (ContractValidationException e) {
+            return false;
         }
-        return 0;
     }
 
     private boolean doesContainContracts(JCMethodDecl method) {
@@ -44,37 +53,42 @@ public class ContractValidator {
                 .anyMatch(ContractAstUtil::isContractInvocation);
     }
 
-    private void checkIfAllContractsAreInOneBlockAtTheBeginningOfMethod(MethodInput input) {
-        JCMethodDecl method = (JCMethodDecl) input.getMethod();
-        List<? extends StatementTree> stmts = method.getBody().getStatements();
+    private void checkIfAllContractsAreInOneBlockAtTheBeginningOfMethod(ValidationInput input) {
 
         int firstContractIdx = CollectionUtils.getIndexOfFirstElementMatchingPredicate(
-                stmts, this::isContractThatMustBeAtTheMethodBeginning);
+                input.getStatements(), this::isContractThatMustBeAtTheMethodBeginning);
         int lastContractIdx = CollectionUtils.getIndexOfLastElementMatchingPredicate(
-                stmts, this::isContractThatMustBeAtTheMethodBeginning);
+                input.getStatements(), this::isContractThatMustBeAtTheMethodBeginning);
 
-        checkIfFirstContractIsAtTheBeginningOfAMethod(method, stmts, firstContractIdx);
-        checkIfContractBlockContainContractsOnly(stmts, firstContractIdx, lastContractIdx);
+        checkIfFirstContractIsAtTheBeginningOfAMethod(input, firstContractIdx);
+        checkIfContractBlockContainContractsOnly(input, firstContractIdx, lastContractIdx);
     }
 
-    private void checkIfFirstContractIsAtTheBeginningOfAMethod(JCMethodDecl method,
-            List<? extends StatementTree> statements, int firstContractIdx) {
+    private void checkIfFirstContractIsAtTheBeginningOfAMethod(ValidationInput input,
+            int firstContractIdx) {
 
-        if (firstContractIdx != 0 && !(AstUtil.isConstructor(method) && firstContractIdx == 1)) {
+        boolean isContractFirstStatement = firstContractIdx == 0;
+        boolean isContractSecondStatementInConstructor =
+                AstUtil.isConstructor(input.getMethod()) && firstContractIdx == 1;
+
+        if (!isContractFirstStatement && !isContractSecondStatementInConstructor) {
+            StatementTree offending = input.getStatements().get(firstContractIdx);
+            CompilationUnitTree compilationUnit = input.getCompilationUnit();
             errorProducer.raiseError(
                     ContractError.CONTRACT_CAN_OCCUR_IN_BLOCK_AT_THE_BEGINNING_OF_THE_METHOD,
-                    statements.get(firstContractIdx));
+                    offending, compilationUnit);
         }
     }
 
-    private void checkIfContractBlockContainContractsOnly(List<? extends StatementTree> statements,
+    private void checkIfContractBlockContainContractsOnly(ValidationInput input,
             int firstContractIdx, int lastContractIdx) {
 
         for (int i = firstContractIdx; i < lastContractIdx; i++) {
-            StatementTree statement = statements.get(i);
+            StatementTree statement = input.getStatements().get(i);
+            CompilationUnitTree compilationUnit = input.getCompilationUnit();
             if (!isContractThatMustBeAtTheMethodBeginning(statement)) {
                 errorProducer.raiseError(ContractError.CONTRACT_BLOCK_CAN_CONTAIN_ONLY_CONTRACTS,
-                        statement);
+                        statement, compilationUnit);
             }
         }
     }
@@ -87,13 +101,15 @@ public class ContractValidator {
         return false;
     }
 
-    private void checkIfResultOccursInsideEnsuresInNonVoidMethodsOnly(MethodInput input) {
-        JCMethodDecl method = (JCMethodDecl) input.getMethod();
-        method.accept(resultValidator);
+    private void checkIfResultOccursInsideEnsuresInNonVoidMethodsOnly(ValidationInput input) {
+        JCMethodDecl method = input.getMethod();
+        ContractResultValidator validator = resultValidatorFactory.create(input);
+        method.accept(validator);
     }
 
-    private void checkIfResultTypeMatchesMethodType(MethodInput input) {
-        JCMethodDecl method = (JCMethodDecl) input.getMethod();
-        method.accept(resultTypeValidator);
+    private void checkIfResultTypeMatchesMethodType(ValidationInput input) {
+        JCMethodDecl method = input.getMethod();
+        ResultTypeValidator validator = resultTypeValidatorFactory.create(input);
+        method.accept(validator);
     }
 }
