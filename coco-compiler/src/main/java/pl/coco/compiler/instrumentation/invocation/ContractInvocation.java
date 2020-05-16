@@ -6,7 +6,6 @@ import pl.coco.compiler.instrumentation.ContractMethod;
 
 public class ContractInvocation extends SimpleMethodInvocation {
 
-    // TODO: get rid of this type marker - change it to other subclass
     private final ContractMethod contractMethod;
 
     private ContractInvocation(SimpleMethodInvocation invocation,
@@ -24,21 +23,5 @@ public class ContractInvocation extends SimpleMethodInvocation {
 
     public ContractMethod getContractMethod() {
         return contractMethod;
-    }
-
-    // TODO: przenieść wszystkie te metody do enuma ContractMethod
-    public boolean canOccurAtTheBeginningOfTheMethodOnly() {
-        return contractMethod == ContractMethod.ENSURES
-                || contractMethod == ContractMethod.REQUIRES
-                || contractMethod == ContractMethod.INVARIANT;
-    }
-
-    public boolean isContractSpecification() {
-        return contractMethod == ContractMethod.ENSURES || contractMethod == ContractMethod.REQUIRES
-                || contractMethod == ContractMethod.INVARIANT;
-    }
-
-    public boolean canOccurInsideContractSpecificationOnly() {
-        return contractMethod == ContractMethod.FOR_ALL || contractMethod == ContractMethod.EXISTS;
     }
 }

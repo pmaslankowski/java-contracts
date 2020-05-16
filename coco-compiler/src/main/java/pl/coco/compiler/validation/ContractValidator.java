@@ -8,6 +8,7 @@ import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.StatementTree;
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 
+import pl.coco.compiler.instrumentation.ContractMethod;
 import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
 import pl.coco.compiler.util.AstUtil;
 import pl.coco.compiler.util.CollectionUtils;
@@ -109,7 +110,8 @@ public class ContractValidator {
     private boolean isContractThatMustBeAtTheMethodBeginning(StatementTree statement) {
         if (ContractAstUtil.isContractInvocation(statement)) {
             ContractInvocation contract = ContractAstUtil.getContractInvocation(statement);
-            return contract.canOccurAtTheBeginningOfTheMethodOnly();
+            ContractMethod contractMethod = contract.getContractMethod();
+            return contractMethod.canOccurAtTheBeginningOfTheMethodOnly();
         }
         return false;
     }

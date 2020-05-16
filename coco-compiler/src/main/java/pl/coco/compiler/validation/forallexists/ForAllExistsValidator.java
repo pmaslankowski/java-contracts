@@ -3,6 +3,7 @@ package pl.coco.compiler.validation.forallexists;
 import com.sun.tools.javac.tree.JCTree.JCMethodInvocation;
 import com.sun.tools.javac.tree.TreeScanner;
 
+import pl.coco.compiler.instrumentation.ContractMethod;
 import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.validation.ContractError;
@@ -25,13 +26,15 @@ public class ForAllExistsValidator extends TreeScanner {
     public void visitApply(JCMethodInvocation invocation) {
         if (ContractAstUtil.isContractInvocation(invocation)) {
             ContractInvocation contract = ContractAstUtil.getContractInvocation(invocation);
-            if (contract.isContractSpecification()) {
+            ContractMethod contractMethod = contract.getContractMethod();
+            if (contractMethod.isContractSpecification()) {
                 handleContractSpecification(invocation);
+            } else {
+                if (contractMethod.canOccurInsideSpecificationOnly()) {
+                    checkIfContractIsInsideSpecification(invocation);
+                }
+                super.visitApply(invocation);
             }
-            if (contract.canOccurInsideContractSpecificationOnly()) {
-                checkIfContractIsInsideSpecification(invocation);
-            }
-            super.visitApply(invocation);
         }
     }
 
