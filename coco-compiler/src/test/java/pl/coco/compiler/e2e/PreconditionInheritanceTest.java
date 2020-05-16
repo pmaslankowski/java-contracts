@@ -315,7 +315,6 @@ class PreconditionInheritanceTest {
 
         Throwable thrown = catchThrowable(() -> run(compiled));
 
-        // TODO: check message
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class);
     }
@@ -467,7 +466,6 @@ class PreconditionInheritanceTest {
 
         Throwable thrown = catchThrowable(() -> run(compiled));
 
-        // TODO: check message
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class);
     }
@@ -568,7 +566,6 @@ class PreconditionInheritanceTest {
 
         Throwable thrown = catchThrowable(() -> run(compiled));
 
-        // TODO: check message
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class);
     }

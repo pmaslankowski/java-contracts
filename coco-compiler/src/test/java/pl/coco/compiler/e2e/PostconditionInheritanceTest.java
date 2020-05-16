@@ -119,7 +119,6 @@ class PostconditionInheritanceTest {
 
         Throwable thrown = catchThrowable(() -> run(compiled));
 
-        // TODO: check message
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class);
     }
@@ -219,7 +218,6 @@ class PostconditionInheritanceTest {
 
         Throwable thrown = catchThrowable(() -> run(compiled));
 
-        // TODO: check message
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class);
     }
@@ -272,7 +270,6 @@ class PostconditionInheritanceTest {
 
         Throwable thrown = catchThrowable(() -> run(compiled));
 
-        // TODO: check message
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class);
     }
@@ -322,7 +319,6 @@ class PostconditionInheritanceTest {
 
         Throwable thrown = catchThrowable(() -> run(compiled));
 
-        // TODO: check message
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class);
     }
@@ -374,7 +370,6 @@ class PostconditionInheritanceTest {
 
         Throwable thrown = catchThrowable(() -> run(compiled));
 
-        // TODO: check message
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class);
     }
@@ -426,7 +421,6 @@ class PostconditionInheritanceTest {
 
         Throwable thrown = catchThrowable(() -> run(compiled));
 
-        // TODO: check message
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class);
     }
