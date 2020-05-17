@@ -322,7 +322,6 @@ class ContractValidationTest {
                         ContractError.MULTIPLE_INVARIANT_METHODS_IN_THE_SAME_CLASS.getMessage());
     }
 
-    @Disabled
     @DisplayName("Compilation error when invariant method has wrong signature")
     @Test
     void shouldProduceErrorWhenInvariantMethodHasWrongSignature() {
@@ -349,7 +348,7 @@ class ContractValidationTest {
         assertThat(thrown)
                 .isInstanceOf(CompilationFailedException.class)
                 .hasMessageContaining(
-                        ContractError.BAD_INVARIANT_METHOD_TYPE.getMessage());
+                        ContractError.BAD_INVARIANT_METHOD_SIGNATURE.getMessage());
     }
 
     @DisplayName("Compilation error when Contract.forAll(array, pred) is used outside of contracts")

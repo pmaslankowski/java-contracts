@@ -5,18 +5,18 @@ import javax.inject.Singleton;
 
 import com.sun.tools.javac.tree.JCTree.JCClassDecl;
 
-import pl.coco.compiler.validation.invariant.UniqueInvariantMethodValidator;
-import pl.coco.compiler.validation.invariant.UniqueInvariantMethodValidatorFactory;
+import pl.coco.compiler.validation.invariant.InvariantMethodValidator;
+import pl.coco.compiler.validation.invariant.InvariantMethodValidatorFactory;
 
 @Singleton
 public class ContractClassValidator {
 
-    private final UniqueInvariantMethodValidatorFactory uniqueInvariantMethodValidatorFactory;
+    private final InvariantMethodValidatorFactory invariantMethodValidatorFactory;
 
     @Inject
     public ContractClassValidator(
-            UniqueInvariantMethodValidatorFactory uniqueInvariantMethodValidatorFactory) {
-        this.uniqueInvariantMethodValidatorFactory = uniqueInvariantMethodValidatorFactory;
+            InvariantMethodValidatorFactory invariantMethodValidatorFactory) {
+        this.invariantMethodValidatorFactory = invariantMethodValidatorFactory;
     }
 
     public boolean isValid(ClassValidationInput input) {
@@ -31,8 +31,8 @@ public class ContractClassValidator {
     private void checkIfInvariantMethodsAreUnique(ClassValidationInput input) {
 
         JCClassDecl clazz = input.getClazz();
-        UniqueInvariantMethodValidator validator =
-                uniqueInvariantMethodValidatorFactory.create(input);
+        InvariantMethodValidator validator =
+                invariantMethodValidatorFactory.create(input);
         clazz.accept(validator);
     }
 }

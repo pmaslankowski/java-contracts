@@ -22,7 +22,7 @@ public enum ContractError {
     MULTIPLE_INVARIANT_METHODS_IN_THE_SAME_CLASS(
             "There can be at most one invariant method in a class"),
 
-    BAD_INVARIANT_METHOD_TYPE(
+    BAD_INVARIANT_METHOD_SIGNATURE(
             "Invariant type must have the following signature: void()"),
 
     CONTRACT_STATEMENT_OUTSIDE_OF_CONTRACTS(
