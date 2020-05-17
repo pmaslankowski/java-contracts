@@ -6,7 +6,7 @@ import javax.inject.Singleton;
 import com.sun.tools.javac.code.Types;
 
 import pl.coco.compiler.validation.ErrorProducer;
-import pl.coco.compiler.validation.ValidationInput;
+import pl.coco.compiler.validation.MethodValidationInput;
 
 @Singleton
 public class ResultTypeValidatorFactory {
@@ -20,7 +20,7 @@ public class ResultTypeValidatorFactory {
         this.types = types;
     }
 
-    public ResultTypeValidator create(ValidationInput input) {
+    public ResultTypeValidator create(MethodValidationInput input) {
         return new ResultTypeValidator(errorProducer, input, types);
     }
 }

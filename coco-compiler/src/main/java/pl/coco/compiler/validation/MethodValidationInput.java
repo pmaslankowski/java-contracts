@@ -9,20 +9,21 @@ import com.sun.source.tree.StatementTree;
 
 import pl.coco.compiler.instrumentation.synthetic.MethodInput;
 
-public class ValidationInput {
+public class MethodValidationInput {
 
     private final CompilationUnitTree compilationUnit;
     private final JCMethodDecl method;
     private final List<? extends StatementTree> statements;
 
-    public ValidationInput(CompilationUnitTree compilationUnit, JCMethodDecl method) {
+    public MethodValidationInput(CompilationUnitTree compilationUnit, JCMethodDecl method) {
         this.compilationUnit = compilationUnit;
         this.method = method;
         this.statements = method.getBody().getStatements();
     }
 
-    public static ValidationInput of(MethodInput input) {
-        return new ValidationInput(input.getCompilationUnit(), (JCMethodDecl) input.getMethod());
+    public static MethodValidationInput of(MethodInput input) {
+        return new MethodValidationInput(input.getCompilationUnit(),
+                (JCMethodDecl) input.getMethod());
     }
 
     public CompilationUnitTree getCompilationUnit() {
@@ -36,4 +37,5 @@ public class ValidationInput {
     public List<? extends StatementTree> getStatements() {
         return statements;
     }
+
 }

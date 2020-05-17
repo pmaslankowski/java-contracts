@@ -8,16 +8,16 @@ import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.validation.ContractError;
 import pl.coco.compiler.validation.ErrorProducer;
-import pl.coco.compiler.validation.ValidationInput;
+import pl.coco.compiler.validation.MethodValidationInput;
 
 public class ForAllExistsValidator extends TreeScanner {
 
     private final ErrorProducer errorProducer;
-    private final ValidationInput input;
+    private final MethodValidationInput input;
 
     private boolean isInsideSpecification = false;
 
-    public ForAllExistsValidator(ErrorProducer errorProducer, ValidationInput input) {
+    public ForAllExistsValidator(ErrorProducer errorProducer, MethodValidationInput input) {
         this.errorProducer = errorProducer;
         this.input = input;
     }

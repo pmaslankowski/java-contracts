@@ -15,15 +15,15 @@ import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.validation.ContractError;
 import pl.coco.compiler.validation.ErrorProducer;
-import pl.coco.compiler.validation.ValidationInput;
+import pl.coco.compiler.validation.MethodValidationInput;
 
 public class ResultTypeValidator extends TreeScanner {
 
     private final ErrorProducer errorProducer;
-    private final ValidationInput input;
+    private final MethodValidationInput input;
     private final Types types;
 
-    public ResultTypeValidator(ErrorProducer errorProducer, ValidationInput input, Types types) {
+    public ResultTypeValidator(ErrorProducer errorProducer, MethodValidationInput input, Types types) {
         this.errorProducer = errorProducer;
         this.input = input;
         this.types = types;

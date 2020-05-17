@@ -3,7 +3,7 @@ package pl.coco.compiler.validation.forallexists;
 import javax.inject.Inject;
 
 import pl.coco.compiler.validation.ErrorProducer;
-import pl.coco.compiler.validation.ValidationInput;
+import pl.coco.compiler.validation.MethodValidationInput;
 
 public class ForAllExistsValidatorFactory {
 
@@ -14,7 +14,7 @@ public class ForAllExistsValidatorFactory {
         this.errorProducer = errorProducer;
     }
 
-    public ForAllExistsValidator create(ValidationInput input) {
+    public ForAllExistsValidator create(MethodValidationInput input) {
         return new ForAllExistsValidator(errorProducer, input);
     }
 }

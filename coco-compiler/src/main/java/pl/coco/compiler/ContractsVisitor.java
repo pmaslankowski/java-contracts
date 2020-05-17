@@ -11,8 +11,9 @@ import com.sun.source.util.TreeScanner;
 import pl.coco.compiler.instrumentation.ContractProcessor;
 import pl.coco.compiler.instrumentation.ContractScanner;
 import pl.coco.compiler.instrumentation.synthetic.MethodInput;
+import pl.coco.compiler.validation.ClassValidationInput;
 import pl.coco.compiler.validation.ContractValidator;
-import pl.coco.compiler.validation.ValidationInput;
+import pl.coco.compiler.validation.MethodValidationInput;
 
 @Singleton
 public class ContractsVisitor extends TreeScanner<Void, Void> {
@@ -41,7 +42,12 @@ public class ContractsVisitor extends TreeScanner<Void, Void> {
     @Override
     public Void visitClass(ClassTree clazz, Void aVoid) {
         this.clazz = clazz;
-        return super.visitClass(clazz, aVoid);
+
+        if (validator.isClassValid(new ClassValidationInput(compilationUnit, clazz))) {
+            return super.visitClass(clazz, aVoid);
+        }
+
+        return null;
     }
 
     @Override
@@ -52,7 +58,7 @@ public class ContractsVisitor extends TreeScanner<Void, Void> {
                 .withMethod(method)
                 .build();
 
-        if (!validator.isValid(ValidationInput.of(input))) {
+        if (!validator.isMethodValid(MethodValidationInput.of(input))) {
             return super.visitMethod(method, aVoid);
         }
 

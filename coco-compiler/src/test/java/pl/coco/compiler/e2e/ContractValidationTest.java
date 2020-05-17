@@ -292,7 +292,6 @@ class ContractValidationTest {
                         ContractError.INVARIANT_CAN_OCCUR_IN_INVARIANT_METHODS_ONLY.getMessage());
     }
 
-    @Disabled
     @DisplayName("Compilation error when there are multiple invariant methods in the class")
     @Test
     void shouldProduceErrorWhenThereIsMoreThanOneInvariantMethodInClass() {

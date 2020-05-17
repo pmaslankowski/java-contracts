@@ -4,7 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import pl.coco.compiler.validation.ErrorProducer;
-import pl.coco.compiler.validation.ValidationInput;
+import pl.coco.compiler.validation.MethodValidationInput;
 
 @Singleton
 public class ContractResultValidatorFactory {
@@ -16,7 +16,7 @@ public class ContractResultValidatorFactory {
         this.errorProducer = errorProducer;
     }
 
-    public ContractResultValidator create(ValidationInput input) {
+    public ContractResultValidator create(MethodValidationInput input) {
         return new ContractResultValidator(errorProducer, input);
     }
 }
