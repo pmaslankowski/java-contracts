@@ -4,8 +4,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.tools.Diagnostic;
 
-import com.sun.source.tree.CompilationUnitTree;
-import com.sun.source.tree.Tree;
 import com.sun.source.util.Trees;
 
 @Singleton
@@ -18,10 +16,8 @@ public class ErrorProducer {
         this.trees = trees;
     }
 
-    public void raiseError(ContractError error, Tree offending,
-            CompilationUnitTree compilationUnit) {
-
-        trees.printMessage(Diagnostic.Kind.ERROR, error.getMessage(), offending, compilationUnit);
-        throw new ContractValidationException(error);
+    public void produceErrorMessage(ContractValidationException ex) {
+        trees.printMessage(Diagnostic.Kind.ERROR, ex.getMessage(), ex.getOffending(),
+                ex.getCompilationUnit());
     }
 }

@@ -14,33 +14,22 @@ import pl.coco.compiler.util.AstUtil;
 import pl.coco.compiler.util.CollectionUtils;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.validation.forallexists.ForAllExistsValidator;
-import pl.coco.compiler.validation.forallexists.ForAllExistsValidatorFactory;
 import pl.coco.compiler.validation.invariant.InvariantCallValidator;
-import pl.coco.compiler.validation.invariant.InvariantCallValidatorFactory;
 import pl.coco.compiler.validation.result.ContractResultValidator;
-import pl.coco.compiler.validation.result.ContractResultValidatorFactory;
 import pl.coco.compiler.validation.result.ResultTypeValidator;
 import pl.coco.compiler.validation.result.ResultTypeValidatorFactory;
 
 public class ContractMethodValidator {
 
     private final ErrorProducer errorProducer;
-    private final ContractResultValidatorFactory resultValidatorFactory;
     private final ResultTypeValidatorFactory resultTypeValidatorFactory;
-    private final ForAllExistsValidatorFactory forAllExistsValidatorFactory;
-    private final InvariantCallValidatorFactory invariantCallValidatorFactory;
 
     @Inject
     public ContractMethodValidator(ErrorProducer errorProducer,
-            ContractResultValidatorFactory resultValidatorFactory,
-            ResultTypeValidatorFactory resultTypeValidatorFactory,
-            ForAllExistsValidatorFactory forAllExistsValidatorFactory,
-            InvariantCallValidatorFactory invariantCallValidatorFactory) {
+            ResultTypeValidatorFactory resultTypeValidatorFactory) {
+
         this.errorProducer = errorProducer;
-        this.resultValidatorFactory = resultValidatorFactory;
         this.resultTypeValidatorFactory = resultTypeValidatorFactory;
-        this.forAllExistsValidatorFactory = forAllExistsValidatorFactory;
-        this.invariantCallValidatorFactory = invariantCallValidatorFactory;
     }
 
     public boolean isValid(MethodValidationInput input) {
@@ -58,7 +47,8 @@ public class ContractMethodValidator {
             checkIfForAllAndExistsOccursInsideContractSpecificationsOnly(input);
             checkIfInvariantsOccursInsideInvariantMethodsOnly(input);
             return true;
-        } catch (ContractValidationException e) {
+        } catch (ContractValidationException ex) {
+            errorProducer.produceErrorMessage(ex);
             return false;
         }
     }
@@ -95,7 +85,7 @@ public class ContractMethodValidator {
         if (!isContractFirstStatement && !isContractSecondStatementInConstructor) {
             StatementTree offending = input.getStatements().get(firstContractIdx);
             CompilationUnitTree compilationUnit = input.getCompilationUnit();
-            errorProducer.raiseError(
+            throw new ContractValidationException(
                     ContractError.CONTRACT_CAN_OCCUR_IN_BLOCK_AT_THE_BEGINNING_OF_THE_METHOD,
                     offending, compilationUnit);
         }
@@ -108,7 +98,8 @@ public class ContractMethodValidator {
             StatementTree statement = input.getStatements().get(i);
             CompilationUnitTree compilationUnit = input.getCompilationUnit();
             if (!isContractThatMustBeAtTheMethodBeginning(statement)) {
-                errorProducer.raiseError(ContractError.CONTRACT_BLOCK_CAN_CONTAIN_ONLY_CONTRACTS,
+                throw new ContractValidationException(
+                        ContractError.CONTRACT_BLOCK_CAN_CONTAIN_ONLY_CONTRACTS,
                         statement, compilationUnit);
             }
         }
@@ -125,8 +116,7 @@ public class ContractMethodValidator {
 
     private void checkIfResultOccursInsideEnsuresInNonVoidMethodsOnly(MethodValidationInput input) {
         JCMethodDecl method = input.getMethod();
-        ContractResultValidator validator = resultValidatorFactory.create(input);
-        method.accept(validator);
+        method.accept(new ContractResultValidator(input));
     }
 
     private void checkIfResultTypeMatchesMethodType(MethodValidationInput input) {
@@ -139,13 +129,11 @@ public class ContractMethodValidator {
             MethodValidationInput input) {
 
         JCMethodDecl method = input.getMethod();
-        ForAllExistsValidator validator = forAllExistsValidatorFactory.create(input);
-        method.accept(validator);
+        method.accept(new ForAllExistsValidator(input));
     }
 
     private void checkIfInvariantsOccursInsideInvariantMethodsOnly(MethodValidationInput input) {
         JCMethodDecl method = input.getMethod();
-        InvariantCallValidator validator = invariantCallValidatorFactory.create(input);
-        method.accept(validator);
+        method.accept(new InvariantCallValidator(input));
     }
 }

@@ -5,7 +5,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-//TODO: add validation that there is only one invariant method in each class
 /**
  * Annotation specyfying invariant method in a class.
  * <p>

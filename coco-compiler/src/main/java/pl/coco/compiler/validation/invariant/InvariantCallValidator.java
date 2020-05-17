@@ -11,17 +11,14 @@ import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.validation.ContractError;
 import pl.coco.compiler.validation.ContractValidationException;
-import pl.coco.compiler.validation.ErrorProducer;
 import pl.coco.compiler.validation.MethodValidationInput;
 
 public class InvariantCallValidator extends TreeScanner {
 
-    private final ErrorProducer errorProducer;
     private final MethodValidationInput input;
 
     @Inject
-    public InvariantCallValidator(ErrorProducer errorProducer, MethodValidationInput input) {
-        this.errorProducer = errorProducer;
+    public InvariantCallValidator(MethodValidationInput input) {
         this.input = input;
     }
 
@@ -33,11 +30,9 @@ public class InvariantCallValidator extends TreeScanner {
             if (contractMethod == ContractMethod.INVARIANT) {
                 JCMethodDecl enclosingMethod = input.getMethod();
                 if (!ContractAstUtil.isInvariantMethod(enclosingMethod)) {
-                    errorProducer.raiseError(
+                    throw new ContractValidationException(
                             ContractError.INVARIANT_CAN_OCCUR_IN_INVARIANT_METHODS_ONLY, invocation,
                             input.getCompilationUnit());
-                    throw new ContractValidationException(
-                            ContractError.INVARIANT_CAN_OCCUR_IN_INVARIANT_METHODS_ONLY);
                 }
             }
         }

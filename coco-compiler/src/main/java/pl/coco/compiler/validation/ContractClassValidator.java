@@ -6,17 +6,15 @@ import javax.inject.Singleton;
 import com.sun.tools.javac.tree.JCTree.JCClassDecl;
 
 import pl.coco.compiler.validation.invariant.InvariantMethodValidator;
-import pl.coco.compiler.validation.invariant.InvariantMethodValidatorFactory;
 
 @Singleton
 public class ContractClassValidator {
 
-    private final InvariantMethodValidatorFactory invariantMethodValidatorFactory;
+    private final ErrorProducer errorProducer;
 
     @Inject
-    public ContractClassValidator(
-            InvariantMethodValidatorFactory invariantMethodValidatorFactory) {
-        this.invariantMethodValidatorFactory = invariantMethodValidatorFactory;
+    public ContractClassValidator(ErrorProducer errorProducer) {
+        this.errorProducer = errorProducer;
     }
 
     public boolean isValid(ClassValidationInput input) {
@@ -24,15 +22,13 @@ public class ContractClassValidator {
             checkIfInvariantMethodsAreUnique(input);
             return true;
         } catch (ContractValidationException ex) {
+            errorProducer.produceErrorMessage(ex);
             return false;
         }
     }
 
     private void checkIfInvariantMethodsAreUnique(ClassValidationInput input) {
-
         JCClassDecl clazz = input.getClazz();
-        InvariantMethodValidator validator =
-                invariantMethodValidatorFactory.create(input);
-        clazz.accept(validator);
+        clazz.accept(new InvariantMethodValidator(input));
     }
 }
