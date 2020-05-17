@@ -262,7 +262,6 @@ class ContractValidationTest {
         assertThat(actual).isEqualTo(42);
     }
 
-    @Disabled
     @DisplayName("Compilation error when Contract.invariant is used outside of invariant method")
     @Test
     void shouldProduceErrorWhenInvariantIsUsedOutsideInvariantMethod() {

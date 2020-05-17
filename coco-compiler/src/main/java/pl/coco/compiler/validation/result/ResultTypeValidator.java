@@ -14,6 +14,7 @@ import pl.coco.compiler.instrumentation.ContractMethod;
 import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.validation.ContractError;
+import pl.coco.compiler.validation.ContractValidationException;
 import pl.coco.compiler.validation.ErrorProducer;
 import pl.coco.compiler.validation.MethodValidationInput;
 
@@ -23,7 +24,8 @@ public class ResultTypeValidator extends TreeScanner {
     private final MethodValidationInput input;
     private final Types types;
 
-    public ResultTypeValidator(ErrorProducer errorProducer, MethodValidationInput input, Types types) {
+    public ResultTypeValidator(ErrorProducer errorProducer, MethodValidationInput input,
+            Types types) {
         this.errorProducer = errorProducer;
         this.input = input;
         this.types = types;
@@ -38,9 +40,10 @@ public class ResultTypeValidator extends TreeScanner {
                 List<? extends ExpressionTree> arguments = contract.getArguments();
                 JCExpression resultType = (JCExpression) arguments.get(0);
                 if (doesResultTypeMatchMethodType(resultType)) {
-
                     errorProducer.raiseError(ContractError.RESULT_TYPE_MUST_MATCH_METHOD_TYPE,
                             resultType, input.getCompilationUnit());
+                    throw new ContractValidationException(
+                            ContractError.RESULT_TYPE_MUST_MATCH_METHOD_TYPE);
                 }
             }
         }

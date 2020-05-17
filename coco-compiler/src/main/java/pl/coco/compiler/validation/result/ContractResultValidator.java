@@ -8,6 +8,7 @@ import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
 import pl.coco.compiler.util.AstUtil;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.validation.ContractError;
+import pl.coco.compiler.validation.ContractValidationException;
 import pl.coco.compiler.validation.ErrorProducer;
 import pl.coco.compiler.validation.MethodValidationInput;
 
@@ -42,6 +43,8 @@ public class ContractResultValidator extends TreeScanner {
             errorProducer.raiseError(
                     ContractError.RESULT_CAN_BE_PLACED_INSIDE_ENSURES_IN_NON_VOID_METHODS_ONLY,
                     invocation, input.getCompilationUnit());
+            throw new ContractValidationException(
+                    ContractError.RESULT_CAN_BE_PLACED_INSIDE_ENSURES_IN_NON_VOID_METHODS_ONLY);
         }
         super.visitApply(invocation);
     }

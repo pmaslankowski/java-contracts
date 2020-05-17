@@ -15,6 +15,8 @@ import pl.coco.compiler.util.CollectionUtils;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.validation.forallexists.ForAllExistsValidator;
 import pl.coco.compiler.validation.forallexists.ForAllExistsValidatorFactory;
+import pl.coco.compiler.validation.invariant.InvariantCallValidator;
+import pl.coco.compiler.validation.invariant.InvariantCallValidatorFactory;
 import pl.coco.compiler.validation.result.ContractResultValidator;
 import pl.coco.compiler.validation.result.ContractResultValidatorFactory;
 import pl.coco.compiler.validation.result.ResultTypeValidator;
@@ -26,16 +28,19 @@ public class ContractMethodValidator {
     private final ContractResultValidatorFactory resultValidatorFactory;
     private final ResultTypeValidatorFactory resultTypeValidatorFactory;
     private final ForAllExistsValidatorFactory forAllExistsValidatorFactory;
+    private final InvariantCallValidatorFactory invariantCallValidatorFactory;
 
     @Inject
     public ContractMethodValidator(ErrorProducer errorProducer,
             ContractResultValidatorFactory resultValidatorFactory,
             ResultTypeValidatorFactory resultTypeValidatorFactory,
-            ForAllExistsValidatorFactory forAllExistsValidatorFactory) {
+            ForAllExistsValidatorFactory forAllExistsValidatorFactory,
+            InvariantCallValidatorFactory invariantCallValidatorFactory) {
         this.errorProducer = errorProducer;
         this.resultValidatorFactory = resultValidatorFactory;
         this.resultTypeValidatorFactory = resultTypeValidatorFactory;
         this.forAllExistsValidatorFactory = forAllExistsValidatorFactory;
+        this.invariantCallValidatorFactory = invariantCallValidatorFactory;
     }
 
     public boolean isValid(MethodValidationInput input) {
@@ -51,6 +56,7 @@ public class ContractMethodValidator {
             checkIfResultOccursInsideEnsuresInNonVoidMethodsOnly(input);
             checkIfResultTypeMatchesMethodType(input);
             checkIfForAllAndExistsOccursInsideContractSpecificationsOnly(input);
+            checkIfInvariantsOccursInsideInvariantMethodsOnly(input);
             return true;
         } catch (ContractValidationException e) {
             return false;
@@ -62,7 +68,8 @@ public class ContractMethodValidator {
                 .anyMatch(ContractAstUtil::isContractInvocation);
     }
 
-    private void checkIfAllContractsAreInOneBlockAtTheBeginningOfMethod(MethodValidationInput input) {
+    private void checkIfAllContractsAreInOneBlockAtTheBeginningOfMethod(
+            MethodValidationInput input) {
 
         Optional<Integer> firstContractIdx =
                 CollectionUtils.getIndexOfFirstElementMatchingPredicate(input.getStatements(),
@@ -79,7 +86,7 @@ public class ContractMethodValidator {
     }
 
     private void checkIfFirstContractIsAtTheBeginningOfAMethod(MethodValidationInput input,
-                                                               int firstContractIdx) {
+            int firstContractIdx) {
 
         boolean isContractFirstStatement = firstContractIdx == 0;
         boolean isContractSecondStatementInConstructor =
@@ -95,7 +102,7 @@ public class ContractMethodValidator {
     }
 
     private void checkIfContractBlockContainContractsOnly(MethodValidationInput input,
-                                                          int firstContractIdx, int lastContractIdx) {
+            int firstContractIdx, int lastContractIdx) {
 
         for (int i = firstContractIdx; i < lastContractIdx; i++) {
             StatementTree statement = input.getStatements().get(i);
@@ -133,6 +140,12 @@ public class ContractMethodValidator {
 
         JCMethodDecl method = input.getMethod();
         ForAllExistsValidator validator = forAllExistsValidatorFactory.create(input);
+        method.accept(validator);
+    }
+
+    private void checkIfInvariantsOccursInsideInvariantMethodsOnly(MethodValidationInput input) {
+        JCMethodDecl method = input.getMethod();
+        InvariantCallValidator validator = invariantCallValidatorFactory.create(input);
         method.accept(validator);
     }
 }
