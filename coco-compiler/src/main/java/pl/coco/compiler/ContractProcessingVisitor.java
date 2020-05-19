@@ -9,23 +9,27 @@ import com.sun.source.tree.MethodTree;
 import com.sun.source.util.TreeScanner;
 
 import pl.coco.compiler.instrumentation.ClassInput;
-import pl.coco.compiler.instrumentation.ContractProcessor;
+import pl.coco.compiler.instrumentation.ClassLevelProcessor;
 import pl.coco.compiler.instrumentation.ContractScanner;
 import pl.coco.compiler.instrumentation.MethodInput;
+import pl.coco.compiler.instrumentation.MethodLevelProcessor;
 
 @Singleton
 public class ContractProcessingVisitor extends TreeScanner<Void, Void> {
 
     private final ContractScanner scanner;
-    private final ContractProcessor processor;
+    private final ClassLevelProcessor classProcessor;
+    private final MethodLevelProcessor methodProcessor;
 
     private CompilationUnitTree compilationUnit;
     private ClassTree clazz;
 
     @Inject
-    public ContractProcessingVisitor(ContractScanner scanner, ContractProcessor processor) {
+    public ContractProcessingVisitor(ContractScanner scanner, ClassLevelProcessor classProcessor,
+            MethodLevelProcessor methodProcessor) {
         this.scanner = scanner;
-        this.processor = processor;
+        this.classProcessor = classProcessor;
+        this.methodProcessor = methodProcessor;
     }
 
     @Override
@@ -37,7 +41,7 @@ public class ContractProcessingVisitor extends TreeScanner<Void, Void> {
     @Override
     public Void visitClass(ClassTree clazz, Void aVoid) {
         this.clazz = clazz;
-        processor.processClass(new ClassInput(compilationUnit, clazz));
+        classProcessor.process(new ClassInput(compilationUnit, clazz));
         return super.visitClass(clazz, aVoid);
     }
 
@@ -50,7 +54,7 @@ public class ContractProcessingVisitor extends TreeScanner<Void, Void> {
                 .build();
 
         scanner.scan(input);
-        processor.processMethod(input);
+        methodProcessor.process(input);
 
         return null;
     }

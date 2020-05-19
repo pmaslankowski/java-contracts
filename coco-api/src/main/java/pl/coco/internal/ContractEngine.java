@@ -34,7 +34,7 @@ public class ContractEngine {
         boolean result = evaluateCondition(condition);
 
         if (!result) {
-            throw new ContractFailedException(contractMessage, args);
+            throw new ContractFailedException(contractMessage, (Object[]) args);
         }
     }
 

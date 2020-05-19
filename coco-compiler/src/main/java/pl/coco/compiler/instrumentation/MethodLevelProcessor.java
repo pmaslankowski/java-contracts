@@ -1,9 +1,5 @@
 package pl.coco.compiler.instrumentation;
 
-import static com.sun.tools.javac.tree.JCTree.JCIdent;
-import static com.sun.tools.javac.tree.JCTree.JCMethodInvocation;
-import static com.sun.tools.javac.tree.JCTree.JCReturn;
-import static com.sun.tools.javac.tree.JCTree.JCVariableDecl;
 import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
@@ -23,7 +19,10 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCBlock;
 import com.sun.tools.javac.tree.JCTree.JCClassDecl;
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
+import com.sun.tools.javac.tree.JCTree.JCMethodInvocation;
+import com.sun.tools.javac.tree.JCTree.JCReturn;
 import com.sun.tools.javac.tree.JCTree.JCStatement;
+import com.sun.tools.javac.tree.JCTree.JCVariableDecl;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Names;
@@ -32,73 +31,38 @@ import pl.coco.compiler.instrumentation.invocation.MethodInvocationBuilder;
 import pl.coco.compiler.instrumentation.invocation.MethodInvocationDescription;
 import pl.coco.compiler.instrumentation.synthetic.ContractSyntheticMethods;
 import pl.coco.compiler.instrumentation.synthetic.ContractSyntheticMethodsGenerator;
-import pl.coco.compiler.instrumentation.synthetic.InvariantMethodGenerator;
 import pl.coco.compiler.util.AstUtil;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.util.TreePasser;
 
-// TODO: podzielić tą klasę na MethodLevelProcessor i ClassLevelProcessor
 @Singleton
-public class ContractProcessor {
+public class MethodLevelProcessor {
+
+    private static final Logger log = LoggerFactory.getLogger(MethodLevelProcessor.class);
 
     // TODO: zmienić nazwę, żeby utrudnić clasha
     private static final String RESULT_VARIABLE_NAME = "result";
     private static final String INVARIANT_METHOD_NAME = "coco$invariant";
 
-    private static final Logger log = LoggerFactory.getLogger(ContractProcessor.class);
-
     private final TreeMaker treeMaker;
     private final Names names;
     private final ContractAnalyzer contractAnalyzer;
     private final ContractSyntheticMethodsGenerator syntheticGenerator;
-    private final InvariantMethodGenerator invariantGenerator;
     private final MethodInvocationBuilder methodInvocationBuilder;
 
     @Inject
-    public ContractProcessor(
-            TreeMaker treeMaker,
-            Names names,
-            ContractAnalyzer contractAnalyzer,
+    public MethodLevelProcessor(TreeMaker treeMaker, Names names, ContractAnalyzer contractAnalyzer,
             ContractSyntheticMethodsGenerator syntheticGenerator,
-            InvariantMethodGenerator invariantGenerator,
             MethodInvocationBuilder methodInvocationBuilder) {
-
         this.treeMaker = treeMaker;
         this.names = names;
         this.contractAnalyzer = contractAnalyzer;
         this.syntheticGenerator = syntheticGenerator;
-        this.invariantGenerator = invariantGenerator;
         this.methodInvocationBuilder = methodInvocationBuilder;
     }
 
-    public void processClass(ClassInput input) {
-        JCClassDecl clazz = input.getClazz();
-        Optional<JCMethodDecl> originalInvariantMethod = findInvariantMethod(clazz);
-        originalInvariantMethod.ifPresent(originalInvariant -> {
-            log.debug("Found invariant method: " + originalInvariant.getName().toString());
-            JCMethodDecl syntheticInvariant = invariantGenerator.generate(clazz, originalInvariant);
-            log.debug("Processed invariant method:" + syntheticInvariant);
-            AstUtil.addMethodToClass(syntheticInvariant, clazz);
-        });
-    }
-
-    private Optional<JCMethodDecl> findInvariantMethod(JCClassDecl clazz) {
-        for (JCTree member : clazz.getMembers()) {
-            boolean isInvariantMethod = TreePasser.of(member)
-                    .as(JCMethodDecl.class)
-                    .mapAndGet(ContractAstUtil::isInvariantMethod)
-                    .orElse(false);
-
-            if (isInvariantMethod) {
-                return Optional.of((JCMethodDecl) member);
-            }
-        }
-
-        return Optional.empty();
-    }
-
     // TODO: refactor po dodaniu niezmienników
-    public void processMethod(MethodInput input) {
+    public void process(MethodInput input) {
         JCClassDecl clazz = (JCClassDecl) input.getClazz();
         JCMethodDecl originalMethod = (JCMethodDecl) input.getMethod();
         JCBlock body = originalMethod.getBody();
@@ -128,12 +92,14 @@ public class ContractProcessor {
         }
     }
 
+    // TODO: przenieść od AstUtil
     private boolean isSynthetic(JCMethodDecl methodDecl) {
         long flags = methodDecl.getModifiers().flags;
         return (flags & Flags.SYNTHETIC) != 0;
     }
 
-    private void addSyntheticMethodsToClass(ContractSyntheticMethods methods, JCClassDecl clazz) {
+    private void addSyntheticMethodsToClass(ContractSyntheticMethods methods,
+            JCClassDecl clazz) {
         AstUtil.addMethodToClass(methods.getTarget(), clazz);
         AstUtil.addMethodToClass(methods.getPreconditions(), clazz);
         AstUtil.addMethodToClass(methods.getPostconditions(), clazz);
@@ -200,7 +166,8 @@ public class ContractProcessor {
                 target.sym);
     }
 
-    private JCStatement generateTargetInvocationStatement(JCMethodDecl target, VarSymbol result) {
+    private JCStatement generateTargetInvocationStatement(JCMethodDecl target,
+            VarSymbol result) {
 
         JCMethodInvocation bridgeMethodInvocation = generateMethodInvocation(target);
 
@@ -217,7 +184,7 @@ public class ContractProcessor {
 
     private JCMethodInvocation generateMethodInvocation(JCMethodDecl method) {
 
-        java.util.List<JCIdent> parameters = getParameters(method);
+        java.util.List<JCTree.JCIdent> parameters = getParameters(method);
         MethodInvocationDescription desc = new MethodInvocationDescription.Builder()
                 .withMethodSymbol(method.sym)
                 .withArguments(List.from(parameters))
@@ -225,13 +192,13 @@ public class ContractProcessor {
         return methodInvocationBuilder.build(desc);
     }
 
-    private java.util.List<JCIdent> getParameters(MethodTree method) {
+    private java.util.List<JCTree.JCIdent> getParameters(MethodTree method) {
         return method.getParameters().stream()
                 .map(this::toIdentifier)
                 .collect(toList());
     }
 
-    private JCIdent toIdentifier(VariableTree param) {
+    private JCTree.JCIdent toIdentifier(VariableTree param) {
         JCVariableDecl variableDec = (JCVariableDecl) param;
         return treeMaker.Ident(variableDec.sym);
     }
