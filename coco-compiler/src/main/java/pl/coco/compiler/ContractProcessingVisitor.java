@@ -47,11 +47,7 @@ public class ContractProcessingVisitor extends TreeScanner<Void, Void> {
 
     @Override
     public Void visitMethod(MethodTree method, Void aVoid) {
-        MethodInput input = new MethodInput.Builder()
-                .withCompilationUnit(compilationUnit)
-                .withClazz(clazz)
-                .withMethod(method)
-                .build();
+        MethodInput input = new MethodInput(compilationUnit, clazz, method);
 
         scanner.scan(input);
         methodProcessor.process(input);
