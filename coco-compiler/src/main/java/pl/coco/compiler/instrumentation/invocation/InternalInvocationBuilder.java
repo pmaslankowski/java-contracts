@@ -24,6 +24,8 @@ import pl.coco.compiler.instrumentation.invocation.arguments.ArgumentsProcessor;
 import pl.coco.compiler.instrumentation.invocation.arguments.ArgumentsProcessorFactory;
 import pl.coco.compiler.util.TypeRegistry;
 
+// TODO: podzielić na klasę bazową i 2 klasy: RequiresInvocationBuilder i EnsuresInvocationBuilder
+// oraz użyć klasy bazowej w InvariantInvocationBuilder
 public class InternalInvocationBuilder {
 
     private static final String STRING_TYPE_NAME = "java.lang.String";

@@ -8,13 +8,16 @@ public class ArgumentsProcessorFactory {
 
     private final EnsuresArgumentsProcessor ensuresArgsProcessor;
     private final RequiresArgumentsProcessor requiresArgsProcessor;
+    private final InvariantArgumentsProcessor invariantArgsProcessor;
 
     @Inject
     public ArgumentsProcessorFactory(EnsuresArgumentsProcessor ensuresArgsProcessor,
-            RequiresArgumentsProcessor requiresArgsProcessor) {
+            RequiresArgumentsProcessor requiresArgsProcessor,
+            InvariantArgumentsProcessor invariantArgsProcessor) {
 
         this.ensuresArgsProcessor = ensuresArgsProcessor;
         this.requiresArgsProcessor = requiresArgsProcessor;
+        this.invariantArgsProcessor = invariantArgsProcessor;
     }
 
     public ArgumentsProcessor newArgumentsProcessor(ContractMethod method) {
@@ -23,6 +26,8 @@ public class ArgumentsProcessorFactory {
                 return ensuresArgsProcessor;
             case REQUIRES:
                 return requiresArgsProcessor;
+            case INVARIANT:
+                return invariantArgsProcessor;
             default:
                 throw new IllegalArgumentException(
                         "Contract method: " + method + " is not supported in this class.");

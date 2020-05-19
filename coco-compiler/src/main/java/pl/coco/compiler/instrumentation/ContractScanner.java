@@ -9,7 +9,6 @@ import com.sun.source.tree.StatementTree;
 import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
 import pl.coco.compiler.instrumentation.registry.ContractsRegistry;
 import pl.coco.compiler.instrumentation.registry.MethodKey;
-import pl.coco.compiler.instrumentation.synthetic.MethodInput;
 import pl.coco.compiler.util.ContractAstUtil;
 
 @Singleton

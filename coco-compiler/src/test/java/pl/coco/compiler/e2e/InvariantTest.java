@@ -15,9 +15,11 @@ class InvariantTest {
     private static final String ENTRY_POINT = "entry";
     private static final int RESULT = 42;
 
-    @DisplayName("Invariant on static method passes")
+    @DisplayName("Invariant on static method is ignored")
     @Test
-    void shouldReturnResultFromStaticMethodWhenInvariantPasses() throws Throwable {
+    void shouldReturnResultFromStaticMethodWhenClassHasInvariantEvenThoughItsNotSatisfied()
+            throws Throwable {
+
         String code = "package pl.coco.compiler;\n"
                 + "\n"
                 + "import pl.coco.api.Contract;\n"
@@ -25,7 +27,7 @@ class InvariantTest {
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
-                + "    private static int val = 0;\n"
+                + "    private static int val = -1;\n"
                 + "\n"
                 + "    public static int entry() {\n"
                 + "        return 42;\n"
@@ -41,69 +43,6 @@ class InvariantTest {
         Object actual = JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code);
 
         assertThat(actual).isEqualTo(RESULT);
-    }
-
-    @DisplayName("Invariant on static method fails before")
-    @Test
-    void shouldThrowExceptionFromStaticMethodWhenInvariantFailsBefore() {
-        String code = "package pl.coco.compiler;\n"
-                + "\n"
-                + "import pl.coco.api.Contract;\n"
-                + "import pl.coco.api.Invariant;\n"
-                + "\n"
-                + "public class Test {\n"
-                + "\n"
-                + "    private static int val = -1;\n"
-                + "\n"
-                + "    public static int entry() {\n"
-                + "        return 42;\n"
-                + "    }\n"
-                + "\n"
-                + "    @Invariant\n"
-                + "    public void invariantMethod() {\n"
-                + "        Contract.invariant(val >= 0);\n"
-                + "    }\n"
-                + "\n"
-                + "}\n";
-
-        Throwable thrown = catchThrowable(
-                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
-
-        assertThat(thrown)
-                .isInstanceOf(ContractFailedException.class)
-                .hasMessage("Invariant \"val >= 0\" is not satisfied before the method call.");
-    }
-
-    @DisplayName("Invariant on static method fails after")
-    @Test
-    void shouldThrowExceptionFromStaticMethodWhenInvariantFailsAfter() {
-        String code = "package pl.coco.compiler;\n"
-                + "\n"
-                + "import pl.coco.api.Contract;\n"
-                + "import pl.coco.api.Invariant;\n"
-                + "\n"
-                + "public class Test {\n"
-                + "\n"
-                + "    private static int val = 0;\n"
-                + "\n"
-                + "    public static int entry() {\n"
-                + "        val = -1;\n"
-                + "        return 42;\n"
-                + "    }\n"
-                + "\n"
-                + "    @Invariant"
-                + "    protected void invariantMethod() {\n"
-                + "        Contract.invariant(val >= 0);\n"
-                + "    }\n"
-                + "\n"
-                + "}\n";
-
-        Throwable thrown = catchThrowable(
-                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
-
-        assertThat(thrown)
-                .isInstanceOf(ContractFailedException.class)
-                .hasMessage("Invariant \"val >= 0\" is not satisfied after the method call.");
     }
 
     @DisplayName("Invariant on instance method passes")
@@ -154,7 +93,7 @@ class InvariantTest {
                 + "    public static int entry() {\n"
                 + "        Test instance = new Test();\n"
                 + "        val = -1;\n"
-                + "        instance.testedMethod();\n"
+                + "        return instance.testedMethod();\n"
                 + "    }\n"
                 + "\n"
                 + "    private int testedMethod() {\n"
@@ -190,7 +129,7 @@ class InvariantTest {
                 + "\n"
                 + "    public static int entry() {\n"
                 + "        Test instance = new Test();\n"
-                + "        instance.testedMethod();\n"
+                + "        return instance.testedMethod();\n"
                 + "    }\n"
                 + "\n"
                 + "    private int testedMethod() {\n"

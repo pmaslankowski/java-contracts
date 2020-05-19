@@ -107,17 +107,17 @@ public class PostconditionMethodGenerator extends AbstractMethodGenerator {
         java.util.List<ContractInvocation> postconditions =
                 contractsRegistry.getPostconditions(key);
 
-        if (contractAnalyzer.isFirstClassInInheritanceHierarchyWithContracts(clazz, method)) {
-            java.util.List<JCStatement> postconditionStatements =
-                    generateThisClassPostconditionStatements(wrapper, postconditions, method);
-            return treeMaker.Block(0, List.from(postconditionStatements));
-        } else {
+        if (contractAnalyzer.hasContractsUpInHierarchy(clazz, method)) {
             JCStatement superMethodCall =
                     generateSuperPostconditionMethodCall(wrapper, clazz, method);
             java.util.List<JCStatement> postconditionStatements =
                     generateThisClassPostconditionStatements(wrapper, postconditions, method);
             return treeMaker.Block(0,
                     List.of(superMethodCall).appendList(List.from(postconditionStatements)));
+        } else {
+            java.util.List<JCStatement> postconditionStatements =
+                    generateThisClassPostconditionStatements(wrapper, postconditions, method);
+            return treeMaker.Block(0, List.from(postconditionStatements));
         }
     }
 

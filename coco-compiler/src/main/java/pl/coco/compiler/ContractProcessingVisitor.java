@@ -8,17 +8,14 @@ import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.util.TreeScanner;
 
+import pl.coco.compiler.instrumentation.ClassInput;
 import pl.coco.compiler.instrumentation.ContractProcessor;
 import pl.coco.compiler.instrumentation.ContractScanner;
-import pl.coco.compiler.instrumentation.synthetic.MethodInput;
-import pl.coco.compiler.validation.ClassValidationInput;
-import pl.coco.compiler.validation.ContractValidator;
-import pl.coco.compiler.validation.MethodValidationInput;
+import pl.coco.compiler.instrumentation.MethodInput;
 
 @Singleton
-public class ContractsVisitor extends TreeScanner<Void, Void> {
+public class ContractProcessingVisitor extends TreeScanner<Void, Void> {
 
-    private final ContractValidator validator;
     private final ContractScanner scanner;
     private final ContractProcessor processor;
 
@@ -26,9 +23,7 @@ public class ContractsVisitor extends TreeScanner<Void, Void> {
     private ClassTree clazz;
 
     @Inject
-    public ContractsVisitor(ContractValidator validator, ContractScanner scanner,
-            ContractProcessor processor) {
-        this.validator = validator;
+    public ContractProcessingVisitor(ContractScanner scanner, ContractProcessor processor) {
         this.scanner = scanner;
         this.processor = processor;
     }
@@ -42,12 +37,8 @@ public class ContractsVisitor extends TreeScanner<Void, Void> {
     @Override
     public Void visitClass(ClassTree clazz, Void aVoid) {
         this.clazz = clazz;
-
-        if (validator.isClassValid(new ClassValidationInput(compilationUnit, clazz))) {
-            return super.visitClass(clazz, aVoid);
-        }
-
-        return null;
+        processor.processClass(new ClassInput(compilationUnit, clazz));
+        return super.visitClass(clazz, aVoid);
     }
 
     @Override
@@ -58,13 +49,9 @@ public class ContractsVisitor extends TreeScanner<Void, Void> {
                 .withMethod(method)
                 .build();
 
-        if (!validator.isMethodValid(MethodValidationInput.of(input))) {
-            return super.visitMethod(method, aVoid);
-        }
-
         scanner.scan(input);
-        processor.process(input);
+        processor.processMethod(input);
 
-        return super.visitMethod(method, aVoid);
+        return null;
     }
 }

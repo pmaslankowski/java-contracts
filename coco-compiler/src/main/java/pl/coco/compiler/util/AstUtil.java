@@ -3,6 +3,7 @@ package pl.coco.compiler.util;
 import javax.lang.model.type.TypeKind;
 
 import com.sun.source.tree.ClassTree;
+import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree.JCClassDecl;
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 
@@ -26,5 +27,9 @@ public class AstUtil {
         }
 
         return method.getReturnType().type.getKind().equals(TypeKind.VOID);
+    }
+
+    public static boolean isStatic(JCMethodDecl method) {
+        return Flags.isStatic(method.sym);
     }
 }

@@ -53,22 +53,8 @@ public class ContractAnalyzer {
         return false;
     }
 
-    public boolean isFirstClassInInheritanceHierarchyWithContracts(JCClassDecl clazz,
-            JCMethodDecl method) {
-
-        if (!doesThisMethodContainContracts(clazz, method)) {
-            return false;
-        }
-
+    public boolean hasContractsUpInHierarchy(JCClassDecl clazz, JCMethodDecl method) {
         ClassType superType = (ClassType) ((ClassType) clazz.type).supertype_field;
-
-        return !hasContractsInHierarchy(superType, method.getName(), method.type);
-    }
-
-    private boolean doesThisMethodContainContracts(JCClassDecl clazz, JCMethodDecl method) {
-        Name className = clazz.type.tsym.getQualifiedName();
-        MethodKey methodKey = new MethodKey(className, method.getName(), method.type);
-        List<ContractInvocation> contracts = contractsRegistry.getContracts(methodKey);
-        return !contracts.isEmpty();
+        return hasContractsInHierarchy(superType, method.getName(), method.type);
     }
 }

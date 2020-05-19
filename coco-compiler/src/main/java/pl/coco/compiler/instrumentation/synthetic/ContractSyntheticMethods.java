@@ -26,4 +26,5 @@ public class ContractSyntheticMethods {
     public JCMethodDecl getPostconditions() {
         return postconditions;
     }
+
 }

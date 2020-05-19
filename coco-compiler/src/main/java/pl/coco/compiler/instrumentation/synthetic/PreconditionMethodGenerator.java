@@ -83,11 +83,7 @@ public class PreconditionMethodGenerator extends AbstractMethodGenerator {
         MethodKey key = new MethodKey(clazz.sym.getQualifiedName(), method.getName(), method.type);
         java.util.List<ContractInvocation> preconditions = contractsRegistry.getPreconditions(key);
 
-        boolean doesThisClassHavePreconditions = preconditions.isEmpty();
-        boolean isThisClassFirstInInheritanceHierarchyWithContracts =
-                !contractAnalyzer.isFirstClassInInheritanceHierarchyWithContracts(clazz, method);
-
-        if (doesThisClassHavePreconditions && isThisClassFirstInInheritanceHierarchyWithContracts) {
+        if (preconditions.isEmpty() && contractAnalyzer.hasContractsUpInHierarchy(clazz, method)) {
             return generateSuperPreconditionMethodCall(wrapper, clazz, method);
         } else {
             return generateBodyFromThisClassPreconditions(wrapper, preconditions);

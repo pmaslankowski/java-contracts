@@ -15,6 +15,7 @@ public class SyntheticMethodNameGenerator {
     private static final String TARGET_METHOD_PREFIX = "coco$target$";
     private static final String PRECONDITION_PREFIX = "coco$preconditions$";
     private static final String POSTCONDITION_PREFIX = "coco$postconditions$";
+    private static final String INVARIANT_METHOD_NAME = "coco$invariant";
 
     private static final String CONSTRUCTOR_NAME = "$constructor$";
 
@@ -36,6 +37,10 @@ public class SyntheticMethodNameGenerator {
 
     public Name getPostconditionMethodName(JCMethodDecl method) {
         return getProcessedMethodNameWithPrefix(method, POSTCONDITION_PREFIX);
+    }
+
+    public Name getInvariantMethodName() {
+        return names.fromString(INVARIANT_METHOD_NAME);
     }
 
     private Name getProcessedMethodNameWithPrefix(JCMethodDecl originalMethod, String prefix) {
