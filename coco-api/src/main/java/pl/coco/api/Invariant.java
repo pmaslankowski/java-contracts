@@ -5,6 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+// TODO: add check for invariant with generics
 // TODO: add validation that there are only Contract.invariant calls inside invariant methods
 /**
  * Annotation specyfying invariant method in a class.

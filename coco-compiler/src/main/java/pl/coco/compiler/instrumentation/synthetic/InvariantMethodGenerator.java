@@ -6,6 +6,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.sun.tools.javac.code.Symbol.MethodSymbol;
+import com.sun.tools.javac.code.Symbol.VarSymbol;
+import com.sun.tools.javac.code.Symtab;
+import com.sun.tools.javac.code.Type.JCVoidType;
+import com.sun.tools.javac.code.Type.MethodType;
 import com.sun.tools.javac.tree.JCTree.JCBlock;
 import com.sun.tools.javac.tree.JCTree.JCClassDecl;
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
@@ -25,15 +29,20 @@ public class InvariantMethodGenerator extends AbstractMethodGenerator {
     private final TreeMaker treeMaker;
     private final InvariantInvocationBuilder invariantInvocationBuilder;
     private final SyntheticMethodNameGenerator nameGenerator;
+    private final IsBeforeSymbolProvider isBeforeSymbolProvider;
+    private final Symtab symtab;
 
     @Inject
     public InvariantMethodGenerator(TreeMaker treeMaker, Names names,
             InvariantInvocationBuilder invariantInvocationBuilder,
-            SyntheticMethodNameGenerator nameGenerator) {
+            SyntheticMethodNameGenerator nameGenerator,
+            IsBeforeSymbolProvider isBeforeSymbolProvider, Symtab symtab) {
         super(treeMaker, names);
         this.treeMaker = treeMaker;
         this.invariantInvocationBuilder = invariantInvocationBuilder;
         this.nameGenerator = nameGenerator;
+        this.isBeforeSymbolProvider = isBeforeSymbolProvider;
+        this.symtab = symtab;
     }
 
     public JCMethodDecl generate(JCClassDecl clazz, JCMethodDecl method) {
@@ -44,13 +53,20 @@ public class InvariantMethodGenerator extends AbstractMethodGenerator {
 
     private MethodSymbol getInvariantSymbol(JCMethodDecl invariantMethod) {
         Name invariantMethodName = nameGenerator.getInvariantMethodName();
+        MethodType invariantMethodType = getInvariantMethodType();
         long flags = getProtectedMethodFlags(invariantMethod);
 
-        MethodSymbol result = new MethodSymbol(flags, invariantMethodName, invariantMethod.type,
+        MethodSymbol result = new MethodSymbol(flags, invariantMethodName, invariantMethodType,
                 invariantMethod.sym.owner);
 
-        result.params = invariantMethod.sym.params;
+        VarSymbol isBeforeSymbol = isBeforeSymbolProvider.get(invariantMethod);
+        result.params = List.of(isBeforeSymbol);
+
         return result;
+    }
+
+    private MethodType getInvariantMethodType() {
+        return new MethodType(List.of(symtab.booleanType), new JCVoidType(), List.nil(), null);
     }
 
     private JCBlock getProcessedInvariantBody(JCMethodDecl originalInvariant) {

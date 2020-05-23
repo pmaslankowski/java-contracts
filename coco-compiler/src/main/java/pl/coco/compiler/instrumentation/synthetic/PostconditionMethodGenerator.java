@@ -24,9 +24,9 @@ import com.sun.tools.javac.util.Names;
 
 import pl.coco.compiler.instrumentation.ContractAnalyzer;
 import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
-import pl.coco.compiler.instrumentation.invocation.internal.postcondition.EnsuresInvocationBuilder;
 import pl.coco.compiler.instrumentation.invocation.MethodInvocationBuilder;
 import pl.coco.compiler.instrumentation.invocation.MethodInvocationDescription;
+import pl.coco.compiler.instrumentation.invocation.internal.postcondition.EnsuresInvocationBuilder;
 import pl.coco.compiler.instrumentation.registry.ContractsRegistry;
 import pl.coco.compiler.instrumentation.registry.MethodKey;
 import pl.coco.compiler.util.AstUtil;
@@ -127,8 +127,7 @@ public class PostconditionMethodGenerator extends AbstractMethodGenerator {
     }
 
     private JCStatement generateSuperPostconditionMethodCall(JCMethodDecl wrapper,
-            JCClassDecl clazz,
-            JCMethodDecl method) {
+            JCClassDecl clazz, JCMethodDecl method) {
 
         Type superType = ((ClassType) clazz.type).supertype_field;
         Name superClassName = superType.tsym.getQualifiedName();

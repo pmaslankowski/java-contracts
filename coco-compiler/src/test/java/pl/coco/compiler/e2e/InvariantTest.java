@@ -111,8 +111,8 @@ class InvariantTest {
                 () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
 
         assertThat(thrown)
-                .isInstanceOf(ContractFailedException.class);
-        // .hasMessage("Invariant \"val >= 0\" is not satisfied before the method call.");
+                .isInstanceOf(ContractFailedException.class)
+                .hasMessage("Invariant \"val >= 0\" is not satisfied before the method call");
     }
 
     @DisplayName("Invariant on instance method fails after")
@@ -148,8 +148,7 @@ class InvariantTest {
                 () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
 
         assertThat(thrown)
-                .isInstanceOf(ContractFailedException.class);
-        // .hasMessage("Invariant \"val >= 0\" is not satisfied before the method call.");
-
+                .isInstanceOf(ContractFailedException.class)
+                .hasMessage("Invariant \"val >= 0\" is not satisfied after the method call");
     }
 }

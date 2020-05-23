@@ -5,6 +5,7 @@ import static com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.Symbol.VarSymbol;
 import com.sun.tools.javac.util.Names;
 
@@ -22,7 +23,7 @@ public class ResultSymbolProvider {
     }
 
     public VarSymbol getResultSymbol(JCMethodDecl target) {
-        return new VarSymbol(0,
+        return new VarSymbol(Flags.SYNTHETIC,
                 names.fromString(RESULT_VARIABLE_NAME),
                 target.sym.getReturnType(),
                 target.sym);

@@ -3,6 +3,7 @@ package pl.coco.compiler.instrumentation.methodbody;
 import static com.sun.tools.javac.tree.JCTree.JCStatement;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ import javax.inject.Singleton;
 
 import com.sun.tools.javac.code.Symbol.VarSymbol;
 import com.sun.tools.javac.tree.JCTree.JCClassDecl;
+import com.sun.tools.javac.tree.JCTree.JCExpression;
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 import com.sun.tools.javac.tree.JCTree.JCReturn;
 import com.sun.tools.javac.tree.TreeMaker;
@@ -43,7 +45,7 @@ public class InstrumentedMethodBodyGenerator {
         }
 
         if (!AstUtil.isConstructor(originalMethod) && !AstUtil.isStatic(originalMethod)) {
-            addInvariantInvocationIfNeeded(input.getClazz(), processed);
+            addInvariantInvocationIfNeeded(input.getClazz(), processed, InvariantPoint.BEFORE);
         }
 
         addPreconditionInvocation(input, processed);
@@ -51,7 +53,7 @@ public class InstrumentedMethodBodyGenerator {
         addPostconditionInvocation(input, processed);
 
         if (!AstUtil.isStatic(originalMethod)) {
-            addInvariantInvocationIfNeeded(input.getClazz(), processed);
+            addInvariantInvocationIfNeeded(input.getClazz(), processed, InvariantPoint.AFTER);
         }
 
         if (shouldReturnResult(originalMethod)) {
@@ -67,9 +69,14 @@ public class InstrumentedMethodBodyGenerator {
         processed.add(superStmt);
     }
 
-    private void addInvariantInvocationIfNeeded(JCClassDecl clazz, List<JCStatement> processed) {
+    private void addInvariantInvocationIfNeeded(JCClassDecl clazz, List<JCStatement> processed,
+            InvariantPoint invocationPoint) {
+
+        List<JCExpression> params = Collections.singletonList(
+                treeMaker.Literal(invocationPoint.isBefore()));
         Optional<JCStatement> invariantInvocation = ContractAstUtil.getInvariantMethod(clazz)
-                .map(invocationStmtGenerator::generate);
+                .map(inv -> invocationStmtGenerator.generateWithParameters(inv, params));
+
         invariantInvocation.ifPresent(processed::add);
     }
 

@@ -18,10 +18,12 @@ public class ContractEngine {
         evaluate(postcondition, "Postcondition \"{0}\" is not satisfied.", postconditionAsString);
     }
 
-    // TODO: dodać informację czy przed czy po
-    public static void invariant(ConditionSupplier condition, String conditionAsString) {
-        evaluate(condition, "Invariant \"{0}\" is not satisfied in the method call",
-                conditionAsString);
+    public static void invariant(ConditionSupplier condition, String conditionAsString,
+            boolean isBefore) {
+
+        String when = isBefore ? "before" : "after";
+        evaluate(condition, "Invariant \"{0}\" is not satisfied {1} the method call",
+                conditionAsString, when);
     }
 
     private static void evaluate(ConditionSupplier condition, String contractMessage,
