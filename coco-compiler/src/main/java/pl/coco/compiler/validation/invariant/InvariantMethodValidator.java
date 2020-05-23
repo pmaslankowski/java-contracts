@@ -1,8 +1,10 @@
 package pl.coco.compiler.validation.invariant;
 
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
+import com.sun.tools.javac.tree.JCTree.JCStatement;
 import com.sun.tools.javac.tree.TreeScanner;
 
+import pl.coco.compiler.instrumentation.ContractMethod;
 import pl.coco.compiler.util.AstUtil;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.validation.ClassValidationInput;
@@ -24,6 +26,7 @@ public class InvariantMethodValidator extends TreeScanner {
         if (ContractAstUtil.isInvariantMethod(method)) {
             checkInvariantMethodSignature(method);
             checkIfInvariantMethodIsUnique(method);
+            checkIfInvariantMethodContainsInvariantsOnly(method);
             invariantAlreadyMethodOccurred = true;
         }
 
@@ -45,5 +48,25 @@ public class InvariantMethodValidator extends TreeScanner {
                     ContractError.MULTIPLE_INVARIANT_METHODS_IN_THE_SAME_CLASS, method,
                     input.getCompilationUnit());
         }
+    }
+
+    private void checkIfInvariantMethodContainsInvariantsOnly(JCMethodDecl method) {
+        for (JCStatement statement : method.getBody().getStatements()) {
+            if (!ContractAstUtil.isContractInvocation(statement)) {
+                throwInvariantHasToContainInvariantMethodsOnlyException(statement);
+            }
+
+            ContractMethod contract = ContractAstUtil.getContractInvocation(statement)
+                    .getContractMethod();
+            if (contract != ContractMethod.INVARIANT) {
+                throwInvariantHasToContainInvariantMethodsOnlyException(statement);
+            }
+        }
+    }
+
+    private void throwInvariantHasToContainInvariantMethodsOnlyException(JCStatement statement) {
+        throw new ContractValidationException(
+                ContractError.INVARIANT_METHOD_MUST_CONTAIN_INVARIANTS_ONLY, statement,
+                input.getCompilationUnit());
     }
 }

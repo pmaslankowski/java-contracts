@@ -25,6 +25,9 @@ public enum ContractError {
     BAD_INVARIANT_METHOD_SIGNATURE(
             "Invariant type must have the following signature: void()"),
 
+    INVARIANT_METHOD_MUST_CONTAIN_INVARIANTS_ONLY(
+            "Invariant method must contain invariants only"),
+
     CONTRACT_STATEMENT_OUTSIDE_OF_CONTRACTS(
             "This statement can be used inside other contract statements only");
 

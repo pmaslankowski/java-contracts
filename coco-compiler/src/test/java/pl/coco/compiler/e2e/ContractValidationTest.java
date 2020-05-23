@@ -3,7 +3,6 @@ package pl.coco.compiler.e2e;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -339,7 +338,34 @@ class ContractValidationTest {
                 + "    private void invariant1(String arg) {\n"
                 + "    }\n"
                 + "\n"
+                + "}\n";
 
+        Throwable thrown = catchThrowable(
+                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+
+        assertThat(thrown)
+                .isInstanceOf(CompilationFailedException.class)
+                .hasMessageContaining(ContractError.BAD_INVARIANT_METHOD_SIGNATURE.getMessage());
+    }
+
+    @DisplayName("Compilation error when invariant method contains non invariant statement")
+    @Test
+    void shouldProduceErrorWhenInvarinatMethodContainsNotInvariantStatement() {
+
+        String code = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.Invariant;\n"
+                + "\n"
+                + "public class Test {\n"
+                + "\n"
+                + "    public static void entry() {\n"
+                + "    }\n"
+                + "\n"
+                + "    @Invariant\n"
+                + "    private void invariant1() {\n"
+                + "        Integer x = 0;\n"
+                + "    }\n"
+                + "\n"
                 + "}\n";
 
         Throwable thrown = catchThrowable(
@@ -348,7 +374,7 @@ class ContractValidationTest {
         assertThat(thrown)
                 .isInstanceOf(CompilationFailedException.class)
                 .hasMessageContaining(
-                        ContractError.BAD_INVARIANT_METHOD_SIGNATURE.getMessage());
+                        ContractError.INVARIANT_METHOD_MUST_CONTAIN_INVARIANTS_ONLY.getMessage());
     }
 
     @DisplayName("Compilation error when Contract.forAll(array, pred) is used outside of contracts")
