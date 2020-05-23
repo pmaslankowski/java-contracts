@@ -1,8 +1,11 @@
 package pl.coco.compiler.instrumentation.synthetic;
 
+import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Symbol.MethodSymbol;
 import com.sun.tools.javac.code.Symbol.VarSymbol;
 import com.sun.tools.javac.code.Type;
@@ -21,7 +24,7 @@ import com.sun.tools.javac.util.Names;
 
 import pl.coco.compiler.instrumentation.ContractAnalyzer;
 import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
-import pl.coco.compiler.instrumentation.invocation.InternalInvocationBuilder;
+import pl.coco.compiler.instrumentation.invocation.internal.postcondition.EnsuresInvocationBuilder;
 import pl.coco.compiler.instrumentation.invocation.MethodInvocationBuilder;
 import pl.coco.compiler.instrumentation.invocation.MethodInvocationDescription;
 import pl.coco.compiler.instrumentation.registry.ContractsRegistry;
@@ -33,6 +36,7 @@ public class PostconditionMethodGenerator extends AbstractMethodGenerator {
 
     private static final JCVoidType VOID_TYPE = new JCVoidType();
 
+    private final EnsuresInvocationBuilder ensuresInvocationBuilder;
     private final MethodInvocationBuilder methodInvocationBuilder;
     private final ContractsRegistry contractsRegistry;
     private final ContractAnalyzer contractAnalyzer;
@@ -40,12 +44,13 @@ public class PostconditionMethodGenerator extends AbstractMethodGenerator {
 
     @Inject
     public PostconditionMethodGenerator(TreeMaker treeMaker,
-            InternalInvocationBuilder internalInvocationBuilder,
+            EnsuresInvocationBuilder ensuresInvocationBuilder,
             MethodInvocationBuilder methodInvocationBuilder, Names names,
             ContractsRegistry contractsRegistry, ContractAnalyzer contractAnalyzer,
             SyntheticMethodNameGenerator nameGenerator) {
 
-        super(treeMaker, names, internalInvocationBuilder);
+        super(treeMaker, names);
+        this.ensuresInvocationBuilder = ensuresInvocationBuilder;
         this.methodInvocationBuilder = methodInvocationBuilder;
         this.contractsRegistry = contractsRegistry;
         this.contractAnalyzer = contractAnalyzer;
@@ -148,6 +153,14 @@ public class PostconditionMethodGenerator extends AbstractMethodGenerator {
             VarSymbol resultSymbol = getResultSymbol(wrapper);
             return convertContractsToStatements(wrapper, postconditions, resultSymbol);
         }
+    }
+
+    private java.util.List<JCStatement> convertContractsToStatements(JCMethodDecl wrapper,
+            java.util.List<ContractInvocation> postconditions, Symbol resultSymbol) {
+
+        return postconditions.stream()
+                .map(contract -> ensuresInvocationBuilder.build(contract, wrapper, resultSymbol))
+                .collect(Collectors.toList());
     }
 
     private VarSymbol getResultSymbol(JCMethodDecl wrapper) {

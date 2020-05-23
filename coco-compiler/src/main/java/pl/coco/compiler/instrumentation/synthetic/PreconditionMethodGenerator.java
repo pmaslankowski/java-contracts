@@ -21,31 +21,31 @@ import com.sun.tools.javac.util.Names;
 
 import pl.coco.compiler.instrumentation.ContractAnalyzer;
 import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
-import pl.coco.compiler.instrumentation.invocation.InternalInvocationBuilder;
 import pl.coco.compiler.instrumentation.invocation.MethodInvocationBuilder;
 import pl.coco.compiler.instrumentation.invocation.MethodInvocationDescription;
+import pl.coco.compiler.instrumentation.invocation.internal.precondition.RequiresInvocationBuilder;
 import pl.coco.compiler.instrumentation.registry.ContractsRegistry;
 import pl.coco.compiler.instrumentation.registry.MethodKey;
 
 @Singleton
 public class PreconditionMethodGenerator extends AbstractMethodGenerator {
 
-    private final InternalInvocationBuilder internalInvocationBuilder;
     private final MethodInvocationBuilder methodInvocationBuilder;
+    private final RequiresInvocationBuilder requiresInvocationBuilder;
     private final ContractsRegistry contractsRegistry;
     private final ContractAnalyzer contractAnalyzer;
     private final SyntheticMethodNameGenerator nameGenerator;
 
     @Inject
     public PreconditionMethodGenerator(TreeMaker treeMaker,
-            InternalInvocationBuilder internalInvocationBuilder,
             MethodInvocationBuilder methodInvocationBuilder, Names names,
+            RequiresInvocationBuilder requiresInvocationBuilder,
             ContractsRegistry contractsRegistry, ContractAnalyzer contractAnalyzer,
             SyntheticMethodNameGenerator nameGenerator) {
 
-        super(treeMaker, names, internalInvocationBuilder);
-        this.internalInvocationBuilder = internalInvocationBuilder;
+        super(treeMaker, names);
         this.methodInvocationBuilder = methodInvocationBuilder;
+        this.requiresInvocationBuilder = requiresInvocationBuilder;
         this.contractsRegistry = contractsRegistry;
         this.contractAnalyzer = contractAnalyzer;
         this.nameGenerator = nameGenerator;
@@ -120,7 +120,7 @@ public class PreconditionMethodGenerator extends AbstractMethodGenerator {
             java.util.List<ContractInvocation> preconditions) {
 
         return preconditions.stream()
-                .map(contract -> internalInvocationBuilder.build(contract, wrapper, null))
+                .map(contract -> requiresInvocationBuilder.build(contract, wrapper))
                 .collect(Collectors.toList());
     }
 }

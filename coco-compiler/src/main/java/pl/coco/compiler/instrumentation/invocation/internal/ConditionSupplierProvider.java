@@ -1,8 +1,6 @@
-package pl.coco.compiler.instrumentation.invocation;
+package pl.coco.compiler.instrumentation.invocation.internal;
 
 import javax.inject.Inject;
-
-import pl.coco.compiler.util.TypeRegistry;
 
 import com.sun.tools.javac.api.JavacTaskImpl;
 import com.sun.tools.javac.code.Type;
@@ -10,6 +8,8 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCLambda;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
+
+import pl.coco.compiler.util.TypeRegistry;
 
 public class ConditionSupplierProvider {
 
@@ -19,9 +19,9 @@ public class ConditionSupplierProvider {
     private final TypeRegistry typeRegistry;
 
     @Inject
-    public ConditionSupplierProvider(JavacTaskImpl task) {
+    public ConditionSupplierProvider(JavacTaskImpl task, TypeRegistry typeRegistry) {
         this.treeMaker = TreeMaker.instance(task.getContext());
-        this.typeRegistry = new TypeRegistry(task);
+        this.typeRegistry = typeRegistry;
     }
 
     public JCLambda getSupplier(JCTree.JCExpression precondition) {

@@ -16,23 +16,23 @@ import com.sun.tools.javac.util.Name;
 import com.sun.tools.javac.util.Names;
 
 import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
-import pl.coco.compiler.instrumentation.invocation.InternalInvocationBuilder;
+import pl.coco.compiler.instrumentation.invocation.internal.invariant.InvariantInvocationBuilder;
 import pl.coco.compiler.util.ContractAstUtil;
 
 @Singleton
 public class InvariantMethodGenerator extends AbstractMethodGenerator {
 
     private final TreeMaker treeMaker;
-    private final InternalInvocationBuilder internalInvocationBuilder;
+    private final InvariantInvocationBuilder invariantInvocationBuilder;
     private final SyntheticMethodNameGenerator nameGenerator;
 
     @Inject
     public InvariantMethodGenerator(TreeMaker treeMaker, Names names,
-            InternalInvocationBuilder internalInvocationBuilder,
+            InvariantInvocationBuilder invariantInvocationBuilder,
             SyntheticMethodNameGenerator nameGenerator) {
-        super(treeMaker, names, internalInvocationBuilder);
+        super(treeMaker, names);
         this.treeMaker = treeMaker;
-        this.internalInvocationBuilder = internalInvocationBuilder;
+        this.invariantInvocationBuilder = invariantInvocationBuilder;
         this.nameGenerator = nameGenerator;
     }
 
@@ -61,8 +61,7 @@ public class InvariantMethodGenerator extends AbstractMethodGenerator {
                 .collect(Collectors.toList());
 
         java.util.List<JCStatement> processedInvariants = invariants.stream()
-                .map(contract -> internalInvocationBuilder.build(contract, originalInvariant,
-                        null))
+                .map(contract -> invariantInvocationBuilder.build(contract, originalInvariant))
                 .collect(Collectors.toList());
 
         return treeMaker.Block(0, List.from(processedInvariants));
