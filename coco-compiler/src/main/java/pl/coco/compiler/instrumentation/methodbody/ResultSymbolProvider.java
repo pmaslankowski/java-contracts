@@ -12,8 +12,7 @@ import com.sun.tools.javac.util.Names;
 @Singleton
 public class ResultSymbolProvider {
 
-    // TODO: zmienić nazwę, żeby utrudnić clasha
-    private static final String RESULT_VARIABLE_NAME = "result";
+    private static final String RESULT_VARIABLE_NAME = "$result";
 
     private final Names names;
 

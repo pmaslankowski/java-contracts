@@ -15,6 +15,7 @@ import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 import pl.coco.compiler.instrumentation.synthetic.InvariantMethodGenerator;
 import pl.coco.compiler.util.AstUtil;
 import pl.coco.compiler.util.ContractAstUtil;
+import pl.coco.compiler.util.InvariantUtil;
 import pl.coco.compiler.util.TreePasser;
 
 @Singleton
@@ -44,7 +45,7 @@ public class ClassLevelProcessor {
         for (JCTree member : clazz.getMembers()) {
             boolean isInvariantMethod = TreePasser.of(member)
                     .as(JCMethodDecl.class)
-                    .mapAndGet(ContractAstUtil::isInvariantMethod)
+                    .mapAndGet(InvariantUtil::isInvariantMethod)
                     .orElse(false);
 
             if (isInvariantMethod) {

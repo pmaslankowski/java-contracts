@@ -28,7 +28,6 @@ import pl.coco.compiler.instrumentation.invocation.internal.ConditionSupplierPro
 import pl.coco.compiler.instrumentation.synthetic.IsBeforeSymbolProvider;
 import pl.coco.compiler.util.TypeRegistry;
 
-// TODO: zmienić nazwę
 @Singleton
 public class InvariantInvocationBuilder {
 

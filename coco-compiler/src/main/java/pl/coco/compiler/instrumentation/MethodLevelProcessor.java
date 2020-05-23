@@ -20,6 +20,7 @@ import pl.coco.compiler.instrumentation.synthetic.ContractSyntheticMethods;
 import pl.coco.compiler.instrumentation.synthetic.ContractSyntheticMethodsGenerator;
 import pl.coco.compiler.util.AstUtil;
 import pl.coco.compiler.util.ContractAstUtil;
+import pl.coco.compiler.util.InvariantUtil;
 
 @Singleton
 public class MethodLevelProcessor {
@@ -55,12 +56,12 @@ public class MethodLevelProcessor {
         boolean hasContractsOrInvariants =
                 contractAnalyzer.hasContracts(clazz, method) || containsInvariantMethod(clazz);
 
-        return !ContractAstUtil.isSynthetic(method) && !ContractAstUtil.isInvariantMethod(method)
+        return !ContractAstUtil.isSynthetic(method) && !InvariantUtil.isInvariantMethod(method)
                 && hasContractsOrInvariants;
     }
 
     private boolean containsInvariantMethod(JCClassDecl clazz) {
-        return ContractAstUtil.getInvariantMethod(clazz).isPresent();
+        return InvariantUtil.getInvariantMethod(clazz).isPresent();
     }
 
     private void doProcess(MethodInput input) {

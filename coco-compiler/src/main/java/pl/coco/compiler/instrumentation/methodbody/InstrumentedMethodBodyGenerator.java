@@ -20,6 +20,7 @@ import com.sun.tools.javac.tree.TreeMaker;
 import pl.coco.compiler.instrumentation.synthetic.ContractSyntheticMethods;
 import pl.coco.compiler.util.AstUtil;
 import pl.coco.compiler.util.ContractAstUtil;
+import pl.coco.compiler.util.InvariantUtil;
 
 @Singleton
 public class InstrumentedMethodBodyGenerator {
@@ -74,7 +75,7 @@ public class InstrumentedMethodBodyGenerator {
 
         List<JCExpression> params = Collections.singletonList(
                 treeMaker.Literal(invocationPoint.isBefore()));
-        Optional<JCStatement> invariantInvocation = ContractAstUtil.getInvariantMethod(clazz)
+        Optional<JCStatement> invariantInvocation = InvariantUtil.getInvariantMethod(clazz)
                 .map(inv -> invocationStmtGenerator.generateWithParameters(inv, params));
 
         invariantInvocation.ifPresent(processed::add);
