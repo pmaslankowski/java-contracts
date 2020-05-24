@@ -1,4 +1,4 @@
-package pl.coco.compiler.e2e;
+package pl.coco.compiler.e2e.code;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
