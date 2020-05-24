@@ -13,7 +13,7 @@ public enum ContractMethod {
     FOR_ALL("forAll", false, true, false),
     EXISTS("exists", false, true, false);
 
-    private static final String API_CLASS_NAME = "pl.coco.api.Contract";
+    private static final String API_CLASS_NAME = "pl.coco.api.code.Contract";
     private static final String INTERNAL_CLASS_NAME = "pl.coco.internal.ContractEngine";
 
     private final String methodName;

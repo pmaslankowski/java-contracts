@@ -21,7 +21,7 @@ class ContractRequiresTest {
     void shouldReturnResultWhenPreconditionOnStaticMethodPasses() throws Throwable {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -45,7 +45,7 @@ class ContractRequiresTest {
     void shouldThrowExceptionWhenPreconditionOnStaticMethodFails() {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "    public static int entry() {\n"
@@ -72,7 +72,7 @@ class ContractRequiresTest {
     void shouldReturnResultWhenPreconditionOnInstanceMethodPasses() throws Throwable {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -98,7 +98,7 @@ class ContractRequiresTest {
     void shouldThrowExceptionWhenPreconditionOnInstanceMethodFails() {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -127,7 +127,7 @@ class ContractRequiresTest {
     void shouldPassWhenPreconditionOnVoidMethodPasses() {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -149,7 +149,7 @@ class ContractRequiresTest {
     void shouldFailWhenPreconditionOnVoidMethodFails() {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -175,7 +175,7 @@ class ContractRequiresTest {
     void shouldReturnResultWhenPreconditionOnInstanceMethodWithGenericPasses() throws Throwable {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -201,7 +201,7 @@ class ContractRequiresTest {
     void shouldThrowExceptionWhenPreconditionOnInstanceMethodWithGenericsFails() {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -237,7 +237,7 @@ class ContractRequiresTest {
                 + "    }\n"
                 + "\n"
                 + "    public static int testedMethod(int arg, boolean flag) {\n"
-                + "        pl.coco.api.Contract.requires(arg >= 0 && flag);\n"
+                + "        pl.coco.api.code.Contract.requires(arg >= 0 && flag);\n"
                 + "        return 42;\n"
                 + "    }\n"
                 + "}\n";
@@ -259,7 +259,7 @@ class ContractRequiresTest {
                 + "    }\n"
                 + "\n"
                 + "    public static int testedMethod(int arg) {\n"
-                + "        pl.coco.api.Contract.requires(arg >= 0);\n"
+                + "        pl.coco.api.code.Contract.requires(arg >= 0);\n"
                 + "        return 42;\n"
                 + "    }\n"
                 + "}\n";
@@ -277,7 +277,7 @@ class ContractRequiresTest {
     void shouldThrowContractFailedExceptionWhenExceptionIsThrownDuringContractEvaluation() {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"

@@ -2,7 +2,7 @@ package pl.coco.experiments;
 
 import java.time.ZonedDateTime;
 
-import pl.coco.api.Contract;
+import pl.coco.api.code.Contract;
 
 public class TestMath {
 

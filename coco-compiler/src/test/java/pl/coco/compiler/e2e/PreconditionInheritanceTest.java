@@ -41,7 +41,7 @@ class PreconditionInheritanceTest {
 
         String base = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Base {\n"
                 + "\n"
@@ -54,7 +54,7 @@ class PreconditionInheritanceTest {
 
         String subclass = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Subclass extends Base {\n"
                 + "\n"
@@ -89,7 +89,7 @@ class PreconditionInheritanceTest {
 
         String base = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Base {\n"
                 + "\n"
@@ -102,7 +102,7 @@ class PreconditionInheritanceTest {
 
         String subclass = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Subclass extends Base {\n"
                 + "\n"
@@ -139,7 +139,7 @@ class PreconditionInheritanceTest {
 
         String base = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Base {\n"
                 + "\n"
@@ -151,7 +151,7 @@ class PreconditionInheritanceTest {
 
         String subclass = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Subclass extends Base {\n"
                 + "\n"
@@ -187,7 +187,7 @@ class PreconditionInheritanceTest {
 
         String base = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Base {\n"
                 + "\n"
@@ -199,7 +199,7 @@ class PreconditionInheritanceTest {
 
         String subclass = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Subclass extends Base {\n"
                 + "\n"
@@ -237,7 +237,7 @@ class PreconditionInheritanceTest {
 
         String base = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Base {\n"
                 + "\n"
@@ -250,7 +250,7 @@ class PreconditionInheritanceTest {
 
         String subclass = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Subclass extends Base {\n"
                 + "\n"
@@ -286,7 +286,7 @@ class PreconditionInheritanceTest {
 
         String base = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Base {\n"
                 + "\n"
@@ -299,7 +299,7 @@ class PreconditionInheritanceTest {
 
         String subclass = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Subclass extends Base {\n"
                 + "\n"
@@ -337,7 +337,7 @@ class PreconditionInheritanceTest {
 
         String base = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Base {\n"
                 + "\n"
@@ -350,7 +350,7 @@ class PreconditionInheritanceTest {
 
         String subclass = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Subclass extends Base {\n"
                 + "\n"
@@ -386,7 +386,7 @@ class PreconditionInheritanceTest {
 
         String base = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Base {\n"
                 + "\n"
@@ -401,7 +401,7 @@ class PreconditionInheritanceTest {
 
         String subclass = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Subclass extends Base {\n"
                 + "\n"
@@ -436,7 +436,7 @@ class PreconditionInheritanceTest {
 
         String base = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Base {\n"
                 + "\n"
@@ -451,7 +451,7 @@ class PreconditionInheritanceTest {
 
         String subclass = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Subclass extends Base {\n"
                 + "\n"
@@ -486,7 +486,7 @@ class PreconditionInheritanceTest {
 
         String base = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Base {\n"
                 + "\n"
@@ -501,7 +501,7 @@ class PreconditionInheritanceTest {
 
         String subclass = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Subclass extends Base {\n"
                 + "\n"
@@ -536,7 +536,7 @@ class PreconditionInheritanceTest {
 
         String base = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Base {\n"
                 + "\n"
@@ -551,7 +551,7 @@ class PreconditionInheritanceTest {
 
         String subclass = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Subclass extends Base {\n"
                 + "\n"
@@ -587,7 +587,7 @@ class PreconditionInheritanceTest {
 
         String base = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Base {\n"
                 + "\n"
@@ -602,7 +602,7 @@ class PreconditionInheritanceTest {
 
         String subclass = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Subclass extends Base {\n"
                 + "\n"
@@ -638,7 +638,7 @@ class PreconditionInheritanceTest {
 
         String base = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Base {\n"
                 + "\n"
@@ -651,7 +651,7 @@ class PreconditionInheritanceTest {
 
         String subclass = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Subclass extends Base {\n"
                 + "\n"
@@ -686,7 +686,7 @@ class PreconditionInheritanceTest {
 
         String base = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Base {\n"
                 + "\n"
@@ -699,7 +699,7 @@ class PreconditionInheritanceTest {
 
         String subclass = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Subclass extends Base {\n"
                 + "\n"

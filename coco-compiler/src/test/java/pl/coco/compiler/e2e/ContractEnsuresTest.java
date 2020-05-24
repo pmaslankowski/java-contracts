@@ -22,7 +22,7 @@ class ContractEnsuresTest {
 
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -49,7 +49,7 @@ class ContractEnsuresTest {
     void shouldThrowExceptionWhenPostconditionOnStaticMethodFails() {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -79,7 +79,7 @@ class ContractEnsuresTest {
 
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -109,7 +109,7 @@ class ContractEnsuresTest {
 
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -139,7 +139,7 @@ class ContractEnsuresTest {
 
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -170,7 +170,7 @@ class ContractEnsuresTest {
     void shouldThrowExceptionWhenPreconditionOnInstanceMethodFails() {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -201,7 +201,7 @@ class ContractEnsuresTest {
     void shouldPassWhenPreconditionOnVoidMethodPasses() {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -227,7 +227,7 @@ class ContractEnsuresTest {
     void shouldFailWhenPreconditionOnVoidMethodFails() {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -256,7 +256,7 @@ class ContractEnsuresTest {
     void shouldReturnResultWhenPostconditionWithResultInsideUnaryOpPasses() throws Throwable {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -282,7 +282,7 @@ class ContractEnsuresTest {
     void shouldThrowExceptionWhenPostconditionWithResultInsideUnaryOpFails() {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -311,7 +311,7 @@ class ContractEnsuresTest {
     void shouldReturnResultWhenPostconditionWithResultInsideBinaryOpPasses() throws Throwable {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -337,7 +337,7 @@ class ContractEnsuresTest {
     void shouldThrowExceptionWhenPostconditionWithResultInsideBinaryOpFails() {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -366,7 +366,7 @@ class ContractEnsuresTest {
     void shouldReturnResultWhenPostconditionWithResultInsideTernaryOpPasses() throws Throwable {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -395,7 +395,7 @@ class ContractEnsuresTest {
     void shouldReturnResultWhenPostconditionWithResultInsideTernaryOpFails() {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -435,7 +435,7 @@ class ContractEnsuresTest {
                 + "    }\n"
                 + "\n"
                 + "    public static int testedMethod() {\n"
-                + "        pl.coco.api.Contract.ensures(val == 1);\n"
+                + "        pl.coco.api.code.Contract.ensures(val == 1);\n"
                 + "        val = 1;\n"
                 + "        return 42;\n"
                 + "    }\n"
@@ -460,7 +460,7 @@ class ContractEnsuresTest {
                 + "    }\n"
                 + "\n"
                 + "    public static int testedMethod() {\n"
-                + "        pl.coco.api.Contract.ensures(val == 1);\n"
+                + "        pl.coco.api.code.Contract.ensures(val == 1);\n"
                 + "        return 42;\n"
                 + "    }\n"
                 + "}\n";
@@ -487,8 +487,8 @@ class ContractEnsuresTest {
                 + "    }\n"
                 + "\n"
                 + "    public static int testedMethod() {\n"
-                + "        pl.coco.api.Contract.ensures(\n"
-                + "            pl.coco.api.Contract.result(int.class) == 42);\n"
+                + "        pl.coco.api.code.Contract.ensures(\n"
+                + "            pl.coco.api.code.Contract.result(int.class) == 42);\n"
                 + "        return 42;\n"
                 + "    }\n"
                 + "}\n";
@@ -512,8 +512,8 @@ class ContractEnsuresTest {
                 + "    }\n"
                 + "\n"
                 + "    public static int testedMethod() {\n"
-                + "        pl.coco.api.Contract.ensures(\n"
-                + "            pl.coco.api.Contract.result(int.class) != 42);\n"
+                + "        pl.coco.api.code.Contract.ensures(\n"
+                + "            pl.coco.api.code.Contract.result(int.class) != 42);\n"
                 + "        return 42;\n"
                 + "    }\n"
                 + "}\n";
@@ -530,7 +530,7 @@ class ContractEnsuresTest {
     void shouldThrowContractFailedExceptionWhenExceptionIsThrownDuringContractEvaluation() {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"

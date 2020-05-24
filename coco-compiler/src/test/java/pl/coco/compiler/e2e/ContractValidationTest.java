@@ -21,7 +21,7 @@ class ContractValidationTest {
 
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -54,7 +54,7 @@ class ContractValidationTest {
 
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -86,7 +86,7 @@ class ContractValidationTest {
 
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -118,7 +118,7 @@ class ContractValidationTest {
 
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -150,7 +150,7 @@ class ContractValidationTest {
 
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -180,7 +180,7 @@ class ContractValidationTest {
 
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -212,7 +212,7 @@ class ContractValidationTest {
 
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -242,7 +242,7 @@ class ContractValidationTest {
 
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -267,7 +267,7 @@ class ContractValidationTest {
 
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -296,7 +296,7 @@ class ContractValidationTest {
 
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Invariant;\n"
+                + "import pl.coco.api.code.Invariant;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -327,7 +327,7 @@ class ContractValidationTest {
 
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Invariant;\n"
+                + "import pl.coco.api.code.Invariant;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -354,7 +354,7 @@ class ContractValidationTest {
 
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Invariant;\n"
+                + "import pl.coco.api.code.Invariant;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -383,7 +383,7 @@ class ContractValidationTest {
 
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -409,7 +409,7 @@ class ContractValidationTest {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
                 + "import java.util.Collections;\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -434,7 +434,7 @@ class ContractValidationTest {
 
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -460,7 +460,7 @@ class ContractValidationTest {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
                 + "import java.util.Collections;\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"

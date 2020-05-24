@@ -1,4 +1,4 @@
-package pl.coco.api;
+package pl.coco.api.code;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation specyfying invariant method in a class.
+ * Annotation specifying invariant method in a class.
  * <p>
  * Invariant method should be a public void method with no arguments and it can contain
  * only contract specifications. Contracts specified in invariant method are evaluated before and

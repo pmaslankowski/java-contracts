@@ -1,4 +1,4 @@
-package pl.coco.api;
+package pl.coco.api.code;
 
 import java.util.Arrays;
 import java.util.function.Predicate;

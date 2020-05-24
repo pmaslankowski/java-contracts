@@ -30,7 +30,7 @@ class PostconditionInConstructorTest {
     void shouldReturnWhenContractInConstructorPasses() throws Throwable {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Entry {\n"
                 + "\n"
@@ -58,7 +58,7 @@ class PostconditionInConstructorTest {
     void shouldThrowExceptionWhenContractInConstructorFails() {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Entry {\n"
                 + "\n"
@@ -101,7 +101,7 @@ class PostconditionInConstructorTest {
 
         String base = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Base {\n"
                 + "\n"
@@ -115,7 +115,7 @@ class PostconditionInConstructorTest {
 
         String subclass = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Subclass extends Base {\n"
                 + "\n"
@@ -150,7 +150,7 @@ class PostconditionInConstructorTest {
 
         String base = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Base {\n"
                 + "\n"
@@ -164,7 +164,7 @@ class PostconditionInConstructorTest {
 
         String subclass = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
+                + "import pl.coco.api.code.Contract;\n"
                 + "\n"
                 + "public class Subclass extends Base {\n"
                 + "\n"

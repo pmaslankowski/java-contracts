@@ -22,8 +22,8 @@ class InvariantTest {
 
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
-                + "import pl.coco.api.Invariant;\n"
+                + "import pl.coco.api.code.Contract;\n"
+                + "import pl.coco.api.code.Invariant;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -50,8 +50,8 @@ class InvariantTest {
     void shouldReturnResultFromInstanceMethodWhenInvariantPasses() throws Throwable {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
-                + "import pl.coco.api.Invariant;\n"
+                + "import pl.coco.api.code.Contract;\n"
+                + "import pl.coco.api.code.Invariant;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -83,8 +83,8 @@ class InvariantTest {
     void shouldThrowExceptionFromInstanceMethodWhenInvariantFailsBefore() {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
-                + "import pl.coco.api.Invariant;\n"
+                + "import pl.coco.api.code.Contract;\n"
+                + "import pl.coco.api.code.Invariant;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -120,8 +120,8 @@ class InvariantTest {
     void shouldThrowExceptionFromInstanceMethodWhenInvariantFailsAfter() {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.Contract;\n"
-                + "import pl.coco.api.Invariant;\n"
+                + "import pl.coco.api.code.Contract;\n"
+                + "import pl.coco.api.code.Invariant;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
