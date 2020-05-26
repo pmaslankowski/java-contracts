@@ -33,6 +33,7 @@ class AnnotationPreconditionsTest {
                 + "    public static int testedMethod(int arg, boolean flag) {\n"
                 + "        return 42;\n"
                 + "    }\n"
+
                 + "}\n";
 
         Object actual = JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code);
@@ -52,7 +53,7 @@ class AnnotationPreconditionsTest {
                 + "        return testedMethod(-1);\n"
                 + "    }\n"
                 + "\n"
-                + "    @Requires(\"arg >= 0 && flag\")"
+                + "    @Requires(\"arg >= 0\")"
                 + "    private static int testedMethod(int arg) {\n"
                 + "        return 42;\n"
                 + "    }\n"
@@ -81,7 +82,7 @@ class AnnotationPreconditionsTest {
                 + "        return test.testedMethod(1, true);"
                 + "    }\n"
                 + "\n"
-                + "    @Requires(\"arg >= 0 && flag\")"
+                + "    @Requires(\"i >= 0 && flag\")"
                 + "    private int testedMethod(int i, boolean flag) {\n"
                 + "        return 42;\n"
                 + "    }\n"

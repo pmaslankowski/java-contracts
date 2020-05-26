@@ -13,7 +13,7 @@ import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 
 public class InvariantUtil {
 
-    public static final String INVARIANT_ANNOTATION_TYPE = "pl.coco.api.code.Invariant";
+    public static final String INVARIANT_ANNOTATION_TYPE = "pl.coco.api.code.InvariantMethod";
     private static final String INVARIANT_METHOD_NAME = "coco$invariant";
 
     public static boolean isInvariantMethod(MethodTree method) {

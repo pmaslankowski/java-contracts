@@ -8,6 +8,7 @@ import com.sun.tools.javac.api.JavacTaskImpl;
 import com.sun.tools.javac.code.Symtab;
 import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.comp.Resolve;
+import com.sun.tools.javac.parser.ParserFactory;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Names;
 
@@ -66,5 +67,10 @@ public class CocoModule extends AbstractModule {
     @Provides
     Symtab symtab(JavacTaskImpl taskImpl) {
         return Symtab.instance(taskImpl.getContext());
+    }
+
+    @Provides
+    ParserFactory parserFactory(JavacTaskImpl taskImpl) {
+        return ParserFactory.instance(taskImpl.getContext());
     }
 }

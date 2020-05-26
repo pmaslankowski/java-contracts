@@ -49,7 +49,7 @@ public class Contract {
      * Specifies class invariant. Can be used inside invariant methods only.
      * 
      * @param condition condition
-     * @see Invariant
+     * @see InvariantMethod
      */
     public static void invariant(boolean condition) {
         throw new IllegalStateException(MESSAGE);

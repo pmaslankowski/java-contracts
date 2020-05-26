@@ -1,14 +1,16 @@
 package pl.coco.compiler.instrumentation.invocation;
 
 import javax.inject.Inject;
-
-import pl.coco.compiler.util.TypeRegistry;
+import javax.inject.Singleton;
 
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
 import com.sun.tools.javac.tree.TreeMaker;
 
+import pl.coco.compiler.util.TypeRegistry;
+
+@Singleton
 public class ClassAccessBuilder {
 
     private final TreeMaker treeMaker;

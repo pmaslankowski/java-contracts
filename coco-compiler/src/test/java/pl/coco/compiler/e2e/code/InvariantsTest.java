@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import pl.coco.api.ContractFailedException;
 import pl.coco.util.JavacTestUtils;
 
-class InvariantTest {
+class InvariantsTest {
 
     private static final String QUALIFIED_CLASS_NAME = "pl.coco.compiler.Test";
     private static final String ENTRY_POINT = "entry";
@@ -23,7 +23,7 @@ class InvariantTest {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
                 + "import pl.coco.api.code.Contract;\n"
-                + "import pl.coco.api.code.Invariant;\n"
+                + "import pl.coco.api.code.InvariantMethod;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -33,7 +33,7 @@ class InvariantTest {
                 + "        return 42;\n"
                 + "    }\n"
                 + "\n"
-                + "    @Invariant\n"
+                + "    @InvariantMethod\n"
                 + "    private void invariantMethod() {\n"
                 + "        Contract.invariant(val >= 0);\n"
                 + "    }\n"
@@ -51,7 +51,7 @@ class InvariantTest {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
                 + "import pl.coco.api.code.Contract;\n"
-                + "import pl.coco.api.code.Invariant;\n"
+                + "import pl.coco.api.code.InvariantMethod;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -62,7 +62,7 @@ class InvariantTest {
                 + "        return instance.testedMethod();\n"
                 + "    }\n"
                 + "\n"
-                + "    @Invariant"
+                + "    @InvariantMethod"
                 + "    private void invariantMethod() {\n"
                 + "        Contract.invariant(val >= 0);\n"
                 + "    }\n"
@@ -84,7 +84,7 @@ class InvariantTest {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
                 + "import pl.coco.api.code.Contract;\n"
-                + "import pl.coco.api.code.Invariant;\n"
+                + "import pl.coco.api.code.InvariantMethod;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -100,7 +100,7 @@ class InvariantTest {
                 + "        return 42;\n"
                 + "    }\n"
                 + "\n"
-                + "    @Invariant"
+                + "    @InvariantMethod"
                 + "    void invariantMethod() {\n"
                 + "        Contract.invariant(val >= 0);\n"
                 + "    }\n"
@@ -121,7 +121,7 @@ class InvariantTest {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
                 + "import pl.coco.api.code.Contract;\n"
-                + "import pl.coco.api.code.Invariant;\n"
+                + "import pl.coco.api.code.InvariantMethod;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -137,7 +137,7 @@ class InvariantTest {
                 + "        return 42;\n"
                 + "    }\n"
                 + "\n"
-                + "    @Invariant"
+                + "    @InvariantMethod"
                 + "    void invariantMethod() {\n"
                 + "        Contract.invariant(val >= 0);\n"
                 + "    }\n"
