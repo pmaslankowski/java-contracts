@@ -1,10 +1,11 @@
-package pl.coco.compiler;
+package pl.coco.compiler.listeners;
 
 import javax.inject.Inject;
 
 import com.sun.source.util.TaskEvent;
 import com.sun.source.util.TaskListener;
 
+import pl.coco.compiler.ContractProcessingVisitor;
 import pl.coco.compiler.annotation.ContractAnnotationVisitor;
 import pl.coco.compiler.validation.ContractValidatingVisitor;
 
