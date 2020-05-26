@@ -39,4 +39,19 @@ public class InvariantUtil {
                 .mapAndGet(method -> method.getName().contentEquals(INVARIANT_METHOD_NAME))
                 .orElse(false);
     }
+
+    public static Optional<JCMethodDecl> findInvariantMethod(JCClassDecl clazz) {
+        for (JCTree member : clazz.getMembers()) {
+            boolean isInvariantMethod = TreePasser.of(member)
+                    .as(JCMethodDecl.class)
+                    .mapAndGet(InvariantUtil::isInvariantMethod)
+                    .orElse(false);
+
+            if (isInvariantMethod) {
+                return Optional.of((JCMethodDecl) member);
+            }
+        }
+
+        return Optional.empty();
+    }
 }

@@ -1,8 +1,10 @@
 package pl.coco.compiler.util;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class CollectionUtils {
 
@@ -30,5 +32,15 @@ public class CollectionUtils {
         }
 
         return Optional.empty();
+    }
+
+    public static <T> com.sun.tools.javac.util.List<T> remove(com.sun.tools.javac.util.List<T> list,
+            T element) {
+
+        List<T> listWithElementRemoved = list.stream()
+                .filter(listItem -> !Objects.equals(listItem, element))
+                .collect(Collectors.toList());
+
+        return com.sun.tools.javac.util.List.from(listWithElementRemoved);
     }
 }

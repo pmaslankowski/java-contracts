@@ -7,14 +7,18 @@ import com.sun.source.util.TaskEvent;
 import com.sun.source.util.TaskListener;
 
 import pl.coco.compiler.stripping.ContractStrippingVisitor;
+import pl.coco.compiler.validation.ContractValidatingVisitor;
 
 @Singleton
 public class StrippingListener implements TaskListener {
 
+    private final ContractValidatingVisitor validatingVisitor;
     private final ContractStrippingVisitor strippingVisitor;
 
     @Inject
-    public StrippingListener(ContractStrippingVisitor strippingVisitor) {
+    public StrippingListener(ContractValidatingVisitor validatingVisitor,
+            ContractStrippingVisitor strippingVisitor) {
+        this.validatingVisitor = validatingVisitor;
         this.strippingVisitor = strippingVisitor;
     }
 
@@ -26,7 +30,10 @@ public class StrippingListener implements TaskListener {
     @Override
     public void finished(TaskEvent taskEvent) {
         if (taskEvent.getKind() == TaskEvent.Kind.ANALYZE) {
-            taskEvent.getCompilationUnit().accept(strippingVisitor, null);
+            boolean isValid = taskEvent.getCompilationUnit().accept(validatingVisitor, null);
+            if (isValid) {
+                taskEvent.getCompilationUnit().accept(strippingVisitor, null);
+            }
         }
     }
 }
