@@ -3,7 +3,6 @@ package pl.coco.util;
 public class JavacTestUtils {
 
     public static final String CONTRACTS_ENABLED = "-Xplugin:coco";
-    public static final String CONTRACTS_DISABLED = "-Xplugin:coco --disabled";
 
     public static Object compileAndRun(String qualifiedClassName, String methodName, String code)
             throws Throwable {
