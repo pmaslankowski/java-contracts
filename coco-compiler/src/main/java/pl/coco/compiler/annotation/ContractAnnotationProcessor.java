@@ -15,15 +15,19 @@ public class ContractAnnotationProcessor {
 
     private final ContractAnnotationFactory annotationFactory;
     private final AnnotationTranslator annotationTranslator;
+    private final ContractImportAdder contractImportAdder;
 
     @Inject
     public ContractAnnotationProcessor(ContractAnnotationFactory annotationFactory,
-            AnnotationTranslator annotationTranslator) {
+            AnnotationTranslator annotationTranslator, ContractImportAdder contractImportAdder) {
         this.annotationFactory = annotationFactory;
         this.annotationTranslator = annotationTranslator;
+        this.contractImportAdder = contractImportAdder;
     }
 
-    public void processMethod(JCMethodDecl method) {
+    public void processMethod(AnnotationProcessorInput input) {
+        JCMethodDecl method = input.getMethod();
+
         List<JCAnnotation> annotations = method.getModifiers().getAnnotations();
 
         List<ContractAnnotation> contractAnnotations = annotations.stream()
@@ -34,6 +38,10 @@ public class ContractAnnotationProcessor {
         List<JCStatement> contractStatements = contractAnnotations.stream()
                 .map(annotationTranslator::translate)
                 .collect(Collectors.toList());
+
+        if (!contractStatements.isEmpty()) {
+            contractImportAdder.addImportToCompilationUnit(input.getCompilationUnit());
+        }
 
         method.getBody().stats = method.getBody().getStatements()
                 .prependList(com.sun.tools.javac.util.List.from(contractStatements));

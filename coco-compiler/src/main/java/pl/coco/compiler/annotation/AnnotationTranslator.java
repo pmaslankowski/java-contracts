@@ -3,8 +3,6 @@ package pl.coco.compiler.annotation;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import pl.coco.compiler.annotation.util.SimpleAccessBuilder;
-
 import com.sun.tools.javac.parser.JavacParser;
 import com.sun.tools.javac.parser.ParserFactory;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
@@ -12,6 +10,8 @@ import com.sun.tools.javac.tree.JCTree.JCMethodInvocation;
 import com.sun.tools.javac.tree.JCTree.JCStatement;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
+
+import pl.coco.compiler.annotation.util.SimpleAccessBuilder;
 
 @Singleton
 public class AnnotationTranslator {
