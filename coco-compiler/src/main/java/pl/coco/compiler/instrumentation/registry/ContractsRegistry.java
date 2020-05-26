@@ -14,7 +14,7 @@ import org.apache.commons.collections4.ListUtils;
 import com.google.common.collect.Lists;
 
 import pl.coco.compiler.instrumentation.ContractMethod;
-import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
+import pl.coco.compiler.model.ContractInvocation;
 
 @Singleton
 public class ContractsRegistry {

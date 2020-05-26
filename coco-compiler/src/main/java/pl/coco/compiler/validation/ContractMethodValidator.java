@@ -9,7 +9,7 @@ import com.sun.source.tree.StatementTree;
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 
 import pl.coco.compiler.instrumentation.ContractMethod;
-import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
+import pl.coco.compiler.model.ContractInvocation;
 import pl.coco.compiler.util.AstUtil;
 import pl.coco.compiler.util.CollectionUtils;
 import pl.coco.compiler.util.ContractAstUtil;

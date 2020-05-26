@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.sun.source.util.JavacTask;
 import com.sun.source.util.Plugin;
+import com.sun.source.util.TaskListener;
 
 import pl.coco.compiler.arguments.ArgumentParser;
 import pl.coco.compiler.arguments.CocoArgs;
@@ -23,9 +24,10 @@ public class CocoPlugin implements Plugin {
         CocoArgs cocoArgs = parser.parseArgs(args);
 
         Injector injector = Guice.createInjector(new CocoModule(javacTask, cocoArgs));
-        InstrumentationListener instrumentationListener = injector.getInstance(
-                InstrumentationListener.class);
 
-        javacTask.addTaskListener(instrumentationListener);
+        TaskListenerFactory taskListenerFactory = injector.getInstance(TaskListenerFactory.class);
+        TaskListener cocoTaskListener = taskListenerFactory.getInstrumentationListener();
+
+        javacTask.addTaskListener(cocoTaskListener);
     }
 }

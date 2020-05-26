@@ -1,4 +1,4 @@
-package pl.coco.compiler.instrumentation.invocation;
+package pl.coco.compiler.model;
 
 import java.util.Optional;
 

@@ -19,7 +19,7 @@ import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Name;
 import com.sun.tools.javac.util.Names;
 
-import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
+import pl.coco.compiler.model.ContractInvocation;
 import pl.coco.compiler.instrumentation.invocation.internal.invariant.InvariantInvocationBuilder;
 import pl.coco.compiler.util.ContractAstUtil;
 

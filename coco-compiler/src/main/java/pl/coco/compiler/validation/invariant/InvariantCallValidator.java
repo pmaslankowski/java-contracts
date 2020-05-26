@@ -7,7 +7,7 @@ import com.sun.tools.javac.tree.JCTree.JCMethodInvocation;
 import com.sun.tools.javac.tree.TreeScanner;
 
 import pl.coco.compiler.instrumentation.ContractMethod;
-import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
+import pl.coco.compiler.model.ContractInvocation;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.util.InvariantUtil;
 import pl.coco.compiler.validation.ContractError;

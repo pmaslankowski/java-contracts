@@ -6,7 +6,7 @@ import javax.inject.Singleton;
 import com.sun.source.tree.BlockTree;
 import com.sun.source.tree.StatementTree;
 
-import pl.coco.compiler.instrumentation.invocation.ContractInvocation;
+import pl.coco.compiler.model.ContractInvocation;
 import pl.coco.compiler.instrumentation.registry.ContractsRegistry;
 import pl.coco.compiler.instrumentation.registry.MethodKey;
 import pl.coco.compiler.util.ContractAstUtil;
