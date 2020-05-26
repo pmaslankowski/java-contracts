@@ -6,12 +6,12 @@ import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.tools.javac.tree.JCTree.JCCompilationUnit;
 
-public class AnnotationProcessorInput {
+public class AnnotationProcessorMethodInput {
 
     private final JCCompilationUnit compilationUnit;
     private final JCMethodDecl method;
 
-    public AnnotationProcessorInput(CompilationUnitTree compilationUnit, MethodTree method) {
+    public AnnotationProcessorMethodInput(CompilationUnitTree compilationUnit, MethodTree method) {
         this.compilationUnit = (JCCompilationUnit) compilationUnit;
         this.method = (JCMethodDecl) method;
     }
@@ -23,5 +23,4 @@ public class AnnotationProcessorInput {
     public JCMethodDecl getMethod() {
         return method;
     }
-
 }

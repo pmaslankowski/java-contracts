@@ -15,7 +15,8 @@ import pl.coco.compiler.annotation.util.SimpleAccessBuilder;
 @Singleton
 public class ContractImportAdder {
 
-    private static final String CONTRACT_CLASS_PATH = "pl.coco.api.code.Contract";
+    private static final String CONTRACT_PATH = "pl.coco.api.code.Contract";
+    private static final String INVARIANT_METHOD_PATH = "pl.coco.api.code.InvariantMethod";
 
     private final TreeMaker treeMaker;
     private final SimpleAccessBuilder accessBuilder;
@@ -37,9 +38,14 @@ public class ContractImportAdder {
     }
 
     private void doAddImportToCompilationUnit(JCCompilationUnit compilationUnit) {
-        JCExpression contractAccess =
-                accessBuilder.build(CONTRACT_CLASS_PATH, compilationUnit.pos);
-        compilationUnit.defs =
-                compilationUnit.defs.prepend(treeMaker.Import(contractAccess, false));
+        JCExpression contractAccess = getAccess(compilationUnit, CONTRACT_PATH);
+        JCExpression invariantMethodAccess = getAccess(compilationUnit, INVARIANT_METHOD_PATH);
+        compilationUnit.defs = compilationUnit.defs
+                .prepend(treeMaker.Import(contractAccess, false))
+                .prepend(treeMaker.Import(invariantMethodAccess, false));
+    }
+
+    private JCExpression getAccess(JCCompilationUnit compilationUnit, String accessPath) {
+        return accessBuilder.build(accessPath, compilationUnit.pos);
     }
 }

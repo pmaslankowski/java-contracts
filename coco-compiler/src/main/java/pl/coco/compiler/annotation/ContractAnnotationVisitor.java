@@ -3,6 +3,7 @@ package pl.coco.compiler.annotation;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.util.TreeScanner;
@@ -26,8 +27,16 @@ public class ContractAnnotationVisitor extends TreeScanner<Void, Void> {
     }
 
     @Override
+    public Void visitClass(ClassTree clazz, Void aVoid) {
+        annotationProcessor.processClass(new AnnotationProcessorClassInput(compilationUnit, clazz));
+        return super.visitClass(clazz, aVoid);
+    }
+
+    @Override
     public Void visitMethod(MethodTree method, Void aVoid) {
-        annotationProcessor.processMethod(new AnnotationProcessorInput(compilationUnit, method));
-        return super.visitMethod(method, aVoid);
+        AnnotationProcessorMethodInput input =
+                new AnnotationProcessorMethodInput(compilationUnit, method);
+        annotationProcessor.processMethod(input);
+        return aVoid;
     }
 }
