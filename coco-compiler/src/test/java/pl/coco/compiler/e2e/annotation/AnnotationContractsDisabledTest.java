@@ -1,4 +1,4 @@
-package pl.coco.compiler.e2e.code;
+package pl.coco.compiler.e2e.annotation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import pl.coco.util.JavacTestUtils;
 
-class CodeContractDisabledTest {
+class AnnotationContractsDisabledTest {
 
     public static final String DISABLED = "-Xplugin:coco --disabled";
 
@@ -20,15 +20,15 @@ class CodeContractDisabledTest {
     void shouldReturnResultEvenThoughPreconditionFails() throws Throwable {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.code.Contract;\n"
+                + "import pl.coco.api.annotation.Requires;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "    public static int entry() {\n"
                 + "        return testedMethod(-1);\n"
                 + "    }\n"
                 + "\n"
+                + "    @Requires(\"arg >= 0\")"
                 + "    private static int testedMethod(int arg) {\n"
-                + "        Contract.requires(arg >= 0);\n"
                 + "        return 42;\n"
                 + "    }\n"
                 + "\n"
@@ -45,7 +45,7 @@ class CodeContractDisabledTest {
     void shouldReturnResultEvenThoughPostconditionFails() throws Throwable {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.code.Contract;\n"
+                + "import pl.coco.api.annotation.Ensures;\n"
                 + "\n"
                 + "public class Test {\n"
                 + "\n"
@@ -55,8 +55,8 @@ class CodeContractDisabledTest {
                 + "        return testedMethod();\n"
                 + "    }\n"
                 + "\n"
+                + "    @Ensures(\"val == 1\")"
                 + "    public static int testedMethod() {\n"
-                + "        Contract.ensures(val == 1);\n"
                 + "        return 42;\n"
                 + "    }\n"
                 + "}\n";
@@ -71,9 +71,9 @@ class CodeContractDisabledTest {
     void shouldReturnResultEvenThoughInvariantFails() throws Throwable {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.code.Contract;\n"
-                + "import pl.coco.api.code.InvariantMethod;\n"
+                + "import pl.coco.api.annotation.Invariant;\n"
                 + "\n"
+                + "@Invariant(\"val >= 0\")"
                 + "public class Test {\n"
                 + "\n"
                 + "    private static int val = 0;\n"
@@ -88,16 +88,10 @@ class CodeContractDisabledTest {
                 + "        return 42;\n"
                 + "    }\n"
                 + "\n"
-                + "    @InvariantMethod"
-                + "    void invariantMethod() {\n"
-                + "        Contract.invariant(val >= 0);\n"
-                + "    }\n"
-                + "\n"
                 + "}\n";
 
         Object result = JavacTestUtils.compileAndRun(CLASS_NAME, ENTRY_POINT, code, DISABLED);
 
         assertThat(result).isEqualTo(RESULT);
     }
-
 }
