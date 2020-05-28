@@ -2,6 +2,7 @@ package pl.coco.compiler.instrumentation.invocation.internal.postcondition;
 
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.tree.JCTree.JCArrayAccess;
 import com.sun.tools.javac.tree.JCTree.JCBinary;
 import com.sun.tools.javac.tree.JCTree.JCConditional;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
@@ -23,6 +24,19 @@ public class PostconditionArgumentsVisitor extends TreeScanner {
     public PostconditionArgumentsVisitor(TreeMaker treeMaker, Symbol resultSymbol) {
         this.treeMaker = treeMaker;
         this.resultSymbol = resultSymbol;
+    }
+
+    // TODO: dodać na to unit test
+    @Override
+    public void visitIndexed(JCArrayAccess arrayAccess) {
+        if (isResultInvocation(arrayAccess.index)) {
+            arrayAccess.index = newResultReference();
+        }
+        if (isResultInvocation(arrayAccess.indexed)) {
+            arrayAccess.indexed = newResultReference();
+        }
+
+        super.visitIndexed(arrayAccess);
     }
 
     @Override

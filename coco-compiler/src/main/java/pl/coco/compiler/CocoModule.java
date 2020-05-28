@@ -4,7 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.sun.source.util.JavacTask;
 import com.sun.source.util.Trees;
-import com.sun.tools.javac.api.JavacTaskImpl;
+import com.sun.tools.javac.api.BasicJavacTask;
 import com.sun.tools.javac.code.Symtab;
 import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.comp.Resolve;
@@ -30,8 +30,8 @@ public class CocoModule extends AbstractModule {
     }
 
     @Provides
-    JavacTaskImpl javacTaskImpl() {
-        return (JavacTaskImpl) task;
+    BasicJavacTask basicJavacTask() {
+        return (BasicJavacTask) task;
     }
 
     @Provides
@@ -40,37 +40,37 @@ public class CocoModule extends AbstractModule {
     }
 
     @Provides
-    Names names(JavacTaskImpl taskImpl) {
-        return Names.instance(taskImpl.getContext());
+    Names names(BasicJavacTask task) {
+        return Names.instance(task.getContext());
     }
 
     @Provides
-    TreeMaker treeMaker(JavacTaskImpl taskImpl) {
-        return TreeMaker.instance(taskImpl.getContext());
+    TreeMaker treeMaker(BasicJavacTask task) {
+        return TreeMaker.instance(task.getContext());
     }
 
     @Provides
-    Resolve resolver(JavacTaskImpl taskImpl) {
-        return Resolve.instance(taskImpl.getContext());
+    Resolve resolver(BasicJavacTask task) {
+        return Resolve.instance(task.getContext());
     }
 
     @Provides
-    Trees trees(JavacTaskImpl taskImpl) {
-        return Trees.instance(taskImpl);
+    Trees trees(BasicJavacTask task) {
+        return Trees.instance(task);
     }
 
     @Provides
-    Types types(JavacTaskImpl taskImpl) {
-        return Types.instance(taskImpl.getContext());
+    Types types(BasicJavacTask task) {
+        return Types.instance(task.getContext());
     }
 
     @Provides
-    Symtab symtab(JavacTaskImpl taskImpl) {
-        return Symtab.instance(taskImpl.getContext());
+    Symtab symtab(BasicJavacTask task) {
+        return Symtab.instance(task.getContext());
     }
 
     @Provides
-    ParserFactory parserFactory(JavacTaskImpl taskImpl) {
-        return ParserFactory.instance(taskImpl.getContext());
+    ParserFactory parserFactory(BasicJavacTask task) {
+        return ParserFactory.instance(task.getContext());
     }
 }

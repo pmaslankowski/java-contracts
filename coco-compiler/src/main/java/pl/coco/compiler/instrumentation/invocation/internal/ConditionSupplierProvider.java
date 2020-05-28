@@ -19,8 +19,8 @@ public class ConditionSupplierProvider {
     private final TypeRegistry typeRegistry;
 
     @Inject
-    public ConditionSupplierProvider(JavacTaskImpl task, TypeRegistry typeRegistry) {
-        this.treeMaker = TreeMaker.instance(task.getContext());
+    public ConditionSupplierProvider(TreeMaker treeMaker, TypeRegistry typeRegistry) {
+        this.treeMaker = treeMaker;
         this.typeRegistry = typeRegistry;
     }
 

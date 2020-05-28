@@ -4,7 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.lang.model.element.Element;
 
-import com.sun.tools.javac.api.JavacTaskImpl;
+import com.sun.tools.javac.api.BasicJavacTask;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.comp.AttrContext;
@@ -18,19 +18,19 @@ import com.sun.tools.javac.util.Names;
 @Singleton
 public class TypeRegistry {
 
-    private final JavacTaskImpl task;
+    private final BasicJavacTask task;
     private final Names names;
     private final Resolve resolver;
 
     @Inject
-    public TypeRegistry(JavacTaskImpl task, Names names, Resolve resolver) {
+    public TypeRegistry(BasicJavacTask task, Names names, Resolve resolver) {
         this.task = task;
         this.names = names;
         this.resolver = resolver;
     }
 
     public Type getType(String name) {
-        return task.getElements().getTypeElement(name).asType();
+        return (Type) task.getElements().getTypeElement(name).asType();
     }
 
     public Symbol getClassSymbol(String className) {

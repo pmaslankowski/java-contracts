@@ -80,8 +80,6 @@ public class MethodLevelProcessor {
                 generateInstrumentedMethodBody(clazz, method, syntheticMethods);
 
         body.stats = List.from(instrumentedStmts);
-
-        log.debug("Instrumented class code: {}", clazz);
     }
 
     private void addSyntheticMethodsToClass(ContractSyntheticMethods methods, JCClassDecl clazz) {
