@@ -25,7 +25,7 @@ public class ContractAnnotationFactory {
         for (ContractAnnotationType targetType : ContractAnnotationType.values()) {
             if (targetType.getName().equals(annotation.getAnnotationType().toString())) {
                 ContractAnnotation contractAnnotation = new ContractAnnotation(
-                        getExpression(annotation), annotation.pos, targetType);
+                        getExpression(annotation), getExprPosition(annotation), targetType);
                 return Optional.of(contractAnnotation);
             }
         }
@@ -36,5 +36,10 @@ public class ContractAnnotationFactory {
     private String getExpression(JCAnnotation annotation) {
         JCLiteral expression = (JCLiteral) annotation.getArguments().head;
         return (String) expression.getValue();
+    }
+
+    private int getExprPosition(JCAnnotation annotation) {
+        JCLiteral expression = (JCLiteral) annotation.getArguments().head;
+        return expression.pos;
     }
 }
