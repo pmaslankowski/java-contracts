@@ -8,7 +8,6 @@ import com.sun.source.util.TaskListener;
 
 import pl.coco.compiler.arguments.ArgumentParser;
 import pl.coco.compiler.arguments.CocoArgs;
-import pl.coco.compiler.listeners.TaskListenerFactory;
 
 public class CocoPlugin implements Plugin {
 

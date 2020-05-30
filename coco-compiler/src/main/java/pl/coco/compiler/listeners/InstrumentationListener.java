@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.sun.source.util.TaskEvent;
 import com.sun.source.util.TaskListener;
 
-import pl.coco.compiler.ContractProcessingVisitor;
+import pl.coco.compiler.instrumentation.ContractProcessingVisitor;
 import pl.coco.compiler.annotation.ContractAnnotationVisitor;
 import pl.coco.compiler.validation.ContractValidatingVisitor;
 

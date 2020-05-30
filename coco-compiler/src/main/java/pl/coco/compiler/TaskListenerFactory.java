@@ -1,4 +1,4 @@
-package pl.coco.compiler.listeners;
+package pl.coco.compiler;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -6,6 +6,8 @@ import javax.inject.Singleton;
 import com.sun.source.util.TaskListener;
 
 import pl.coco.compiler.arguments.CocoArgs;
+import pl.coco.compiler.listeners.InstrumentationListener;
+import pl.coco.compiler.listeners.StrippingListener;
 
 @Singleton
 public class TaskListenerFactory {

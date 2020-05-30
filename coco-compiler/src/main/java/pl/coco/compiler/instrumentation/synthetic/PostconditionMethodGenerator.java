@@ -12,6 +12,7 @@ import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.Type.ClassType;
 import com.sun.tools.javac.code.Type.JCVoidType;
 import com.sun.tools.javac.code.Type.MethodType;
+import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.tree.JCTree.JCBlock;
 import com.sun.tools.javac.tree.JCTree.JCClassDecl;
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
@@ -23,12 +24,12 @@ import com.sun.tools.javac.util.Name;
 import com.sun.tools.javac.util.Names;
 
 import pl.coco.compiler.instrumentation.ContractAnalyzer;
-import pl.coco.compiler.model.ContractInvocation;
 import pl.coco.compiler.instrumentation.invocation.MethodInvocationBuilder;
 import pl.coco.compiler.instrumentation.invocation.MethodInvocationDescription;
 import pl.coco.compiler.instrumentation.invocation.internal.postcondition.EnsuresInvocationBuilder;
 import pl.coco.compiler.instrumentation.registry.ContractsRegistry;
 import pl.coco.compiler.instrumentation.registry.MethodKey;
+import pl.coco.compiler.model.ContractInvocation;
 import pl.coco.compiler.util.AstUtil;
 
 @Singleton
@@ -41,13 +42,14 @@ public class PostconditionMethodGenerator extends AbstractMethodGenerator {
     private final ContractsRegistry contractsRegistry;
     private final ContractAnalyzer contractAnalyzer;
     private final SyntheticMethodNameGenerator nameGenerator;
+    private final Types types;
 
     @Inject
     public PostconditionMethodGenerator(TreeMaker treeMaker,
             EnsuresInvocationBuilder ensuresInvocationBuilder,
             MethodInvocationBuilder methodInvocationBuilder, Names names,
             ContractsRegistry contractsRegistry, ContractAnalyzer contractAnalyzer,
-            SyntheticMethodNameGenerator nameGenerator) {
+            SyntheticMethodNameGenerator nameGenerator, Types types) {
 
         super(treeMaker, names);
         this.ensuresInvocationBuilder = ensuresInvocationBuilder;
@@ -55,6 +57,7 @@ public class PostconditionMethodGenerator extends AbstractMethodGenerator {
         this.contractsRegistry = contractsRegistry;
         this.contractAnalyzer = contractAnalyzer;
         this.nameGenerator = nameGenerator;
+        this.types = types;
     }
 
     @Override
@@ -84,7 +87,7 @@ public class PostconditionMethodGenerator extends AbstractMethodGenerator {
 
     private VarSymbol createResultSymbol(JCMethodDecl originalMethod, MethodSymbol result) {
         VarSymbol resultSymbol = new VarSymbol(0, names.fromString("result"),
-                originalMethod.getReturnType().type, result);
+                getBoxedReturnType(originalMethod), result);
 
         if (originalMethod.sym.isStatic()) {
             resultSymbol.adr = result.params.length();
@@ -94,10 +97,14 @@ public class PostconditionMethodGenerator extends AbstractMethodGenerator {
         return resultSymbol;
     }
 
+    private Type getBoxedReturnType(JCMethodDecl originalMethod) {
+        return types.boxedTypeOrType(originalMethod.getReturnType().type);
+    }
+
     private MethodType getMethodType(JCMethodDecl originalMethod) {
         List<Type> originalParamTypes = originalMethod.sym.type.getParameterTypes();
         if (!AstUtil.isVoid(originalMethod)) {
-            Type returnType = originalMethod.sym.getReturnType();
+            Type returnType = getBoxedReturnType(originalMethod);
             List<Type> paramTypes = originalParamTypes.append(returnType);
             return new MethodType(paramTypes, VOID_TYPE, List.nil(), null);
         } else {

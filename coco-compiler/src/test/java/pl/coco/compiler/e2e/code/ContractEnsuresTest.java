@@ -321,7 +321,7 @@ class ContractEnsuresTest {
                 + "    }\n"
                 + "\n"
                 + "    private int testedMethod() {\n"
-                + "        Contract.ensures(Contract.result(int.class) == 42);\n"
+                + "        Contract.ensures(Contract.result(Integer.class) == 42);\n"
                 + "        return 42;\n"
                 + "    }\n"
                 + "\n"

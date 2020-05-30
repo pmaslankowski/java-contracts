@@ -6,6 +6,7 @@ import com.sun.tools.javac.tree.JCTree.JCArrayAccess;
 import com.sun.tools.javac.tree.JCTree.JCBinary;
 import com.sun.tools.javac.tree.JCTree.JCConditional;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
+import com.sun.tools.javac.tree.JCTree.JCFieldAccess;
 import com.sun.tools.javac.tree.JCTree.JCIdent;
 import com.sun.tools.javac.tree.JCTree.JCUnary;
 import com.sun.tools.javac.tree.TreeMaker;
@@ -26,7 +27,16 @@ public class PostconditionArgumentsVisitor extends TreeScanner {
         this.resultSymbol = resultSymbol;
     }
 
-    // TODO: dodać na to unit test
+    // TODO: add test cases for the two following methods:
+    @Override
+    public void visitSelect(JCFieldAccess fieldAccess) {
+        if (isResultInvocation(fieldAccess.selected)) {
+            fieldAccess.selected = newResultReference();
+        }
+
+        super.visitSelect(fieldAccess);
+    }
+
     @Override
     public void visitIndexed(JCArrayAccess arrayAccess) {
         if (isResultInvocation(arrayAccess.index)) {
