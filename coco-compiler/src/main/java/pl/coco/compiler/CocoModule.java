@@ -7,6 +7,7 @@ import com.sun.source.util.Trees;
 import com.sun.tools.javac.api.BasicJavacTask;
 import com.sun.tools.javac.code.Symtab;
 import com.sun.tools.javac.code.Types;
+import com.sun.tools.javac.comp.Attr;
 import com.sun.tools.javac.comp.Resolve;
 import com.sun.tools.javac.parser.ParserFactory;
 import com.sun.tools.javac.tree.TreeMaker;
@@ -72,5 +73,10 @@ public class CocoModule extends AbstractModule {
     @Provides
     ParserFactory parserFactory(BasicJavacTask task) {
         return ParserFactory.instance(task.getContext());
+    }
+
+    @Provides
+    Attr attr(BasicJavacTask task) {
+        return Attr.instance(task.getContext());
     }
 }
