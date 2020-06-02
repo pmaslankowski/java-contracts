@@ -31,7 +31,6 @@ dependencies {
 
 compileJava {
     options.compilerArgs << '-Xplugin:coco'
-    println options.compilerArgs
 }
 
 test {
