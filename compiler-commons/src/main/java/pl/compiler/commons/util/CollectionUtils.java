@@ -1,4 +1,4 @@
-package pl.coco.compiler.util;
+package pl.compiler.commons.util;
 
 import java.util.List;
 import java.util.Objects;

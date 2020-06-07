@@ -21,9 +21,9 @@ import com.sun.tools.javac.util.List;
 import pl.coco.compiler.instrumentation.ContractMethod;
 import pl.coco.compiler.instrumentation.invocation.internal.ConditionSupplierProvider;
 import pl.coco.compiler.model.ContractInvocation;
-import pl.coco.compiler.instrumentation.invocation.MethodInvocationBuilder;
-import pl.coco.compiler.instrumentation.invocation.MethodInvocationDescription;
-import pl.coco.compiler.util.TypeRegistry;
+import pl.compiler.commons.invocation.MethodInvocationBuilder;
+import pl.compiler.commons.invocation.MethodInvocationDescription;
+import pl.compiler.commons.util.TypeRegistry;
 
 @Singleton
 public class EnsuresInvocationBuilder {

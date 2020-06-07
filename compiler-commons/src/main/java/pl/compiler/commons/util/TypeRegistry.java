@@ -1,4 +1,4 @@
-package pl.coco.compiler.util;
+package pl.compiler.commons.util;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

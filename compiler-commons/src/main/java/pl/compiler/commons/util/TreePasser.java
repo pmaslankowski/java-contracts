@@ -1,4 +1,4 @@
-package pl.coco.compiler.util;
+package pl.compiler.commons.util;
 
 import java.util.Optional;
 import java.util.function.Function;

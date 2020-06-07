@@ -1,3 +1,4 @@
+import javax.tools.ToolProvider
 
 plugins {
     id 'java'
@@ -7,8 +8,15 @@ repositories {
     jcenter()
 }
 
+def toolsJar = files((ToolProvider.systemToolClassLoader as URLClassLoader)
+        .URLs
+        .find({ url -> url.toString().contains("tools") }))
+
+
 dependencies {
     implementation 'com.google.guava:guava:28.2-jre'
+    implementation toolsJar
+    implementation 'com.google.inject:guice:4.1.0'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
 

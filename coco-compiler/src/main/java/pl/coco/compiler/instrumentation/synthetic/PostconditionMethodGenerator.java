@@ -24,13 +24,13 @@ import com.sun.tools.javac.util.Name;
 import com.sun.tools.javac.util.Names;
 
 import pl.coco.compiler.instrumentation.ContractAnalyzer;
-import pl.coco.compiler.instrumentation.invocation.MethodInvocationBuilder;
-import pl.coco.compiler.instrumentation.invocation.MethodInvocationDescription;
 import pl.coco.compiler.instrumentation.invocation.internal.postcondition.EnsuresInvocationBuilder;
 import pl.coco.compiler.instrumentation.registry.ContractsRegistry;
 import pl.coco.compiler.instrumentation.registry.MethodKey;
 import pl.coco.compiler.model.ContractInvocation;
-import pl.coco.compiler.util.AstUtil;
+import pl.compiler.commons.invocation.MethodInvocationBuilder;
+import pl.compiler.commons.invocation.MethodInvocationDescription;
+import pl.compiler.commons.util.AstUtil;
 
 @Singleton
 public class PostconditionMethodGenerator extends AbstractMethodGenerator {

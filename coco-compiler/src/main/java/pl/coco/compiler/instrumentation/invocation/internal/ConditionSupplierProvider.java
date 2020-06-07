@@ -2,14 +2,14 @@ package pl.coco.compiler.instrumentation.invocation.internal;
 
 import javax.inject.Inject;
 
-import com.sun.tools.javac.api.JavacTaskImpl;
+import pl.compiler.commons.util.TypeRegistry;
+
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCLambda;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 
-import pl.coco.compiler.util.TypeRegistry;
 
 public class ConditionSupplierProvider {
 

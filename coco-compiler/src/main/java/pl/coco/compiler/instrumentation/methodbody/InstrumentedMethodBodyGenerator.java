@@ -22,9 +22,9 @@ import com.sun.tools.javac.tree.JCTree.JCVariableDecl;
 import com.sun.tools.javac.tree.TreeMaker;
 
 import pl.coco.compiler.instrumentation.synthetic.ContractSyntheticMethods;
-import pl.coco.compiler.util.AstUtil;
 import pl.coco.compiler.util.InvariantUtil;
-import pl.coco.compiler.util.PrimitiveBoxer;
+import pl.compiler.commons.util.AstUtil;
+import pl.compiler.commons.util.PrimitiveBoxer;
 
 @Singleton
 public class InstrumentedMethodBodyGenerator {

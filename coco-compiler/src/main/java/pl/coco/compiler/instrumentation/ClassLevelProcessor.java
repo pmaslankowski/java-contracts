@@ -12,8 +12,8 @@ import com.sun.tools.javac.tree.JCTree.JCClassDecl;
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 
 import pl.coco.compiler.instrumentation.synthetic.InvariantMethodGenerator;
-import pl.coco.compiler.util.AstUtil;
 import pl.coco.compiler.util.InvariantUtil;
+import pl.compiler.commons.util.AstUtil;
 
 @Singleton
 public class ClassLevelProcessor {

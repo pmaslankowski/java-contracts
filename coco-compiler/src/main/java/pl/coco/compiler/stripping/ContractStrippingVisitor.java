@@ -14,9 +14,9 @@ import com.sun.tools.javac.tree.JCTree.JCClassDecl;
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 import com.sun.tools.javac.tree.JCTree.JCStatement;
 
-import pl.coco.compiler.util.CollectionUtils;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.util.InvariantUtil;
+import pl.compiler.commons.util.CollectionUtils;
 
 @Singleton
 public class ContractStrippingVisitor extends TreeScanner<Void, Void> {

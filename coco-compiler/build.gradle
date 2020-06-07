@@ -15,6 +15,7 @@ def toolsJar = files((ToolProvider.systemToolClassLoader as URLClassLoader)
 
 dependencies {
     implementation project(':coco-api')
+    implementation project(':compiler-commons')
 
     implementation toolsJar
 

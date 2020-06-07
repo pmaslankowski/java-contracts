@@ -1,14 +1,15 @@
-package pl.coco.compiler.model;
+package pl.compiler.commons.model;
 
 import java.util.List;
 import java.util.Optional;
+
+import pl.compiler.commons.util.TreePasser;
 
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Name;
 
-import pl.coco.compiler.util.TreePasser;
 
 public class SimpleMethodInvocation {
 

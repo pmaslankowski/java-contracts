@@ -14,8 +14,8 @@ import com.sun.tools.javac.tree.TreeScanner;
 
 import pl.coco.compiler.instrumentation.ContractMethod;
 import pl.coco.compiler.model.ContractInvocation;
-import pl.coco.compiler.model.SimpleMethodInvocation;
-import pl.coco.compiler.util.TreePasser;
+import pl.compiler.commons.model.SimpleMethodInvocation;
+import pl.compiler.commons.util.TreePasser;
 
 public class PostconditionArgumentsVisitor extends TreeScanner {
 

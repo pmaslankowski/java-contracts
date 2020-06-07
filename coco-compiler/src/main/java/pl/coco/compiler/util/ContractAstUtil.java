@@ -10,7 +10,8 @@ import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 
 import pl.coco.compiler.model.ContractInvocation;
-import pl.coco.compiler.model.SimpleMethodInvocation;
+import pl.compiler.commons.model.SimpleMethodInvocation;
+import pl.compiler.commons.util.TreePasser;
 
 public class ContractAstUtil {
 

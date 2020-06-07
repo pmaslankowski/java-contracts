@@ -2,7 +2,7 @@ package pl.coco.compiler.instrumentation;
 
 import java.util.Optional;
 
-import pl.coco.compiler.model.SimpleMethodInvocation;
+import pl.compiler.commons.model.SimpleMethodInvocation;
 
 public enum ContractMethod {
 

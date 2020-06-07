@@ -1,4 +1,4 @@
-package pl.coco.compiler.util;
+package pl.compiler.commons.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

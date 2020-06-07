@@ -13,8 +13,8 @@ import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Name;
 
-import pl.coco.compiler.util.AstUtil;
 import pl.coco.compiler.util.ContractAstUtil;
+import pl.compiler.commons.util.AstUtil;
 
 @Singleton
 public class TargetMethodGenerator {

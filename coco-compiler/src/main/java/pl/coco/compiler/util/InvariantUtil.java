@@ -3,6 +3,8 @@ package pl.coco.compiler.util;
 import java.util.List;
 import java.util.Optional;
 
+import pl.compiler.commons.util.TreePasser;
+
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.tools.javac.code.Type;

@@ -1,4 +1,4 @@
-package pl.coco.compiler.instrumentation.invocation;
+package pl.compiler.commons.invocation;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -8,7 +8,7 @@ import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
 import com.sun.tools.javac.tree.TreeMaker;
 
-import pl.coco.compiler.util.TypeRegistry;
+import pl.compiler.commons.util.TypeRegistry;
 
 @Singleton
 public class ClassAccessBuilder {

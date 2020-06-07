@@ -3,11 +3,11 @@ package pl.coco.compiler.instrumentation.synthetic;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import pl.compiler.commons.util.AstUtil;
+
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 import com.sun.tools.javac.util.Name;
 import com.sun.tools.javac.util.Names;
-
-import pl.coco.compiler.util.AstUtil;
 
 @Singleton
 public class SyntheticMethodNameGenerator {

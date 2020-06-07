@@ -8,6 +8,10 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import pl.compiler.commons.invocation.MethodInvocationBuilder;
+import pl.compiler.commons.invocation.MethodInvocationDescription;
+import pl.compiler.commons.util.AstUtil;
+
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.tools.javac.code.Symbol.VarSymbol;
@@ -18,9 +22,6 @@ import com.sun.tools.javac.tree.JCTree.JCStatement;
 import com.sun.tools.javac.tree.JCTree.JCVariableDecl;
 import com.sun.tools.javac.tree.TreeMaker;
 
-import pl.coco.compiler.instrumentation.invocation.MethodInvocationBuilder;
-import pl.coco.compiler.instrumentation.invocation.MethodInvocationDescription;
-import pl.coco.compiler.util.AstUtil;
 
 @Singleton
 public class InvocationStatementGenerator {

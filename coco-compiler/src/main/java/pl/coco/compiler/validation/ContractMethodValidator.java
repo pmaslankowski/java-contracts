@@ -10,14 +10,14 @@ import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 
 import pl.coco.compiler.instrumentation.ContractMethod;
 import pl.coco.compiler.model.ContractInvocation;
-import pl.coco.compiler.util.AstUtil;
-import pl.coco.compiler.util.CollectionUtils;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.validation.forallexists.ForAllExistsValidator;
 import pl.coco.compiler.validation.invariant.InvariantCallValidator;
 import pl.coco.compiler.validation.result.ContractResultValidator;
 import pl.coco.compiler.validation.result.ResultTypeValidator;
 import pl.coco.compiler.validation.result.ResultTypeValidatorFactory;
+import pl.compiler.commons.util.AstUtil;
+import pl.compiler.commons.util.CollectionUtils;
 
 public class ContractMethodValidator {
 

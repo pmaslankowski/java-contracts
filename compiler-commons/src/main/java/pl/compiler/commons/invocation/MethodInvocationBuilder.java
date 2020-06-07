@@ -1,4 +1,4 @@
-package pl.coco.compiler.instrumentation.invocation;
+package pl.compiler.commons.invocation;
 
 import javax.inject.Inject;
 

@@ -18,9 +18,9 @@ import pl.coco.compiler.instrumentation.methodbody.MethodBodyGeneratorInput;
 import pl.coco.compiler.instrumentation.methodbody.ResultSymbolProvider;
 import pl.coco.compiler.instrumentation.synthetic.ContractSyntheticMethods;
 import pl.coco.compiler.instrumentation.synthetic.ContractSyntheticMethodsGenerator;
-import pl.coco.compiler.util.AstUtil;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.util.InvariantUtil;
+import pl.compiler.commons.util.AstUtil;
 
 @Singleton
 public class MethodLevelProcessor {

@@ -5,11 +5,11 @@ import com.sun.tools.javac.tree.TreeScanner;
 
 import pl.coco.compiler.instrumentation.ContractMethod;
 import pl.coco.compiler.model.ContractInvocation;
-import pl.coco.compiler.util.AstUtil;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.validation.ContractError;
 import pl.coco.compiler.validation.ContractValidationException;
 import pl.coco.compiler.validation.MethodValidationInput;
+import pl.compiler.commons.util.AstUtil;
 
 public class ContractResultValidator extends TreeScanner {
 

@@ -5,12 +5,12 @@ import com.sun.tools.javac.tree.JCTree.JCStatement;
 import com.sun.tools.javac.tree.TreeScanner;
 
 import pl.coco.compiler.instrumentation.ContractMethod;
-import pl.coco.compiler.util.AstUtil;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.util.InvariantUtil;
 import pl.coco.compiler.validation.ClassValidationInput;
 import pl.coco.compiler.validation.ContractError;
 import pl.coco.compiler.validation.ContractValidationException;
+import pl.compiler.commons.util.AstUtil;
 
 public class InvariantMethodValidator extends TreeScanner {
 

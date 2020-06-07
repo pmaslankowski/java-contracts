@@ -3,6 +3,7 @@ package pl.coco.compiler.model;
 import java.util.Optional;
 
 import pl.coco.compiler.instrumentation.ContractMethod;
+import pl.compiler.commons.model.SimpleMethodInvocation;
 
 public class ContractInvocation extends SimpleMethodInvocation {
 
@@ -11,7 +12,8 @@ public class ContractInvocation extends SimpleMethodInvocation {
     private ContractInvocation(SimpleMethodInvocation invocation,
             ContractMethod contractMethod) {
 
-        super(invocation.methodName, invocation.fullyQualifiedClassName, invocation.arguments, invocation.expression);
+        super(invocation.getMethodName(), invocation.getFullyQualifiedClassName(),
+                invocation.getArguments(), invocation.getExpression());
         this.contractMethod = contractMethod;
     }
 
