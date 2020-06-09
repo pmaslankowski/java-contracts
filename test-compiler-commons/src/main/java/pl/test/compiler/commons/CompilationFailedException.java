@@ -1,4 +1,4 @@
-package pl.coco.util;
+package pl.test.compiler.commons;
 
 public class CompilationFailedException extends RuntimeException {
 

@@ -1,4 +1,4 @@
-package pl.coco.util;
+package pl.test.compiler.commons;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;

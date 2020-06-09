@@ -7,11 +7,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import pl.coco.api.ContractFailedException;
-import pl.coco.util.CompiledClasses;
-import pl.coco.util.JavacTestUtils;
-import pl.coco.util.TestCompiler;
-import pl.coco.util.TestCompilerInput;
-import pl.coco.util.TestRunner;
+import pl.coco.util.CocoTestUtils;
+import pl.test.compiler.commons.CompiledClasses;
+import pl.test.compiler.commons.TestCompiler;
+import pl.test.compiler.commons.TestCompilerInput;
+import pl.test.compiler.commons.TestRunner;
 
 class PreconditionInheritanceTest {
 
@@ -723,7 +723,7 @@ class PreconditionInheritanceTest {
                 .addCompilationUnit(ENTRY_CLASS_NAME, entry)
                 .addCompilationUnit(BASE_CLASS_NAME, base)
                 .addCompilationUnit(SUBCLASS_CLASS_NAME, subclass)
-                .withPluginArg(JavacTestUtils.CONTRACTS_ENABLED)
+                .withPluginArg(CocoTestUtils.CONTRACTS_ENABLED)
                 .build();
         return compiler.compile(compilerInput);
     }

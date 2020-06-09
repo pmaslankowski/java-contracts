@@ -18,6 +18,7 @@
             <option value="$PROJECT_DIR$/coco-compiler" />
             <option value="$PROJECT_DIR$/coco-examples" />
             <option value="$PROJECT_DIR$/compiler-commons" />
+            <option value="$PROJECT_DIR$/test-compiler-commons" />
           </set>
         </option>
         <option name="useQualifiedModuleNames" value="true" />

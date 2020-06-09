@@ -7,7 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import pl.coco.api.ContractFailedException;
-import pl.coco.util.JavacTestUtils;
+import pl.coco.util.CocoTestUtils;
 
 class InvariantsTest {
 
@@ -40,7 +40,7 @@ class InvariantsTest {
                 + "\n"
                 + "}\n";
 
-        Object actual = JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code);
+        Object actual = CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code);
 
         assertThat(actual).isEqualTo(RESULT);
     }
@@ -73,7 +73,7 @@ class InvariantsTest {
                 + "\n"
                 + "}\n";
 
-        Object actual = JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code);
+        Object actual = CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code);
 
         assertThat(actual).isEqualTo(RESULT);
     }
@@ -108,7 +108,7 @@ class InvariantsTest {
                 + "}\n";
 
         Throwable thrown = catchThrowable(
-                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+                () -> CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
 
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class)
@@ -145,7 +145,7 @@ class InvariantsTest {
                 + "}\n";
 
         Throwable thrown = catchThrowable(
-                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+                () -> CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
 
         assertThat(thrown)
                 .isInstanceOf(ContractFailedException.class)

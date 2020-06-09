@@ -5,7 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import pl.coco.util.JavacTestUtils;
+import pl.coco.util.CocoTestUtils;
+import pl.test.compiler.commons.JavacTestUtils;
 
 class CodeContractsDisabledTest {
 

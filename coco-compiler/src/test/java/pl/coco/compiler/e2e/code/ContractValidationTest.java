@@ -7,8 +7,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import pl.coco.compiler.validation.ContractError;
-import pl.coco.util.CompilationFailedException;
-import pl.coco.util.JavacTestUtils;
+import pl.coco.util.CocoTestUtils;
+import pl.test.compiler.commons.CompilationFailedException;
 
 class ContractValidationTest {
 
@@ -37,7 +37,7 @@ class ContractValidationTest {
                 + "}\n";
 
         Throwable thrown = catchThrowable(
-                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+                () -> CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
 
         assertThat(thrown)
                 .isInstanceOf(CompilationFailedException.class)
@@ -71,7 +71,7 @@ class ContractValidationTest {
                 + "}\n";
 
         Throwable thrown = catchThrowable(
-                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+                () -> CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
 
         assertThat(thrown)
                 .isInstanceOf(CompilationFailedException.class)
@@ -102,7 +102,7 @@ class ContractValidationTest {
                 + "}\n";
 
         Throwable thrown = catchThrowable(
-                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+                () -> CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
 
         assertThat(thrown)
                 .isInstanceOf(CompilationFailedException.class)
@@ -133,7 +133,7 @@ class ContractValidationTest {
                 + "}\n";
 
         Throwable thrown = catchThrowable(
-                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+                () -> CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
 
         assertThat(thrown)
                 .isInstanceOf(CompilationFailedException.class)
@@ -164,7 +164,7 @@ class ContractValidationTest {
                 + "}\n";
 
         Throwable thrown = catchThrowable(
-                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+                () -> CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
 
         assertThat(thrown)
                 .isInstanceOf(CompilationFailedException.class)
@@ -196,7 +196,7 @@ class ContractValidationTest {
                 + "}\n";
 
         Throwable thrown = catchThrowable(
-                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+                () -> CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
 
         assertThat(thrown)
                 .isInstanceOf(CompilationFailedException.class)
@@ -227,7 +227,7 @@ class ContractValidationTest {
                 + "}\n";
 
         Throwable thrown = catchThrowable(
-                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+                () -> CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
 
         assertThat(thrown)
                 .isInstanceOf(CompilationFailedException.class)
@@ -256,7 +256,7 @@ class ContractValidationTest {
                 + "    }\n"
                 + "}\n";
 
-        Object actual = JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code);
+        Object actual = CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code);
 
         assertThat(actual).isEqualTo(42);
     }
@@ -282,7 +282,7 @@ class ContractValidationTest {
                 + "}\n";
 
         Throwable thrown = catchThrowable(
-                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+                () -> CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
 
         assertThat(thrown)
                 .isInstanceOf(CompilationFailedException.class)
@@ -313,7 +313,7 @@ class ContractValidationTest {
                 + "}\n";
 
         Throwable thrown = catchThrowable(
-                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+                () -> CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
 
         assertThat(thrown)
                 .isInstanceOf(CompilationFailedException.class)
@@ -341,7 +341,7 @@ class ContractValidationTest {
                 + "}\n";
 
         Throwable thrown = catchThrowable(
-                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+                () -> CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
 
         assertThat(thrown)
                 .isInstanceOf(CompilationFailedException.class)
@@ -369,7 +369,7 @@ class ContractValidationTest {
                 + "}\n";
 
         Throwable thrown = catchThrowable(
-                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+                () -> CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
 
         assertThat(thrown)
                 .isInstanceOf(CompilationFailedException.class)
@@ -394,7 +394,7 @@ class ContractValidationTest {
                 + "}\n";
 
         Throwable thrown = catchThrowable(
-                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+                () -> CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
 
         assertThat(thrown)
                 .isInstanceOf(CompilationFailedException.class)
@@ -420,7 +420,7 @@ class ContractValidationTest {
                 + "}\n";
 
         Throwable thrown = catchThrowable(
-                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+                () -> CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
 
         assertThat(thrown)
                 .isInstanceOf(CompilationFailedException.class)
@@ -445,7 +445,7 @@ class ContractValidationTest {
                 + "}\n";
 
         Throwable thrown = catchThrowable(
-                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+                () -> CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
 
         assertThat(thrown)
                 .isInstanceOf(CompilationFailedException.class)
@@ -471,7 +471,7 @@ class ContractValidationTest {
                 + "}\n";
 
         Throwable thrown = catchThrowable(
-                () -> JavacTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+                () -> CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
 
         assertThat(thrown)
                 .isInstanceOf(CompilationFailedException.class)

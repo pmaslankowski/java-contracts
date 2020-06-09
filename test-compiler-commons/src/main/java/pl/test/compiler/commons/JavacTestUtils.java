@@ -1,15 +1,6 @@
-package pl.coco.util;
+package pl.test.compiler.commons;
 
 public class JavacTestUtils {
-
-    public static final String CONTRACTS_ENABLED = "-Xplugin:coco";
-
-    public static Object compileAndRun(String qualifiedClassName, String methodName, String code)
-            throws Throwable {
-
-        return compileAndRun(qualifiedClassName, methodName, code, new Class<?>[] {},
-                new Object[] {}, CONTRACTS_ENABLED);
-    }
 
     public static Object compileAndRun(String qualifiedClassName, String methodName, String code,
             String pluginArg) throws Throwable {
