@@ -1,30 +1,38 @@
+import javax.tools.ToolProvider
 
 plugins {
-    // Apply the java-library plugin to add support for Java Library
-    id 'java-library'
+    id 'java'
 }
 
 repositories {
-    // Use jcenter for resolving dependencies.
-    // You can declare any Maven/Ivy/file repository here.
     jcenter()
 }
 
+def toolsJar = files((ToolProvider.systemToolClassLoader as URLClassLoader)
+        .URLs
+        .find({ url -> url.toString().contains("tools") }))
+
 dependencies {
-    // This dependency is exported to consumers, that is to say found on their compile classpath.
-    api 'org.apache.commons:commons-math3:3.6.1'
+    implementation project(':coas-api')
+    implementation project(':compiler-commons')
 
-    // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation 'com.google.guava:guava:28.1-jre'
+    implementation 'com.google.guava:guava:28.1-jre'
+    implementation 'com.google.inject:guice:4.1.0'
+    implementation 'commons-cli:commons-cli:1.4'
+    implementation 'org.apache.commons:commons-collections4:4.4'
 
-    // Use JUnit Jupiter API for testing.
+    implementation 'org.slf4j:slf4j-api:1.7.30'
+    implementation 'org.slf4j:slf4j-jdk14:1.7.30'
+    
+    implementation toolsJar
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
+    testImplementation project(':test-compiler-commons')
 
-    // Use JUnit Jupiter Engine for testing.
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
 }
 
 test {
-    // Use junit platform for unit tests
     useJUnitPlatform()
 }
