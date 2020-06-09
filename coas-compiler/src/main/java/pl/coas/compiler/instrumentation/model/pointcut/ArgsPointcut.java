@@ -14,6 +14,10 @@ public class ArgsPointcut implements Pointcut {
                 .collect(Collectors.toList());
     }
 
+    public List<WildcardString> getArgumentTypes() {
+        return argumentTypes;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)

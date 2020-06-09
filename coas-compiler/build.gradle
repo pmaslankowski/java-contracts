@@ -2,6 +2,8 @@ import javax.tools.ToolProvider
 
 plugins {
     id 'java'
+    id 'antlr'
+    id 'idea'
 }
 
 repositories {
@@ -21,18 +23,45 @@ dependencies {
     implementation 'com.google.inject:guice:4.1.0'
     implementation 'commons-cli:commons-cli:1.4'
     implementation 'org.apache.commons:commons-collections4:4.4'
+    implementation 'org.antlr:antlr4-runtime:4.7.2'
 
     implementation 'org.slf4j:slf4j-api:1.7.30'
     implementation 'org.slf4j:slf4j-jdk14:1.7.30'
-    
+
     implementation toolsJar
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
     testImplementation project(':test-compiler-commons')
+    testImplementation 'org.assertj:assertj-core:3.11.1'
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
+
+    antlr "org.antlr:antlr4:4.7.2" //
+}
+
+generateGrammarSource {
+    maxHeapSize = "64m"
+
+    // Keep a copy of generated sources
+    doLast {
+        println "Copying generated grammar lexer/parser files to main directory."
+        copy {
+            from "${buildDir}/generated-src/antlr/main"
+            into "generated-src/main/java/pl/coas/compiler/instrumentation/antlr"
+        }
+    }
+}
+
+clean.doLast {
+    file('generated-src').deleteDir()
 }
 
 test {
     useJUnitPlatform()
+}
+
+idea {
+    module {
+        sourceDirs += file("generated-src/antlr/main")
+    }
 }
