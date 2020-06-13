@@ -17,6 +17,13 @@ class ArgsPointcutParserImplTest {
     private final ArgsPointcutParserImpl parser = new ArgsPointcutParserImpl();
 
     @Test
+    void shouldParseEmptyArgs() {
+        ArgsPointcut pointcut = parser.parse("");
+
+        assertThat(pointcut.getArgumentTypes()).isEmpty();
+    }
+
+    @Test
     void shouldParseSingleSimpleType() {
         ArgsPointcut pointcut = parser.parse("String");
 
