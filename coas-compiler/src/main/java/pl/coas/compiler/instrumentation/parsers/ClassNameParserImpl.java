@@ -8,19 +8,18 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import pl.coas.compiler.instrumentation.antlr.ClassPointcutLexer;
 import pl.coas.compiler.instrumentation.antlr.ClassPointcutParser;
-import pl.coas.compiler.instrumentation.model.pointcut.WildcardString;
 
 @Singleton
 public class ClassNameParserImpl
-        extends BaseParser<WildcardString, ClassPointcutLexer, ClassPointcutParser> {
+        extends BaseParser<String, ClassPointcutLexer, ClassPointcutParser> {
 
     @Override
-    public WildcardString parse(String expression) {
+    public String parse(String expression) {
         ClassPointcutParser parser = doParse(expression);
         ParseTreeWalker walker = new ParseTreeWalker();
         ClassNameListener listener = new ClassNameListener();
         walker.walk(listener, parser.classExpr());
-        return new WildcardString(listener.getClassName());
+        return listener.getClassName();
     }
 
     @Override
