@@ -11,8 +11,9 @@ import pl.coas.compiler.instrumentation.antlr.ArgsPointcutParser;
 import pl.coas.compiler.instrumentation.model.pointcut.ArgsPointcut;
 
 @Singleton
-public class ArgsPointcutParserImpl extends BaseParser<ArgsPointcutLexer, ArgsPointcutParser> {
+public class ArgsPointcutParserImpl extends BaseParser<ArgsPointcut, ArgsPointcutLexer, ArgsPointcutParser> {
 
+    @Override
     public ArgsPointcut parse(String expression) {
         ArgsPointcutParser parser = doParse(expression);
         ParseTreeWalker walker = new ParseTreeWalker();

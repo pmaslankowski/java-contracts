@@ -6,7 +6,9 @@ import org.antlr.v4.runtime.Parser;
 
 import pl.coas.compiler.instrumentation.parsers.util.ThrowingErrorListener;
 
-public abstract class BaseParser<L extends Lexer, P extends Parser> {
+public abstract class BaseParser<M, L extends Lexer, P extends Parser> {
+
+    public abstract M parse(String expression);
 
     protected P doParse(String expression) {
         L lexer = getLexer(expression);
