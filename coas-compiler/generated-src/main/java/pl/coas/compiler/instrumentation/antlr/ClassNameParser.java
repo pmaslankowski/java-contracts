@@ -1,4 +1,4 @@
-// Generated from ClassPointcut.g4 by ANTLR 4.7.2
+// Generated from ClassName.g4 by ANTLR 4.7.2
 
 package pl.coas.compiler.instrumentation.antlr;
 
@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
-public class ClassPointcutParser extends Parser {
+public class ClassNameParser extends Parser {
 	static { RuntimeMetaData.checkVersion("4.7.2", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
@@ -75,7 +75,7 @@ public class ClassPointcutParser extends Parser {
 	}
 
 	@Override
-	public String getGrammarFileName() { return "ClassPointcut.g4"; }
+	public String getGrammarFileName() { return "ClassName.g4"; }
 
 	@Override
 	public String[] getRuleNames() { return ruleNames; }
@@ -86,7 +86,7 @@ public class ClassPointcutParser extends Parser {
 	@Override
 	public ATN getATN() { return _ATN; }
 
-	public ClassPointcutParser(TokenStream input) {
+	public ClassNameParser(TokenStream input) {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
@@ -95,18 +95,18 @@ public class ClassPointcutParser extends Parser {
 		public ClassNameContext className() {
 			return getRuleContext(ClassNameContext.class,0);
 		}
-		public TerminalNode EOF() { return getToken(ClassPointcutParser.EOF, 0); }
+		public TerminalNode EOF() { return getToken(ClassNameParser.EOF, 0); }
 		public ClassExprContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_classExpr; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof ClassPointcutListener ) ((ClassPointcutListener)listener).enterClassExpr(this);
+			if ( listener instanceof ClassNameListener ) ((ClassNameListener)listener).enterClassExpr(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof ClassPointcutListener ) ((ClassPointcutListener)listener).exitClassExpr(this);
+			if ( listener instanceof ClassNameListener ) ((ClassNameListener)listener).exitClassExpr(this);
 		}
 	}
 
@@ -143,11 +143,11 @@ public class ClassPointcutParser extends Parser {
 		@Override public int getRuleIndex() { return RULE_className; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof ClassPointcutListener ) ((ClassPointcutListener)listener).enterClassName(this);
+			if ( listener instanceof ClassNameListener ) ((ClassNameListener)listener).enterClassName(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof ClassPointcutListener ) ((ClassPointcutListener)listener).exitClassName(this);
+			if ( listener instanceof ClassNameListener ) ((ClassNameListener)listener).exitClassName(this);
 		}
 	}
 
@@ -173,7 +173,7 @@ public class ClassPointcutParser extends Parser {
 	}
 
 	public static class TypeNameContext extends ParserRuleContext {
-		public TerminalNode IDENTIFIER() { return getToken(ClassPointcutParser.IDENTIFIER, 0); }
+		public TerminalNode IDENTIFIER() { return getToken(ClassNameParser.IDENTIFIER, 0); }
 		public TypeNameContext typeName() {
 			return getRuleContext(TypeNameContext.class,0);
 		}
@@ -183,11 +183,11 @@ public class ClassPointcutParser extends Parser {
 		@Override public int getRuleIndex() { return RULE_typeName; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof ClassPointcutListener ) ((ClassPointcutListener)listener).enterTypeName(this);
+			if ( listener instanceof ClassNameListener ) ((ClassNameListener)listener).enterTypeName(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof ClassPointcutListener ) ((ClassPointcutListener)listener).exitTypeName(this);
+			if ( listener instanceof ClassNameListener ) ((ClassNameListener)listener).exitTypeName(this);
 		}
 	}
 

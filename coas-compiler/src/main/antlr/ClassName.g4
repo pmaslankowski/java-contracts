@@ -1,4 +1,4 @@
-grammar ClassPointcut;
+grammar ClassName;
 
 @header {
 package pl.coas.compiler.instrumentation.antlr;

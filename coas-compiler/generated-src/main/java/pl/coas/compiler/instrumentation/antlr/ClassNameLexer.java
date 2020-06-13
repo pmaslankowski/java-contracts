@@ -1,4 +1,4 @@
-// Generated from ClassPointcut.g4 by ANTLR 4.7.2
+// Generated from ClassName.g4 by ANTLR 4.7.2
 
 package pl.coas.compiler.instrumentation.antlr;
 
@@ -12,7 +12,7 @@ import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.misc.*;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
-public class ClassPointcutLexer extends Lexer {
+public class ClassNameLexer extends Lexer {
 	static { RuntimeMetaData.checkVersion("4.7.2", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
@@ -81,13 +81,13 @@ public class ClassPointcutLexer extends Lexer {
 	}
 
 
-	public ClassPointcutLexer(CharStream input) {
+	public ClassNameLexer(CharStream input) {
 		super(input);
 		_interp = new LexerATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 
 	@Override
-	public String getGrammarFileName() { return "ClassPointcut.g4"; }
+	public String getGrammarFileName() { return "ClassName.g4"; }
 
 	@Override
 	public String[] getRuleNames() { return ruleNames; }

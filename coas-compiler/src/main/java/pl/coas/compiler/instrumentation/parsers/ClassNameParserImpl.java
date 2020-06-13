@@ -6,16 +6,16 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-import pl.coas.compiler.instrumentation.antlr.ClassPointcutLexer;
-import pl.coas.compiler.instrumentation.antlr.ClassPointcutParser;
+import pl.coas.compiler.instrumentation.antlr.ClassNameLexer;
+import pl.coas.compiler.instrumentation.antlr.ClassNameParser;
 
 @Singleton
 public class ClassNameParserImpl
-        extends BaseParser<String, ClassPointcutLexer, ClassPointcutParser> {
+        extends BaseParser<String, ClassNameLexer, ClassNameParser> {
 
     @Override
     public String parse(String expression) {
-        ClassPointcutParser parser = doParse(expression);
+        ClassNameParser parser = doParse(expression);
         ParseTreeWalker walker = new ParseTreeWalker();
         ClassNameListener listener = new ClassNameListener();
         walker.walk(listener, parser.classExpr());
@@ -23,12 +23,12 @@ public class ClassNameParserImpl
     }
 
     @Override
-    protected ClassPointcutLexer getLexer(String expression) {
-        return new ClassPointcutLexer(CharStreams.fromString(expression));
+    protected ClassNameLexer getLexer(String expression) {
+        return new ClassNameLexer(CharStreams.fromString(expression));
     }
 
     @Override
-    protected ClassPointcutParser getParser(CommonTokenStream tokens) {
-        return new ClassPointcutParser(tokens);
+    protected ClassNameParser getParser(CommonTokenStream tokens) {
+        return new ClassNameParser(tokens);
     }
 }
