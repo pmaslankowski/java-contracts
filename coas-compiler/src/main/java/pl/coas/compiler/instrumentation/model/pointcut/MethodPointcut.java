@@ -6,20 +6,36 @@ import java.util.stream.Collectors;
 
 public class MethodPointcut implements Pointcut {
 
+    private final MethodKind kind;
+    private final List<MethodModifier> modifiers;
+    private final WildcardString returnType;
     private final WildcardString className;
     private final WildcardString methodName;
-    private final WildcardString returnType;
-    private final List<WildcardString> argumentTypes;
+    private final MethodArguments argumentTypes;
     private final List<WildcardString> exceptionsThrown;
 
-    private MethodPointcut(WildcardString className, WildcardString methodName,
-            WildcardString returnType,
-            List<WildcardString> argumentTypes, List<WildcardString> exceptionsThrown) {
+    public MethodPointcut(MethodKind kind, List<MethodModifier> modifiers,
+            WildcardString returnType, WildcardString className, WildcardString methodName,
+            MethodArguments argumentTypes, List<WildcardString> exceptionsThrown) {
+        this.kind = kind;
+        this.modifiers = modifiers;
+        this.returnType = returnType;
         this.className = className;
         this.methodName = methodName;
-        this.returnType = returnType;
         this.argumentTypes = argumentTypes;
         this.exceptionsThrown = exceptionsThrown;
+    }
+
+    public MethodKind getKind() {
+        return kind;
+    }
+
+    public List<MethodModifier> getModifiers() {
+        return modifiers;
+    }
+
+    public WildcardString getReturnType() {
+        return returnType;
     }
 
     public WildcardString getClassName() {
@@ -30,11 +46,7 @@ public class MethodPointcut implements Pointcut {
         return methodName;
     }
 
-    public WildcardString getReturnType() {
-        return returnType;
-    }
-
-    public List<WildcardString> getArgumentTypes() {
+    public MethodArguments getArgumentTypes() {
         return argumentTypes;
     }
 
@@ -49,24 +61,29 @@ public class MethodPointcut implements Pointcut {
         if (o == null || getClass() != o.getClass())
             return false;
         MethodPointcut that = (MethodPointcut) o;
-        return Objects.equals(className, that.className) &&
-                Objects.equals(methodName, that.methodName) &&
+        return kind == that.kind &&
+                Objects.equals(modifiers, that.modifiers) &&
                 Objects.equals(returnType, that.returnType) &&
+                Objects.equals(className, that.className) &&
+                Objects.equals(methodName, that.methodName) &&
                 Objects.equals(argumentTypes, that.argumentTypes) &&
                 Objects.equals(exceptionsThrown, that.exceptionsThrown);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(className, methodName, returnType, argumentTypes, exceptionsThrown);
+        return Objects.hash(kind, modifiers, returnType, className, methodName, argumentTypes,
+                exceptionsThrown);
     }
 
     @Override
     public String toString() {
         return "MethodPointcut{" +
-                "className=" + className +
-                ", methodName=" + methodName +
+                "kind=" + kind +
+                ", modifiers=" + modifiers +
                 ", returnType=" + returnType +
+                ", className=" + className +
+                ", methodName=" + methodName +
                 ", argumentTypes=" + argumentTypes +
                 ", exceptionsThrown=" + exceptionsThrown +
                 '}';
@@ -74,11 +91,30 @@ public class MethodPointcut implements Pointcut {
 
     public static class Builder {
 
+        private MethodKind kind;
+        private List<MethodModifier> modifiers;
+        private WildcardString returnType;
         private WildcardString className;
         private WildcardString methodName;
-        private WildcardString returnType;
-        private List<WildcardString> argumentTypes;
+        private MethodArguments argumentTypes;
         private List<WildcardString> exceptionsThrown;
+
+        public Builder withKind(String kind) {
+            this.kind = MethodKind.of(kind);
+            return this;
+        }
+
+        public Builder withModifiers(List<String> modifiers) {
+            this.modifiers = modifiers.stream()
+                    .map(MethodModifier::of)
+                    .collect(Collectors.toList());
+            return this;
+        }
+
+        public Builder withReturnType(String returnType) {
+            this.returnType = new WildcardString(returnType);
+            return this;
+        }
 
         public Builder withClassName(String className) {
             this.className = new WildcardString(className);
@@ -90,15 +126,8 @@ public class MethodPointcut implements Pointcut {
             return this;
         }
 
-        public Builder withReturnType(String returnType) {
-            this.returnType = new WildcardString(returnType);
-            return this;
-        }
-
-        public Builder withArgumentTypes(List<String> argumentTypes) {
-            this.argumentTypes = argumentTypes.stream()
-                    .map(WildcardString::new)
-                    .collect(Collectors.toList());
+        public Builder withArgumentTypes(MethodArguments argumentTypes) {
+            this.argumentTypes = argumentTypes;
             return this;
         }
 
@@ -110,8 +139,8 @@ public class MethodPointcut implements Pointcut {
         }
 
         public MethodPointcut build() {
-            return new MethodPointcut(className, methodName, returnType, argumentTypes,
-                    exceptionsThrown);
+            return new MethodPointcut(kind, modifiers, returnType, className, methodName,
+                    argumentTypes, exceptionsThrown);
         }
     }
 }
