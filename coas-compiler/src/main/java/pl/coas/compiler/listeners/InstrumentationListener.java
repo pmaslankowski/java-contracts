@@ -1,5 +1,6 @@
 package pl.coas.compiler.listeners;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ public class InstrumentationListener implements TaskListener {
     private final AspectValidatingVisitor validatingVisitor;
     private final AspectInstrumentingVisitor instrumentingVisitor;
 
+    @Inject
     public InstrumentationListener(AspectScanningVisitor scanningVisitor,
             AspectValidatingVisitor validatingVisitor,
             AspectInstrumentingVisitor instrumentingVisitor) {

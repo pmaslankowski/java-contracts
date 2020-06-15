@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
-public class ArgsPointcutParser extends Parser {
+public class TypeNamesParser extends Parser {
 	static { RuntimeMetaData.checkVersion("4.7.2", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
@@ -86,13 +86,13 @@ public class ArgsPointcutParser extends Parser {
 	@Override
 	public ATN getATN() { return _ATN; }
 
-	public ArgsPointcutParser(TokenStream input) {
+	public TypeNamesParser(TokenStream input) {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 
 	public static class ArgsContext extends ParserRuleContext {
-		public TerminalNode EOF() { return getToken(ArgsPointcutParser.EOF, 0); }
+		public TerminalNode EOF() { return getToken(TypeNamesParser.EOF, 0); }
 		public NonEmptyArgsContext nonEmptyArgs() {
 			return getRuleContext(NonEmptyArgsContext.class,0);
 		}
@@ -102,11 +102,11 @@ public class ArgsPointcutParser extends Parser {
 		@Override public int getRuleIndex() { return RULE_args; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof ArgsPointcutListener ) ((ArgsPointcutListener)listener).enterArgs(this);
+			if ( listener instanceof TypeNamesListener ) ((TypeNamesListener)listener).enterArgs(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof ArgsPointcutListener ) ((ArgsPointcutListener)listener).exitArgs(this);
+			if ( listener instanceof TypeNamesListener ) ((TypeNamesListener)listener).exitArgs(this);
 		}
 	}
 
@@ -155,11 +155,11 @@ public class ArgsPointcutParser extends Parser {
 		@Override public int getRuleIndex() { return RULE_nonEmptyArgs; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof ArgsPointcutListener ) ((ArgsPointcutListener)listener).enterNonEmptyArgs(this);
+			if ( listener instanceof TypeNamesListener ) ((TypeNamesListener)listener).enterNonEmptyArgs(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof ArgsPointcutListener ) ((ArgsPointcutListener)listener).exitNonEmptyArgs(this);
+			if ( listener instanceof TypeNamesListener ) ((TypeNamesListener)listener).exitNonEmptyArgs(this);
 		}
 	}
 
@@ -211,11 +211,11 @@ public class ArgsPointcutParser extends Parser {
 		@Override public int getRuleIndex() { return RULE_arg; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof ArgsPointcutListener ) ((ArgsPointcutListener)listener).enterArg(this);
+			if ( listener instanceof TypeNamesListener ) ((TypeNamesListener)listener).enterArg(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof ArgsPointcutListener ) ((ArgsPointcutListener)listener).exitArg(this);
+			if ( listener instanceof TypeNamesListener ) ((TypeNamesListener)listener).exitArg(this);
 		}
 	}
 
@@ -241,7 +241,7 @@ public class ArgsPointcutParser extends Parser {
 	}
 
 	public static class TypeNameContext extends ParserRuleContext {
-		public TerminalNode IDENTIFIER() { return getToken(ArgsPointcutParser.IDENTIFIER, 0); }
+		public TerminalNode IDENTIFIER() { return getToken(TypeNamesParser.IDENTIFIER, 0); }
 		public TypeNameContext typeName() {
 			return getRuleContext(TypeNameContext.class,0);
 		}
@@ -251,11 +251,11 @@ public class ArgsPointcutParser extends Parser {
 		@Override public int getRuleIndex() { return RULE_typeName; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof ArgsPointcutListener ) ((ArgsPointcutListener)listener).enterTypeName(this);
+			if ( listener instanceof TypeNamesListener ) ((TypeNamesListener)listener).enterTypeName(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof ArgsPointcutListener ) ((ArgsPointcutListener)listener).exitTypeName(this);
+			if ( listener instanceof TypeNamesListener ) ((TypeNamesListener)listener).exitTypeName(this);
 		}
 	}
 

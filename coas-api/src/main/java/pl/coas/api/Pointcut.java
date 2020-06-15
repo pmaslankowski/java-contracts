@@ -188,7 +188,7 @@ public class Pointcut {
     /**
      * Represents pointcut matching all methods in annotated class.
      * 
-     * @param annotationType type of matchig annotation
+     * @param annotationType type of matching annotation
      */
     public static boolean annotatedType(Class<?> annotationType) {
         throw new IllegalStateException(MESSAGE);

@@ -1,4 +1,4 @@
-// Generated from ArgsPointcut.g4 by ANTLR 4.7.2
+// Generated from TypeNames.g4 by ANTLR 4.7.2
 
 package pl.coas.compiler.instrumentation.antlr;
 

@@ -1,4 +1,4 @@
-grammar ArgsPointcut;
+grammar TypeNames;
 
 @header {
 package pl.coas.compiler.instrumentation.antlr;
