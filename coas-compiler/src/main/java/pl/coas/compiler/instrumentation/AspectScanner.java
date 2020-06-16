@@ -21,6 +21,7 @@ import pl.coas.util.StreamUtil;
 import pl.compiler.commons.model.SimpleMethodInvocation;
 import pl.compiler.commons.util.TreePasser;
 
+//TODO: wsparcie dla wyrażeń logicznych
 @Singleton
 public class AspectScanner {
 

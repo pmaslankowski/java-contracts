@@ -2,10 +2,12 @@ package pl.coas.compiler.instrumentation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
 
 import pl.coas.compiler.instrumentation.model.Aspect;
+import pl.coas.compiler.instrumentation.model.JoinPoint;
 
 @Singleton
 public class AspectRegistry {
@@ -14,5 +16,11 @@ public class AspectRegistry {
 
     public void registerAspect(Aspect aspect) {
         aspects.add(aspect);
+    }
+
+    public List<Aspect> getMatchingAspects(JoinPoint joinPoint) {
+        return aspects.stream()
+                .filter(aspect -> aspect.matches(joinPoint))
+                .collect(Collectors.toList());
     }
 }

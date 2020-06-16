@@ -2,7 +2,14 @@ package pl.coas.compiler.instrumentation.model.pointcut;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.lang.model.element.Modifier;
+
+import com.sun.tools.javac.util.Name;
+
+import pl.coas.compiler.instrumentation.model.JoinPoint;
 
 public class MethodPointcut implements Pointcut {
 
@@ -52,6 +59,73 @@ public class MethodPointcut implements Pointcut {
 
     public List<WildcardString> getExceptionsThrown() {
         return exceptionsThrown;
+    }
+
+    @Override
+    public boolean matches(JoinPoint joinPoint) {
+        return methodKindMatches(joinPoint)
+                && methodModifiersMatch(joinPoint)
+                && returnTypeMatches(joinPoint)
+                && classNameMatches(joinPoint)
+                && methodNameMatches(joinPoint)
+                && argumentTypesMatch(joinPoint)
+                && exceptionsMatch(joinPoint);
+    }
+
+    private boolean methodKindMatches(JoinPoint joinPoint) {
+        Set<Modifier> jpModifiers = joinPoint.getMethod().getModifiers().getFlags();
+        return kind.matches(jpModifiers);
+    }
+
+    private boolean methodModifiersMatch(JoinPoint joinPoint) {
+        Set<Modifier> jpModifiers = joinPoint.getMethod().getModifiers().getFlags();
+        return modifiers.stream().allMatch(modifier -> modifier.matches(jpModifiers));
+    }
+
+    private boolean returnTypeMatches(JoinPoint joinPoint) {
+        Name returnTypeName = joinPoint.getMethod().sym.getReturnType().tsym.getQualifiedName();
+        return returnType.matches(returnTypeName.toString());
+    }
+
+    private boolean classNameMatches(JoinPoint joinPoint) {
+        Name jpClassName = joinPoint.getClazz().sym.getQualifiedName();
+        return className.matches(jpClassName.toString());
+    }
+
+    private boolean methodNameMatches(JoinPoint joinPoint) {
+        Name jpMethodName = joinPoint.getMethod().getName();
+        return methodName.matches(jpMethodName.toString());
+    }
+
+    private boolean argumentTypesMatch(JoinPoint joinPoint) {
+        List<String> jpArgTypes = joinPoint.getMethod().getParameters().stream()
+                .map(arg -> arg.type.tsym.getQualifiedName().toString())
+                .collect(Collectors.toList());
+        return argumentTypes.match(jpArgTypes);
+    }
+
+    private boolean exceptionsMatch(JoinPoint joinPoint) {
+        List<Name> jpExceptionNames = getExceptionNames(joinPoint);
+
+        if (jpExceptionNames.size() != exceptionsThrown.size()) {
+            return false;
+        }
+
+        for (int i = 0; i < jpExceptionNames.size(); i++) {
+            String jpExceptionName = jpExceptionNames.get(i).toString();
+            WildcardString expectedException = exceptionsThrown.get(i);
+            if (!expectedException.matches(jpExceptionName)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private List<Name> getExceptionNames(JoinPoint joinPoint) {
+        return joinPoint.getMethod().type.getThrownTypes().stream()
+                .map(type -> type.tsym.getQualifiedName())
+                .collect(Collectors.toList());
     }
 
     @Override

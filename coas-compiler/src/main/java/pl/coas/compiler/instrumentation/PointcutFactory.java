@@ -18,12 +18,14 @@ import pl.coas.compiler.instrumentation.model.pointcut.ArgsPointcut;
 import pl.coas.compiler.instrumentation.model.pointcut.DynamicTargetPointcut;
 import pl.coas.compiler.instrumentation.model.pointcut.MethodPointcut;
 import pl.coas.compiler.instrumentation.model.pointcut.Pointcut;
+import pl.coas.compiler.instrumentation.model.pointcut.RegularMethodArguments;
 import pl.coas.compiler.instrumentation.model.pointcut.StaticTargetPointcut;
-import pl.coas.compiler.instrumentation.parsers.TypeNamesParserImpl;
+import pl.coas.compiler.instrumentation.model.pointcut.WildcardString;
 import pl.coas.compiler.instrumentation.parsers.ClassNameParserImpl;
 import pl.coas.compiler.instrumentation.parsers.DynamicTargetPointcutParser;
 import pl.coas.compiler.instrumentation.parsers.MethodPointcutParserImpl;
 import pl.coas.compiler.instrumentation.parsers.StaticTargetPointcutParser;
+import pl.coas.compiler.instrumentation.parsers.TypeNamesParserImpl;
 import pl.compiler.commons.model.SimpleMethodInvocation;
 
 @Singleton
@@ -114,14 +116,17 @@ public class PointcutFactory {
     private ArgsPointcut newArgsPointcut(SimpleMethodInvocation invocation) {
         JCExpression expr = (JCExpression) invocation.getArguments().get(0);
         if (expr instanceof JCFieldAccess) {
-            List<String> argTypes = invocation.getArguments().stream()
+            List<WildcardString> argTypes = invocation.getArguments().stream()
                     .map(type -> getClassName((JCFieldAccess) expr))
+                    .map(WildcardString::new)
                     .collect(Collectors.toList());
-            return new ArgsPointcut(argTypes);
+            return new ArgsPointcut(new RegularMethodArguments(argTypes));
         } else if (expr instanceof JCLiteral) {
             Object pointcutExpr = ((JCLiteral) expr).getValue();
-            List<String> argTypes = argsPointcutParser.parse((String) pointcutExpr);
-            return new ArgsPointcut(argTypes);
+            List<WildcardString> argTypes = argsPointcutParser.parse((String) pointcutExpr).stream()
+                    .map(WildcardString::new)
+                    .collect(Collectors.toList());
+            return new ArgsPointcut(new RegularMethodArguments(argTypes));
         } else {
             throw new IllegalArgumentException("Method invocation " + invocation
                     + " does not represent args pointcut");

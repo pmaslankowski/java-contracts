@@ -22,6 +22,7 @@ class AspectTests {
                 + "\n"
                 + "    public int testedMethod(int arg, boolean flag) {\n"
                 + "        Aspect.on(Pointcut.args(MyAspect.class, MyAspect.class));\n"
+                + "        Aspect.on(Pointcut.dynamicTarget(\"java.util.List\"));\n"
                 + "        return 42;\n"
                 + "    }\n"
                 + "}\n";

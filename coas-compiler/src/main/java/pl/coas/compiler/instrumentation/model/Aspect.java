@@ -22,6 +22,10 @@ public class Aspect {
         return advice;
     }
 
+    public boolean matches(JoinPoint joinPoint) {
+        return pointcut.matches(joinPoint);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)

@@ -12,6 +12,23 @@ public class RegularMethodArguments implements MethodArguments {
     }
 
     @Override
+    public boolean match(List<String> jpArguments) {
+        if (jpArguments.size() != arguments.size()) {
+            return false;
+        }
+
+        for (int i = 0; i < arguments.size(); i++) {
+            WildcardString specifiedArg = arguments.get(i);
+            String jpArg = jpArguments.get(i);
+            if (!specifiedArg.matches(jpArg)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o)
             return true;
