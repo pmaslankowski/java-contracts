@@ -15,16 +15,14 @@ import pl.coas.compiler.instrumentation.model.pointcut.AnnotatedArgsPointcut;
 import pl.coas.compiler.instrumentation.model.pointcut.AnnotatedMethodPointcut;
 import pl.coas.compiler.instrumentation.model.pointcut.AnnotatedTypePointcut;
 import pl.coas.compiler.instrumentation.model.pointcut.ArgsPointcut;
-import pl.coas.compiler.instrumentation.model.pointcut.DynamicTargetPointcut;
 import pl.coas.compiler.instrumentation.model.pointcut.MethodPointcut;
 import pl.coas.compiler.instrumentation.model.pointcut.Pointcut;
 import pl.coas.compiler.instrumentation.model.pointcut.RegularMethodArguments;
-import pl.coas.compiler.instrumentation.model.pointcut.StaticTargetPointcut;
+import pl.coas.compiler.instrumentation.model.pointcut.TargetPointcut;
 import pl.coas.compiler.instrumentation.model.pointcut.WildcardString;
 import pl.coas.compiler.instrumentation.parsers.ClassNameParserImpl;
-import pl.coas.compiler.instrumentation.parsers.DynamicTargetPointcutParser;
 import pl.coas.compiler.instrumentation.parsers.MethodPointcutParserImpl;
-import pl.coas.compiler.instrumentation.parsers.StaticTargetPointcutParser;
+import pl.coas.compiler.instrumentation.parsers.TargetPointcutParser;
 import pl.coas.compiler.instrumentation.parsers.TypeNamesParserImpl;
 import pl.compiler.commons.model.SimpleMethodInvocation;
 
@@ -32,19 +30,16 @@ import pl.compiler.commons.model.SimpleMethodInvocation;
 public class PointcutFactory {
 
     private final MethodPointcutParserImpl methodPointcutParser;
-    private final StaticTargetPointcutParser staticTargetPointcutParser;
-    private final DynamicTargetPointcutParser dynamicPointcutParser;
+    private final TargetPointcutParser targetPointcutParser;
     private final ClassNameParserImpl classNameParser;
     private final TypeNamesParserImpl argsPointcutParser;
 
     @Inject
     public PointcutFactory(MethodPointcutParserImpl methodPointcutParser,
-            StaticTargetPointcutParser staticTargetPointcutParser,
-            DynamicTargetPointcutParser dynamicPointcutParser,
+            TargetPointcutParser targetPointcutParser,
             ClassNameParserImpl classNameParser, TypeNamesParserImpl argsPointcutParser) {
         this.methodPointcutParser = methodPointcutParser;
-        this.staticTargetPointcutParser = staticTargetPointcutParser;
-        this.dynamicPointcutParser = dynamicPointcutParser;
+        this.targetPointcutParser = targetPointcutParser;
         this.classNameParser = classNameParser;
         this.argsPointcutParser = argsPointcutParser;
     }
@@ -54,11 +49,8 @@ public class PointcutFactory {
         if (methodName.contentEquals("method")) {
             return newMethodPointcut(invocation);
         }
-        if (methodName.contentEquals("staticTarget")) {
-            return newStaticTargetPointcut(invocation);
-        }
-        if (methodName.contentEquals("dynamicTarget")) {
-            return newDynamicTargetPointcut(invocation);
+        if (methodName.contentEquals("target")) {
+            return newTargetPointcut(invocation);
         }
         if (methodName.contentEquals("args")) {
             return newArgsPointcut(invocation);
@@ -81,36 +73,22 @@ public class PointcutFactory {
         return methodPointcutParser.parse((String) expr.getValue());
     }
 
-    private StaticTargetPointcut newStaticTargetPointcut(SimpleMethodInvocation invocation) {
+    private TargetPointcut newTargetPointcut(SimpleMethodInvocation invocation) {
         JCExpression expr = (JCExpression) invocation.getArguments().get(0);
         if (expr instanceof JCFieldAccess) {
             String className = getClassName((JCFieldAccess) expr);
-            return new StaticTargetPointcut(className);
+            return new TargetPointcut(className);
         } else if (expr instanceof JCLiteral) {
             Object pointcutExpr = ((JCLiteral) expr).getValue();
-            return staticTargetPointcutParser.parse((String) pointcutExpr);
+            return targetPointcutParser.parse((String) pointcutExpr);
         } else {
             throw new IllegalArgumentException("Method invocation " + invocation
-                    + " does not represent static target pointcut");
+                    + " does not represent dynamic target pointcut");
         }
     }
 
     private String getClassName(JCFieldAccess classAccess) {
         return classAccess.type.getTypeArguments().get(0).tsym.getQualifiedName().toString();
-    }
-
-    private DynamicTargetPointcut newDynamicTargetPointcut(SimpleMethodInvocation invocation) {
-        JCExpression expr = (JCExpression) invocation.getArguments().get(0);
-        if (expr instanceof JCFieldAccess) {
-            String className = getClassName((JCFieldAccess) expr);
-            return new DynamicTargetPointcut(className);
-        } else if (expr instanceof JCLiteral) {
-            Object pointcutExpr = ((JCLiteral) expr).getValue();
-            return dynamicPointcutParser.parse((String) pointcutExpr);
-        } else {
-            throw new IllegalArgumentException("Method invocation " + invocation
-                    + " does not represent dynamic target pointcut");
-        }
     }
 
     private ArgsPointcut newArgsPointcut(SimpleMethodInvocation invocation) {

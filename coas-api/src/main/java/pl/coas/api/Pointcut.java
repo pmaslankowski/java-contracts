@@ -71,16 +71,7 @@ public class Pointcut {
     }
 
     /**
-     * Represents pointcut statically matching all methods declared in a specific class.
-     * 
-     * @param type type of matching class
-     */
-    public static boolean staticTarget(Class<?> type) {
-        throw new IllegalStateException(MESSAGE);
-    }
-
-    /**
-     * Represents pointcut statically matching all methods declared in a specific class.
+     * Represents pointcut matching all methods declared in a specific class.
      * <br><br>
      * Supported class pointcut expressions have form of fully qualified class names with optional
      * wildcards (*).
@@ -99,7 +90,7 @@ public class Pointcut {
      * 
      * @param expr class pointcut expression
      */
-    public static boolean staticTarget(String expr) {
+    public static boolean target(String expr) {
         throw new IllegalStateException(MESSAGE);
     }
 
@@ -107,39 +98,11 @@ public class Pointcut {
      * Represents pointcut dynamically matching all methods declared in a specific class.
      * <br><br>
      * Difference between dynamic and static matching of pointcut expressions is described in
-     * {@link Pointcut#dynamicTarget(String)}.
+     * {@link Pointcut#target(String)}.
      *
      * @param type type of matching class
      */
-    public static boolean dynamicTarget(Class<?> type) {
-        throw new IllegalStateException(MESSAGE);
-    }
-
-    /**
-     * Represents pointcut dynamically matching all methods declared in a specific class.
-     * <br><br>
-     * For the detailed description of the class pointcut expression syntax look at
-     * {@link Pointcut#staticTarget(String)}.
-     * <br><br>
-     * Difference between static and dynamic matching of classes can be seen in this example:
-     * <br>
-     * This method call will be matched only dynamically by the <i>Subclass</i> pointcut:
-     * 
-     * <pre>
-     * MyClass instance = new SubClass();
-     * instance.method();
-     * </pre>
-     * 
-     * but the following call will be matched by both static and dynamic matching:
-     * 
-     * <pre>
-     * MyClass instance = new MyClass();
-     * instance.method();
-     * </pre>
-     * 
-     * @param expr class pointcut expression
-     */
-    public static boolean dynamicTarget(String expr) {
+    public static boolean target(Class<?> type) {
         throw new IllegalStateException(MESSAGE);
     }
 

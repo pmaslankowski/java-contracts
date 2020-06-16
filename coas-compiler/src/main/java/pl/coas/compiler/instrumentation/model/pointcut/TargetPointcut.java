@@ -7,13 +7,13 @@ import com.sun.tools.javac.tree.JCTree.JCClassDecl;
 
 import pl.coas.compiler.instrumentation.model.JoinPoint;
 
-public class DynamicTargetPointcut implements Pointcut {
+public class TargetPointcut implements Pointcut {
 
     private static final String JAVA_LANG_OBJECT = "java.lang.Object";
 
     private final WildcardString className;
 
-    public DynamicTargetPointcut(String className) {
+    public TargetPointcut(String className) {
         this.className = new WildcardString(className);
     }
 
@@ -47,7 +47,7 @@ public class DynamicTargetPointcut implements Pointcut {
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        DynamicTargetPointcut that = (DynamicTargetPointcut) o;
+        TargetPointcut that = (TargetPointcut) o;
         return Objects.equals(className, that.className);
     }
 
