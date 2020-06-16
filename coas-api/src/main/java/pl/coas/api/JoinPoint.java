@@ -47,6 +47,7 @@ public class JoinPoint {
         return method;
     }
 
+    // TODO: może zwrócić optionala?
     public interface TargetMethod {
 
         Object proceed(Object... args) throws Exception;

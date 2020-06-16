@@ -6,16 +6,24 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.sun.source.tree.MethodInvocationTree;
+import com.sun.tools.javac.tree.JCTree.JCBinary;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
 import com.sun.tools.javac.tree.JCTree.JCFieldAccess;
 import com.sun.tools.javac.tree.JCTree.JCLiteral;
+import com.sun.tools.javac.tree.JCTree.JCMethodInvocation;
+import com.sun.tools.javac.tree.JCTree.JCUnary;
+import com.sun.tools.javac.tree.JCTree.Tag;
 import com.sun.tools.javac.util.Name;
 
+import pl.coas.compiler.instrumentation.model.pointcut.AndPointcut;
 import pl.coas.compiler.instrumentation.model.pointcut.AnnotatedArgsPointcut;
 import pl.coas.compiler.instrumentation.model.pointcut.AnnotatedMethodPointcut;
 import pl.coas.compiler.instrumentation.model.pointcut.AnnotatedTypePointcut;
 import pl.coas.compiler.instrumentation.model.pointcut.ArgsPointcut;
 import pl.coas.compiler.instrumentation.model.pointcut.MethodPointcut;
+import pl.coas.compiler.instrumentation.model.pointcut.NotPointcut;
+import pl.coas.compiler.instrumentation.model.pointcut.OrPointcut;
 import pl.coas.compiler.instrumentation.model.pointcut.Pointcut;
 import pl.coas.compiler.instrumentation.model.pointcut.RegularMethodArguments;
 import pl.coas.compiler.instrumentation.model.pointcut.TargetPointcut;
@@ -44,7 +52,26 @@ public class PointcutFactory {
         this.argsPointcutParser = argsPointcutParser;
     }
 
-    public Pointcut newPointcut(SimpleMethodInvocation invocation) {
+    public Pointcut newPointcut(JCExpression expression) {
+        if (expression instanceof JCMethodInvocation) {
+            MethodInvocationTree invocation = (MethodInvocationTree) expression;
+            SimpleMethodInvocation simpleInvocation = SimpleMethodInvocation.of(invocation)
+                    .orElseThrow(() -> new IllegalStateException(
+                            "Pointcut expression should be simple method invocation"));
+            return newPointcutFromMethodInvocation(simpleInvocation);
+        } else if (expression instanceof JCBinary) {
+            JCBinary operator = (JCBinary) expression;
+            return newPointcutFromBinaryOp(operator);
+        } else if (expression instanceof JCUnary) {
+            JCUnary operator = (JCUnary) expression;
+            return newPointcutFromUnaryOp(operator);
+        } else {
+            throw new IllegalArgumentException(
+                    "Pointcut expression has to be method invocation or logical expression");
+        }
+    }
+
+    private Pointcut newPointcutFromMethodInvocation(SimpleMethodInvocation invocation) {
         Name methodName = invocation.getMethodName();
         if (methodName.contentEquals("method")) {
             return newMethodPointcut(invocation);
@@ -155,6 +182,31 @@ public class PointcutFactory {
         } else {
             throw new IllegalArgumentException("Method invocation " + invocation
                     + " does not represent args pointcut");
+        }
+    }
+
+    private Pointcut newPointcutFromBinaryOp(JCBinary operator) {
+        if (operator.getTag() == Tag.OR) {
+            Pointcut leftOperand = newPointcut(operator.getLeftOperand());
+            Pointcut rightOperand = newPointcut(operator.getRightOperand());
+            return new OrPointcut(leftOperand, rightOperand);
+        } else if (operator.getTag() == Tag.AND) {
+            Pointcut leftOperand = newPointcut(operator.getLeftOperand());
+            Pointcut rightOperand = newPointcut(operator.getRightOperand());
+            return new AndPointcut(leftOperand, rightOperand);
+        } else {
+            throw new IllegalArgumentException(
+                    "Binary pointcut expression has to be either logical AND or OR.");
+        }
+    }
+
+    private Pointcut newPointcutFromUnaryOp(JCUnary operator) {
+        if (operator.getTag() == Tag.NOT) {
+            Pointcut operand = newPointcut(operator.getExpression());
+            return new NotPointcut(operand);
+        } else {
+            throw new IllegalArgumentException(
+                    "Unary pointcut expression has to be logical NOT.");
         }
     }
 }

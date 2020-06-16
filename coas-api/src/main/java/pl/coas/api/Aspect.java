@@ -21,4 +21,22 @@ public class Aspect {
     public static void on(boolean pointcutExpression) {
         throw new IllegalStateException(MESSAGE);
     }
+
+    /**
+     * Specifies aspect type {@link AspectType}.
+     * 
+     * @param type aspect type
+     */
+    public static void type(AspectType type) {
+        throw new IllegalStateException(MESSAGE);
+    }
+
+    /**
+     * Specifies aspect ordering.
+     * 
+     * @param val aspect ordering value
+     */
+    public static void order(int val) {
+        throw new IllegalStateException();
+    }
 }
