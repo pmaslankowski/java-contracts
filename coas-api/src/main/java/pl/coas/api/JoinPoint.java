@@ -10,23 +10,24 @@ import java.lang.reflect.Method;
 public class JoinPoint {
 
     private final Object target;
+    private final Object[] arguments;
     private final Method method;
     private final TargetMethod targetMethod;
 
-    public JoinPoint(Object target, Method method, TargetMethod targetMethod) {
+    public JoinPoint(Object target, Method method, Object[] arguments, TargetMethod targetMethod) {
         this.target = target;
         this.method = method;
+        this.arguments = arguments;
         this.targetMethod = targetMethod;
     }
 
     /**
      * Proceeds to the target method invocation.
-     * 
-     * @param args arguments for the target method
+     *
      * @return result from target method
      */
-    public Object proceed(Object... args) throws Exception {
-        return targetMethod.proceed(args);
+    public Object proceed() {
+        return targetMethod.proceed(arguments);
     }
 
     /**
@@ -38,6 +39,10 @@ public class JoinPoint {
         return target;
     }
 
+    public Object[] getArguments() {
+        return arguments;
+    }
+
     /**
      * Returns the {@link Method} object representing target method.
      * 
@@ -47,9 +52,8 @@ public class JoinPoint {
         return method;
     }
 
-    // TODO: może zwrócić optionala?
     public interface TargetMethod {
 
-        Object proceed(Object... args) throws Exception;
+        Object proceed(Object[] args);
     }
 }

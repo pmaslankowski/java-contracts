@@ -24,6 +24,9 @@ public class ClassAccessBuilder {
 
     public JCExpression build(String fullyQualifiedClassName, int position) {
         String[] classAccessPath = fullyQualifiedClassName.split("\\.");
+        if (classAccessPath.length == 1) {
+            return treeMaker.Ident(typeRegistry.getClassSymbol(fullyQualifiedClassName));
+        }
 
         String topPackageName = classAccessPath[0];
         JCExpression classAccess = getTopPackageAccess(topPackageName, position);

@@ -28,7 +28,7 @@ public class AspectScanningVisitor extends TreeScanner<Void, Void> {
     @Override
     public Void visitClass(ClassTree classTree, Void aVoid) {
         JCClassDecl clazz = (JCClassDecl) classTree;
-        // Attribution needs to be done here, because contract scanning is performed when
+        // Attribution needs to be done here, because aspect scanning is performed when
         // ENTER phase ends. ContractScanner needs type information not only on method and class
         // declarations but also on expressions inside methods' bodies. Therefore we need to
         // perform one additional class attribution here

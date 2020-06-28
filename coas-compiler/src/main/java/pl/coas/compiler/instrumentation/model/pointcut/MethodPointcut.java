@@ -105,6 +105,10 @@ public class MethodPointcut implements Pointcut {
     }
 
     private boolean exceptionsMatch(JoinPoint joinPoint) {
+        if (exceptionsThrown.isEmpty()) {
+            return true;
+        }
+
         List<Name> jpExceptionNames = getExceptionNames(joinPoint);
 
         if (jpExceptionNames.size() != exceptionsThrown.size()) {

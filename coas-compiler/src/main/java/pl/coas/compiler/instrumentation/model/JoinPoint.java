@@ -41,7 +41,7 @@ public class JoinPoint {
 
     @Override
     public String toString() {
-        return "Pointcut{" +
+        return "JoinPoint{" +
                 "clazz=" + clazz +
                 ", method=" + method +
                 '}';

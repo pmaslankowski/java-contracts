@@ -1,6 +1,7 @@
 package pl.coas.compiler.instrumentation;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,7 @@ public class AspectRegistry {
     public List<Aspect> getMatchingAspects(JoinPoint joinPoint) {
         return aspects.stream()
                 .filter(aspect -> aspect.matches(joinPoint))
+                .sorted(Comparator.comparingInt(Aspect::getOrder))
                 .collect(Collectors.toList());
     }
 }

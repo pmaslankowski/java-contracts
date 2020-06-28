@@ -40,8 +40,8 @@ public class TestRunner {
         try {
             return clazz.getMethod(methodName, argumentTypes);
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException(MessageFormat.format(
-                    "Can't find the {0} method in the compiled test class", methodName),
+            throw new RuntimeException(String.format(
+                    "Can't find the \"%s\" method in the compiled test class", methodName),
                     e);
         }
     }
