@@ -9,8 +9,9 @@ import org.slf4j.LoggerFactory;
 import com.sun.source.util.TaskEvent;
 import com.sun.source.util.TaskListener;
 
-import pl.coas.compiler.instrumentation.AspectInstrumentingVisitor;
+import pl.coas.compiler.instrumentation.AspectClassesInstrumenter;
 import pl.coas.compiler.instrumentation.AspectScanningVisitor;
+import pl.coas.compiler.instrumentation.JoinpointInstrumentingVisitor;
 import pl.coas.compiler.validation.AspectValidatingVisitor;
 
 @Singleton
@@ -20,14 +21,17 @@ public class InstrumentationListener implements TaskListener {
 
     private final AspectScanningVisitor scanningVisitor;
     private final AspectValidatingVisitor validatingVisitor;
-    private final AspectInstrumentingVisitor instrumentingVisitor;
+    private final AspectClassesInstrumenter aspectClassesInstrumenter;
+    private final JoinpointInstrumentingVisitor instrumentingVisitor;
 
     @Inject
     public InstrumentationListener(AspectScanningVisitor scanningVisitor,
             AspectValidatingVisitor validatingVisitor,
-            AspectInstrumentingVisitor instrumentingVisitor) {
+            AspectClassesInstrumenter aspectClassesInstrumenter,
+            JoinpointInstrumentingVisitor instrumentingVisitor) {
         this.scanningVisitor = scanningVisitor;
         this.validatingVisitor = validatingVisitor;
+        this.aspectClassesInstrumenter = aspectClassesInstrumenter;
         this.instrumentingVisitor = instrumentingVisitor;
     }
 
@@ -45,6 +49,7 @@ public class InstrumentationListener implements TaskListener {
         if (taskEvent.getKind() == TaskEvent.Kind.ANALYZE) {
             boolean isValid = taskEvent.getCompilationUnit().accept(validatingVisitor, null);
             if (isValid) {
+                aspectClassesInstrumenter.instrument();
                 taskEvent.getCompilationUnit().accept(instrumentingVisitor, null);
                 log.debug("Instrumented compilation unit:\n{}", taskEvent.getCompilationUnit());
             }

@@ -17,15 +17,15 @@ import com.sun.tools.javac.tree.JCTree.JCClassDecl;
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 
 @Singleton
-public class AspectInstrumentingVisitor extends TreeScanner<Void, Void> {
+public class JoinpointInstrumentingVisitor extends TreeScanner<Void, Void> {
 
-    private final AspectInstrumenter instrumenter;
+    private final JoinpointInstrumenter instrumenter;
     private final Attr attributer;
 
     private JCClassDecl clazz;
 
     @Inject
-    public AspectInstrumentingVisitor(AspectInstrumenter instrumenter, Attr attributer) {
+    public JoinpointInstrumentingVisitor(JoinpointInstrumenter instrumenter, Attr attributer) {
         this.instrumenter = instrumenter;
         this.attributer = attributer;
     }

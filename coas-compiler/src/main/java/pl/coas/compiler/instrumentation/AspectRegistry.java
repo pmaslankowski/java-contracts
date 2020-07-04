@@ -19,6 +19,10 @@ public class AspectRegistry {
         aspects.add(aspect);
     }
 
+    public List<Aspect> getAllAspects() {
+        return aspects;
+    }
+
     public List<Aspect> getMatchingAspects(JoinPoint joinPoint) {
         return aspects.stream()
                 .filter(aspect -> aspect.matches(joinPoint))

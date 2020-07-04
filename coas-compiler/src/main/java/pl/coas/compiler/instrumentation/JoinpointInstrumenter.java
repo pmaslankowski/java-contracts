@@ -29,7 +29,7 @@ import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Name;
 import com.sun.tools.javac.util.Names;
 
-import pl.coas.compiler.instrumentation.model.Advice;
+import pl.coas.api.AspectType;
 import pl.coas.compiler.instrumentation.model.Aspect;
 import pl.coas.compiler.instrumentation.model.JoinPoint;
 import pl.coas.compiler.instrumentation.util.AccessBuilder;
@@ -38,11 +38,11 @@ import pl.compiler.commons.util.AstUtil;
 
 // TODO: dodać walidację sprawdzającą, że advice'y zwracają Object
 @Singleton
-public class AspectInstrumenter {
+public class JoinpointInstrumenter {
 
+    public static final String ASPECT_INSTANCE_FIELD = "coas$aspect$instance";
     private static final String JOINPOINT_API_CLASS = "pl.coas.api.JoinPoint";
     private static final String TARGET_METHOD_PREFIX = "coas$target$";
-
     private final AspectRegistry registry;
     private final NameHelper nameHelper;
     private final TreeMaker tm;
@@ -50,7 +50,7 @@ public class AspectInstrumenter {
     private final Names names;
 
     @Inject
-    public AspectInstrumenter(AspectRegistry registry, TreeMaker tm,
+    public JoinpointInstrumenter(AspectRegistry registry, TreeMaker tm,
             NameHelper nameHelper,
             AccessBuilder accessBuilder, Names names) {
         this.registry = registry;
@@ -262,25 +262,23 @@ public class AspectInstrumenter {
 
     // TODO: dodać walidację, że klasa z aspektem ma domyślny bezargumentowy konstruktor
     private JCMethodInvocation generateAdviceCall(Aspect aspect, JCExpression joinPointExpr) {
-        Advice advice = aspect.getAdvice();
-        JCClassDecl clazz = advice.getClazz();
-        JCMethodDecl method = advice.getMethod();
-        Name typeName = clazz.type.tsym.getQualifiedName();
-        JCExpression aspectClass =
-                accessBuilder.build(typeName + ".class");
-        JCExpression getAspectAccess =
-                accessBuilder.build("pl.coas.internal.AspectFactory.getAspect");
-
-        JCExpression aspectAccess = accessBuilder.build(typeName.toString());
-        JCExpression aspectSupplier = tm.Lambda(com.sun.tools.javac.util.List.nil(),
-                tm.NewClass(null, com.sun.tools.javac.util.List.nil(), aspectAccess,
-                        com.sun.tools.javac.util.List.nil(), null));
-
-        JCMethodInvocation getAspectInvocation = tm.Apply(com.sun.tools.javac.util.List.nil(),
-                getAspectAccess, com.sun.tools.javac.util.List.of(aspectClass, aspectSupplier));
-
+        JCMethodDecl method = aspect.getAdvice().getMethod();
+        JCExpression aspectInstance = getAspectInstance(aspect);
         return tm.Apply(com.sun.tools.javac.util.List.nil(),
-                tm.Select(getAspectInvocation, method.getName()),
+                tm.Select(aspectInstance, method.getName()),
                 com.sun.tools.javac.util.List.of(joinPointExpr));
+    }
+
+    private JCExpression getAspectInstance(Aspect aspect) {
+        JCClassDecl clazz = aspect.getAdvice().getClazz();
+        Name typeName = clazz.type.tsym.getQualifiedName();
+        JCExpression aspectAccess = accessBuilder.build(typeName.toString());
+
+        if (aspect.getType() == AspectType.PROTOTYPE) {
+            return tm.NewClass(null, com.sun.tools.javac.util.List.nil(),
+                    aspectAccess, com.sun.tools.javac.util.List.nil(), null);
+        } else {
+            return tm.Select(aspectAccess, names.fromString(ASPECT_INSTANCE_FIELD));
+        }
     }
 }
