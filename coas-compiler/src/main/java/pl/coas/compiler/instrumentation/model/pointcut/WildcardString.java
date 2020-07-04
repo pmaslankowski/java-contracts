@@ -29,13 +29,12 @@ public class WildcardString {
         if (o == null || getClass() != o.getClass())
             return false;
         WildcardString that = (WildcardString) o;
-        return Objects.equals(value, that.value) &&
-                Objects.equals(pattern, that.pattern);
+        return Objects.equals(value, that.value);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value, pattern);
+        return Objects.hash(value);
     }
 
     @Override
