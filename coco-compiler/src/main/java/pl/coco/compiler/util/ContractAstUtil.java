@@ -23,13 +23,13 @@ public class ContractAstUtil {
                 .isPresent();
     }
 
-    public static boolean isContractAssertsInvocation(StatementTree statement) {
+    public static boolean isContractInvocation(StatementTree statement, ContractMethod method) {
         if (!isContractInvocation(statement)) {
             return false;
         }
 
         ContractInvocation invocation = getContractInvocation(statement);
-        return invocation.getContractMethod() == ContractMethod.ASSERTS;
+        return invocation.getContractMethod() == method;
     }
 
     public static boolean isContractInvocation(ExpressionTree expression) {

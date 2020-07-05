@@ -425,6 +425,55 @@ class PostconditionInheritanceTest {
                 .isInstanceOf(ContractFailedException.class);
     }
 
+    @DisplayName("2 postconditions, self postcondition in base class fails")
+    @Test
+    void methodShouldReturnResultEvenThoughSelfPostconditionInBaseClassFails() throws Throwable {
+
+        String entry = "package pl.coco.compiler;\n"
+                + "\n"
+                + "public class Entry {\n"
+                + "\n"
+                + "    public static int entry() {\n"
+                + "        Base instance = new Subclass();\n"
+                + "        return instance.testedMethod(0);\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        String base = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.code.Contract;\n"
+                + "\n"
+                + "public class Base {\n"
+                + "\n"
+                + "    public int testedMethod(int arg) {\n"
+                + "        Contract.ensuresSelf(Contract.result(Integer.class) == 42);\n"
+                + "        return 41;\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        String subclass = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.code.Contract;\n"
+                + "\n"
+                + "public class Subclass extends Base {\n"
+                + "\n"
+                + "    @Override\n"
+                + "    public int testedMethod(int arg) {\n"
+                + "        Contract.ensures(arg == 0);\n"
+                + "        return 42;\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        CompiledClasses compiled = compile(entry, base, subclass);
+
+        Object actual = run(compiled);
+
+        assertThat(actual).isEqualTo(42);
+    }
+
     private CompiledClasses compile(String entry, String base, String subclass) {
         TestCompilerInput compilerInput = new TestCompilerInput.Builder()
                 .addCompilationUnit(ENTRY_CLASS_NAME, entry)

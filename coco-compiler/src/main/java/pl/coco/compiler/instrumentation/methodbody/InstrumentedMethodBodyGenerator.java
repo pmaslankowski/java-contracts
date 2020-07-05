@@ -59,6 +59,7 @@ public class InstrumentedMethodBodyGenerator {
         addPreconditionInvocation(input, processed);
         addTargetInvocation(input, processed);
         addPostconditionInvocation(input, processed);
+        addSelfPostconditionInvocation(input, processed);
 
         if (!AstUtil.isStatic(originalMethod)) {
             addInvariantInvocationIfNeeded(input.getClazz(), processed, InvariantPoint.AFTER);
@@ -113,6 +114,17 @@ public class InstrumentedMethodBodyGenerator {
         JCStatement postconditionsInvocationStmt =
                 invocationStmtGenerator.generateWithParameters(postconditions, parameters);
         processed.add(postconditionsInvocationStmt);
+    }
+
+    private void addSelfPostconditionInvocation(MethodBodyGeneratorInput input,
+            List<JCStatement> processed) {
+
+        ContractSyntheticMethods syntheticMethods = input.getSyntheticMethods();
+        JCMethodDecl selfPostconditions = syntheticMethods.getSelfPostconditions();
+        List<JCExpression> parameters = getParameters(input);
+        JCStatement selfPostconditionsInvocationStmt =
+                invocationStmtGenerator.generateWithParameters(selfPostconditions, parameters);
+        processed.add(selfPostconditionsInvocationStmt);
     }
 
     private List<JCExpression> getParameters(MethodBodyGeneratorInput input) {

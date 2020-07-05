@@ -12,20 +12,27 @@ public class ContractSyntheticMethodsGenerator {
     private final TargetMethodGenerator targetMethodGenerator;
     private final PreconditionMethodGenerator preconditionMethodGenerator;
     private final PostconditionMethodGenerator postconditionMethodGenerator;
+    private final SelfPostconditionMethodGenerator selfPostconditionMethodGenerator;
 
     @Inject
     public ContractSyntheticMethodsGenerator(TargetMethodGenerator targetMethodGenerator,
             PreconditionMethodGenerator preconditionMethodGenerator,
-            PostconditionMethodGenerator postconditionMethodGenerator) {
+            PostconditionMethodGenerator postconditionMethodGenerator,
+            SelfPostconditionMethodGenerator selfPostconditionMethodGenerator) {
         this.targetMethodGenerator = targetMethodGenerator;
         this.preconditionMethodGenerator = preconditionMethodGenerator;
         this.postconditionMethodGenerator = postconditionMethodGenerator;
+        this.selfPostconditionMethodGenerator = selfPostconditionMethodGenerator;
     }
 
     public ContractSyntheticMethods generateMethods(JCClassDecl clazz, JCMethodDecl method) {
         JCMethodDecl target = targetMethodGenerator.generate(method);
         JCMethodDecl preconditionMethod = preconditionMethodGenerator.generate(clazz, method);
         JCMethodDecl postconditionMethod = postconditionMethodGenerator.generate(clazz, method);
-        return new ContractSyntheticMethods(target, preconditionMethod, postconditionMethod);
+        JCMethodDecl selfPostconditionMethod =
+                selfPostconditionMethodGenerator.generate(clazz, method);
+
+        return new ContractSyntheticMethods(target, preconditionMethod, postconditionMethod,
+                selfPostconditionMethod);
     }
 }

@@ -28,11 +28,21 @@ public class Contract {
     }
 
     /**
-     * Specifies a postcondition from a method.
+     * Specifies a postcondition for a method.
      *
      * @param postcondition postcondition
      */
     public static void ensures(boolean postcondition) {
+        throw new IllegalStateException(MESSAGE);
+    }
+
+    /**
+     * Specifies a postcondition for a method (which is not propagated to methods below in
+     * inheritance hierarchy).
+     * 
+     * @param postcondition postcondition
+     */
+    public static void ensuresSelf(boolean postcondition) {
         throw new IllegalStateException(MESSAGE);
     }
 

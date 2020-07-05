@@ -13,6 +13,7 @@ import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Name;
 
+import pl.coco.compiler.instrumentation.ContractMethod;
 import pl.coco.compiler.instrumentation.invocation.internal.precondition.RequiresAndAssertsInvocationBuilder;
 import pl.coco.compiler.model.ContractInvocation;
 import pl.coco.compiler.util.ContractAstUtil;
@@ -44,7 +45,7 @@ public class TargetMethodGenerator {
 
     private JCBlock getTargetBody(JCMethodDecl originalMethod) {
         java.util.List<JCStatement> nonContractStatements =
-                getNonContractStatementsAndAssertions(originalMethod.getBody());
+                getTargetStatements(originalMethod.getBody());
 
         if (AstUtil.isConstructor(originalMethod)) {
             nonContractStatements.remove(0);
@@ -57,16 +58,20 @@ public class TargetMethodGenerator {
         return treeMaker.Block(0, List.from(processedStatements));
     }
 
-    private java.util.List<JCStatement> getNonContractStatementsAndAssertions(JCBlock methodBody) {
+    private java.util.List<JCStatement> getTargetStatements(JCBlock methodBody) {
         return methodBody.getStatements()
                 .stream()
-                .filter(statement -> !ContractAstUtil.isContractInvocation(statement)
-                        || ContractAstUtil.isContractAssertsInvocation(statement))
+                .filter(this::isTargetStatement)
                 .collect(toList());
     }
 
+    private boolean isTargetStatement(JCStatement statement) {
+        return !ContractAstUtil.isContractInvocation(statement)
+                || ContractAstUtil.isContractInvocation(statement, ContractMethod.ASSERTS);
+    }
+
     private JCStatement processStatement(JCStatement statement, JCMethodDecl currentMethod) {
-        if (ContractAstUtil.isContractAssertsInvocation(statement)) {
+        if (ContractAstUtil.isContractInvocation(statement, ContractMethod.ASSERTS)) {
             ContractInvocation asserts = ContractAstUtil.getContractInvocation(statement);
             return assertsInvocationBuilder.build(asserts, currentMethod);
         } else {

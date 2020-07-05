@@ -3,11 +3,11 @@ package pl.coco.compiler.instrumentation.synthetic;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import pl.compiler.commons.util.AstUtil;
-
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 import com.sun.tools.javac.util.Name;
 import com.sun.tools.javac.util.Names;
+
+import pl.compiler.commons.util.AstUtil;
 
 @Singleton
 public class SyntheticMethodNameGenerator {
@@ -15,6 +15,7 @@ public class SyntheticMethodNameGenerator {
     private static final String TARGET_METHOD_PREFIX = "coco$target$";
     private static final String PRECONDITION_PREFIX = "coco$preconditions$";
     private static final String POSTCONDITION_PREFIX = "coco$postconditions$";
+    private static final String SELF_POSTCONDITION_PREFIX = "coco$selfpostconditions$";
     private static final String INVARIANT_METHOD_NAME = "coco$invariant";
 
     private static final String CONSTRUCTOR_NAME = "$constructor$";
@@ -37,6 +38,10 @@ public class SyntheticMethodNameGenerator {
 
     public Name getPostconditionMethodName(JCMethodDecl method) {
         return getProcessedMethodNameWithPrefix(method, POSTCONDITION_PREFIX);
+    }
+
+    public Name getSelfPostconditionMethodName(JCMethodDecl method) {
+        return getProcessedMethodNameWithPrefix(method, SELF_POSTCONDITION_PREFIX);
     }
 
     public Name getInvariantMethodName() {

@@ -27,12 +27,17 @@ public class ContractResultValidator extends TreeScanner {
             ContractInvocation contract = ContractAstUtil.getContractInvocation(invocation);
             if (contract.getContractMethod() == ContractMethod.RESULT) {
                 handleResultCall(invocation);
-            } else if (contract.getContractMethod() == ContractMethod.ENSURES) {
+            } else if (isEnsuresMethod(contract)) {
                 handleEnsuresCall(invocation);
             } else {
                 super.visitApply(invocation);
             }
         }
+    }
+
+    private boolean isEnsuresMethod(ContractInvocation contract) {
+        return contract.getContractMethod() == ContractMethod.ENSURES
+                || contract.getContractMethod() == ContractMethod.ENSURES_SELF;
     }
 
     private void handleResultCall(JCMethodInvocation invocation) {

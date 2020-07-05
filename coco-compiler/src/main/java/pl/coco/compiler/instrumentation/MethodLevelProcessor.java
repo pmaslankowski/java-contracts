@@ -86,6 +86,7 @@ public class MethodLevelProcessor {
         AstUtil.addMethodToClass(methods.getTarget(), clazz);
         AstUtil.addMethodToClass(methods.getPreconditions(), clazz);
         AstUtil.addMethodToClass(methods.getPostconditions(), clazz);
+        AstUtil.addMethodToClass(methods.getSelfPostconditions(), clazz);
     }
 
     private java.util.List<JCStatement> generateInstrumentedMethodBody(JCClassDecl clazz,

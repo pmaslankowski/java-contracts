@@ -8,6 +8,7 @@ public enum ContractMethod {
 
     REQUIRES("requires", true, false, true),
     ENSURES("ensures", true, false, true),
+    ENSURES_SELF("ensuresSelf", true, false, true),
     INVARIANT("invariant", true, false, true),
     ASSERTS("asserts", true, false, false),
     RESULT("result", false, true, false),

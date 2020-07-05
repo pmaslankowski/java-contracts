@@ -9,12 +9,15 @@ public class ContractEngine {
         isContractUnderEvaluation.set(false);
     }
 
-    // TODO: test isContractUnderEvalutaion flag
     public static void requires(ConditionSupplier precondition, String preconditionAsString) {
         evaluate(precondition, "Precondition \"{0}\" is not satisfied.", preconditionAsString);
     }
 
     public static void ensures(ConditionSupplier postcondition, String postconditionAsString) {
+        evaluate(postcondition, "Postcondition \"{0}\" is not satisfied.", postconditionAsString);
+    }
+
+    public static void ensuresSelf(ConditionSupplier postcondition, String postconditionAsString) {
         evaluate(postcondition, "Postcondition \"{0}\" is not satisfied.", postconditionAsString);
     }
 

@@ -7,12 +7,14 @@ public class ContractSyntheticMethods {
     private final JCMethodDecl target;
     private final JCMethodDecl preconditions;
     private final JCMethodDecl postconditions;
+    private final JCMethodDecl selfPostconditions;
 
     public ContractSyntheticMethods(JCMethodDecl target, JCMethodDecl preconditions,
-            JCMethodDecl postconditions) {
+            JCMethodDecl postconditions, JCMethodDecl selfPostconditions) {
         this.target = target;
         this.preconditions = preconditions;
         this.postconditions = postconditions;
+        this.selfPostconditions = selfPostconditions;
     }
 
     public JCMethodDecl getTarget() {
@@ -27,4 +29,7 @@ public class ContractSyntheticMethods {
         return postconditions;
     }
 
+    public JCMethodDecl getSelfPostconditions() {
+        return selfPostconditions;
+    }
 }
