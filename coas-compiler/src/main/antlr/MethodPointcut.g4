@@ -40,7 +40,8 @@ typeName    : IDENTIFIER '.' typeName | IDENTIFIER ;
 
 fragment DIGIT : [0-9] ;
 fragment ALPHA : [a-zA-Z] ;
+fragment SPECIAL : '_' | '$' | '^' | '/' | '*' | '?' | '[' | ']' | '-' ;
 
 WHITESPACE : (' ' | '\t') -> skip;
 
-IDENTIFIER : (ALPHA | '_' | '$' | '*') (ALPHA | DIGIT | '_' | '$' | '*')* ;
+IDENTIFIER : (ALPHA | DIGIT | SPECIAL)+ ;

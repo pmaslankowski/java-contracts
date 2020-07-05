@@ -14,6 +14,18 @@ public class WildcardString {
     }
 
     private Pattern makeRegex(String value) {
+        if (value.startsWith("r/")) {
+            return getRegexPattern(value.substring(2));
+        } else {
+            return getWildcardPattern(value);
+        }
+    }
+
+    private Pattern getRegexPattern(String value) {
+        return Pattern.compile(value);
+    }
+
+    private Pattern getWildcardPattern(String value) {
         String quotedValue = Pattern.quote(value);
         String regex = quotedValue.replace("*", "\\E.*\\Q");
         return Pattern.compile(regex);
