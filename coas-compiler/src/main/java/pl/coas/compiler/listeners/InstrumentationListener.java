@@ -10,7 +10,7 @@ import com.sun.source.util.TaskEvent;
 import com.sun.source.util.TaskListener;
 
 import pl.coas.compiler.instrumentation.AnnotationScanningVisitor;
-import pl.coas.compiler.instrumentation.AspectClassesInstrumenter;
+import pl.coas.compiler.instrumentation.AspectClassesInstrumentingVisitor;
 import pl.coas.compiler.instrumentation.AspectScanningVisitor;
 import pl.coas.compiler.instrumentation.JoinpointInstrumentingVisitor;
 import pl.coas.compiler.validation.AspectValidatingVisitor;
@@ -23,19 +23,19 @@ public class InstrumentationListener implements TaskListener {
     private final AnnotationScanningVisitor annotationScanningVisitor;
     private final AspectScanningVisitor scanningVisitor;
     private final AspectValidatingVisitor validatingVisitor;
-    private final AspectClassesInstrumenter aspectClassesInstrumenter;
+    private final AspectClassesInstrumentingVisitor aspectClassesInstrumentingVisitor;
     private final JoinpointInstrumentingVisitor instrumentingVisitor;
 
     @Inject
     public InstrumentationListener(AnnotationScanningVisitor annotationScanningVisitor,
-                                   AspectScanningVisitor scanningVisitor,
-                                   AspectValidatingVisitor validatingVisitor,
-                                   AspectClassesInstrumenter aspectClassesInstrumenter,
-                                   JoinpointInstrumentingVisitor instrumentingVisitor) {
+            AspectScanningVisitor scanningVisitor,
+            AspectValidatingVisitor validatingVisitor,
+            AspectClassesInstrumentingVisitor aspectClassesInstrumentingVisitor,
+            JoinpointInstrumentingVisitor instrumentingVisitor) {
         this.annotationScanningVisitor = annotationScanningVisitor;
         this.scanningVisitor = scanningVisitor;
         this.validatingVisitor = validatingVisitor;
-        this.aspectClassesInstrumenter = aspectClassesInstrumenter;
+        this.aspectClassesInstrumentingVisitor = aspectClassesInstrumentingVisitor;
         this.instrumentingVisitor = instrumentingVisitor;
     }
 
@@ -54,7 +54,7 @@ public class InstrumentationListener implements TaskListener {
         if (taskEvent.getKind() == TaskEvent.Kind.ANALYZE) {
             boolean isValid = taskEvent.getCompilationUnit().accept(validatingVisitor, null);
             if (isValid) {
-                aspectClassesInstrumenter.instrument();
+                taskEvent.getCompilationUnit().accept(aspectClassesInstrumentingVisitor, null);
                 taskEvent.getCompilationUnit().accept(instrumentingVisitor, null);
                 log.debug("Instrumented compilation unit:\n{}", taskEvent.getCompilationUnit());
             }
