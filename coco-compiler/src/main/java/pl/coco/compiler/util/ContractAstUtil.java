@@ -9,6 +9,7 @@ import com.sun.source.tree.StatementTree;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 
+import pl.coco.compiler.instrumentation.ContractMethod;
 import pl.coco.compiler.model.ContractInvocation;
 import pl.compiler.commons.model.SimpleMethodInvocation;
 import pl.compiler.commons.util.TreePasser;
@@ -20,6 +21,15 @@ public class ContractAstUtil {
                 .flatMap(SimpleMethodInvocation::of)
                 .flatMap(ContractInvocation::of)
                 .isPresent();
+    }
+
+    public static boolean isContractAssertsInvocation(StatementTree statement) {
+        if (!isContractInvocation(statement)) {
+            return false;
+        }
+
+        ContractInvocation invocation = getContractInvocation(statement);
+        return invocation.getContractMethod() == ContractMethod.ASSERTS;
     }
 
     public static boolean isContractInvocation(ExpressionTree expression) {

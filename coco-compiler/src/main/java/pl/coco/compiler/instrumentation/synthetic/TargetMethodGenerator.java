@@ -13,6 +13,8 @@ import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Name;
 
+import pl.coco.compiler.instrumentation.invocation.internal.precondition.RequiresAndAssertsInvocationBuilder;
+import pl.coco.compiler.model.ContractInvocation;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.compiler.commons.util.AstUtil;
 
@@ -23,12 +25,15 @@ public class TargetMethodGenerator {
 
     private final TreeMaker treeMaker;
     private final SyntheticMethodNameGenerator nameGenerator;
+    private final RequiresAndAssertsInvocationBuilder assertsInvocationBuilder;
 
     @Inject
     public TargetMethodGenerator(TreeMaker treeMaker,
-            SyntheticMethodNameGenerator nameGenerator) {
+            SyntheticMethodNameGenerator nameGenerator,
+            RequiresAndAssertsInvocationBuilder assertsInvocationBuilder) {
         this.treeMaker = treeMaker;
         this.nameGenerator = nameGenerator;
+        this.assertsInvocationBuilder = assertsInvocationBuilder;
     }
 
     public JCMethodDecl generate(JCMethodDecl originalMethod) {
@@ -39,20 +44,34 @@ public class TargetMethodGenerator {
 
     private JCBlock getTargetBody(JCMethodDecl originalMethod) {
         java.util.List<JCStatement> nonContractStatements =
-                getNonContractStatements(originalMethod.getBody());
+                getNonContractStatementsAndAssertions(originalMethod.getBody());
 
         if (AstUtil.isConstructor(originalMethod)) {
             nonContractStatements.remove(0);
         }
 
-        return treeMaker.Block(0, List.from(nonContractStatements));
+        java.util.List<JCStatement> processedStatements = nonContractStatements.stream()
+                .map(statement -> processStatement(statement, originalMethod))
+                .collect(toList());
+
+        return treeMaker.Block(0, List.from(processedStatements));
     }
 
-    private java.util.List<JCStatement> getNonContractStatements(JCBlock methodBody) {
+    private java.util.List<JCStatement> getNonContractStatementsAndAssertions(JCBlock methodBody) {
         return methodBody.getStatements()
                 .stream()
-                .filter(statement -> !ContractAstUtil.isContractInvocation(statement))
+                .filter(statement -> !ContractAstUtil.isContractInvocation(statement)
+                        || ContractAstUtil.isContractAssertsInvocation(statement))
                 .collect(toList());
+    }
+
+    private JCStatement processStatement(JCStatement statement, JCMethodDecl currentMethod) {
+        if (ContractAstUtil.isContractAssertsInvocation(statement)) {
+            ContractInvocation asserts = ContractAstUtil.getContractInvocation(statement);
+            return assertsInvocationBuilder.build(asserts, currentMethod);
+        } else {
+            return statement;
+        }
     }
 
     private MethodSymbol getTargetMethodSymbol(JCMethodDecl originalMethod) {

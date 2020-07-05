@@ -58,6 +58,15 @@ public class Contract {
     }
 
     /**
+     * Specifies assertion which must hold at given point.
+     * 
+     * @param condition condition
+     */
+    public static void asserts(boolean condition) {
+        throw new IllegalStateException(MESSAGE);
+    }
+
+    /**
      * Specifies that given predicate must be true for all objects in given array.
      * 
      * @param objects array of objects that the predicate will be tested on

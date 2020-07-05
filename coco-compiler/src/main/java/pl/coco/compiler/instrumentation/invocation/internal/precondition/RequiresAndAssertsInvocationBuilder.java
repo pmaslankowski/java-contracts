@@ -25,7 +25,7 @@ import pl.compiler.commons.invocation.MethodInvocationDescription;
 import pl.compiler.commons.util.TypeRegistry;
 
 @Singleton
-public class RequiresInvocationBuilder {
+public class RequiresAndAssertsInvocationBuilder {
 
     private static final String STRING_TYPE_NAME = "java.lang.String";
     private static final String CONDITION_SUPPLIER_TYPE = "pl.coco.internal.ConditionSupplier";
@@ -36,7 +36,7 @@ public class RequiresInvocationBuilder {
     private final ConditionSupplierProvider conditionSupplierProvider;
 
     @Inject
-    public RequiresInvocationBuilder(TreeMaker treeMaker, TypeRegistry typeRegistry,
+    public RequiresAndAssertsInvocationBuilder(TreeMaker treeMaker, TypeRegistry typeRegistry,
             MethodInvocationBuilder methodInvocationBuilder,
             ConditionSupplierProvider conditionSupplierProvider) {
         this.treeMaker = treeMaker;

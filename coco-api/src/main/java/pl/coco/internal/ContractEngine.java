@@ -26,6 +26,10 @@ public class ContractEngine {
                 conditionAsString, when);
     }
 
+    public static void asserts(ConditionSupplier condition, String conditionAsString) {
+        evaluate(condition, "Assertion \"{0}\" is not satisfied.", conditionAsString);
+    }
+
     private static void evaluate(ConditionSupplier condition, String contractMessage,
             String... args) {
 

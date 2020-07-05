@@ -21,7 +21,7 @@ import com.sun.tools.javac.util.Names;
 
 import pl.coco.compiler.instrumentation.ContractAnalyzer;
 import pl.coco.compiler.model.ContractInvocation;
-import pl.coco.compiler.instrumentation.invocation.internal.precondition.RequiresInvocationBuilder;
+import pl.coco.compiler.instrumentation.invocation.internal.precondition.RequiresAndAssertsInvocationBuilder;
 import pl.coco.compiler.instrumentation.registry.ContractsRegistry;
 import pl.coco.compiler.instrumentation.registry.MethodKey;
 import pl.compiler.commons.invocation.MethodInvocationBuilder;
@@ -31,7 +31,7 @@ import pl.compiler.commons.invocation.MethodInvocationDescription;
 public class PreconditionMethodGenerator extends AbstractMethodGenerator {
 
     private final MethodInvocationBuilder methodInvocationBuilder;
-    private final RequiresInvocationBuilder requiresInvocationBuilder;
+    private final RequiresAndAssertsInvocationBuilder requiresInvocationBuilder;
     private final ContractsRegistry contractsRegistry;
     private final ContractAnalyzer contractAnalyzer;
     private final SyntheticMethodNameGenerator nameGenerator;
@@ -39,7 +39,7 @@ public class PreconditionMethodGenerator extends AbstractMethodGenerator {
     @Inject
     public PreconditionMethodGenerator(TreeMaker treeMaker,
             MethodInvocationBuilder methodInvocationBuilder, Names names,
-            RequiresInvocationBuilder requiresInvocationBuilder,
+            RequiresAndAssertsInvocationBuilder requiresInvocationBuilder,
             ContractsRegistry contractsRegistry, ContractAnalyzer contractAnalyzer,
             SyntheticMethodNameGenerator nameGenerator) {
 

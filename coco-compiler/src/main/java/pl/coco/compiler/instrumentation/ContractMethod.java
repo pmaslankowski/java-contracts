@@ -9,6 +9,7 @@ public enum ContractMethod {
     REQUIRES("requires", true, false, true),
     ENSURES("ensures", true, false, true),
     INVARIANT("invariant", true, false, true),
+    ASSERTS("asserts", true, false, false),
     RESULT("result", false, true, false),
     FOR_ALL("forAll", false, true, false),
     EXISTS("exists", false, true, false);
