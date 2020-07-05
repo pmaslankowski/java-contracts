@@ -14,8 +14,9 @@ public class WildcardString {
     }
 
     private Pattern makeRegex(String value) {
-        String pattern = value.replace("*", ".*");
-        return Pattern.compile(pattern);
+        String quotedValue = Pattern.quote(value);
+        String regex = quotedValue.replace("*", "\\E.*\\Q");
+        return Pattern.compile(regex);
     }
 
     public boolean matches(String str) {

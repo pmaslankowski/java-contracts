@@ -49,12 +49,15 @@ public class InstrumentationListener implements TaskListener {
         if (taskEvent.getKind() == TaskEvent.Kind.ENTER) {
             taskEvent.getCompilationUnit().accept(annotationScanningVisitor, null);
             taskEvent.getCompilationUnit().accept(scanningVisitor, null);
+            // Here is potential problem with validation. This instrumentation has to be
+            // performed here, because some joinpoints could be processed before corresponding
+            // aspect has been instrumented
+            taskEvent.getCompilationUnit().accept(aspectClassesInstrumentingVisitor, null);
         }
 
         if (taskEvent.getKind() == TaskEvent.Kind.ANALYZE) {
             boolean isValid = taskEvent.getCompilationUnit().accept(validatingVisitor, null);
             if (isValid) {
-                taskEvent.getCompilationUnit().accept(aspectClassesInstrumentingVisitor, null);
                 taskEvent.getCompilationUnit().accept(instrumentingVisitor, null);
                 log.debug("Instrumented compilation unit:\n{}", taskEvent.getCompilationUnit());
             }

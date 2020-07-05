@@ -65,3 +65,13 @@ idea {
         sourceDirs += file("generated-src/antlr/main")
     }
 }
+
+jar {
+    from {
+        configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it).matching {
+                exclude 'META-INF/log4j-provider.properties'
+            }
+        }
+    }
+}
