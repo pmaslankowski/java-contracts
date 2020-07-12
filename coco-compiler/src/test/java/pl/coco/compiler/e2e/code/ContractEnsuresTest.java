@@ -18,7 +18,7 @@ class ContractEnsuresTest {
 
     @DisplayName("Simple postcondition on static method passes")
     @Test
-    void shouldReturnResultWhenPostconditionOnStaticMethodPasses() throws Throwable {
+    void shouldReturnWhenPostconditionWithContractOldPasses() throws Throwable {
 
         String code = "package pl.coco.compiler;\n"
                 + "\n"
@@ -554,5 +554,84 @@ class ContractEnsuresTest {
                 .isInstanceOf(ContractFailedException.class)
                 .hasMessage("An exception has been thrown during contract evaluation:")
                 .hasCause(new RuntimeException("Test exception"));
+    }
+
+    @DisplayName("Postcondition with Contract.old on boxed type passes")
+    @Test
+    void shouldReturnResultWhenPostconditionWithContractOldOnBoxedTypePasses()
+            throws Throwable {
+
+        String code = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.code.Contract;\n"
+                + "\n"
+                + "public class Test {\n"
+                + "\n"
+                + "    public static int entry() {\n"
+                + "        return testedMethod(41);\n"
+                + "    }\n"
+                + "\n"
+                + "    public static int testedMethod(Integer val) {\n"
+                + "        Contract.ensures(Contract.result(int.class) == Contract.old(val) + 1);\n"
+                + "        return val + 1;\n"
+                + "    }\n"
+                + "}\n";
+
+        Object actual = CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code);
+
+        assertThat(actual).isEqualTo(RESULT);
+    }
+
+    @DisplayName("Postcondition with Contract.old on boxed type fails")
+    @Test
+    void shouldReturnResultWhenPostconditionWithContractOldOnBoxedTypeFails() throws Throwable {
+
+        String code = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.code.Contract;\n"
+                + "\n"
+                + "public class Test {\n"
+                + "\n"
+                + "    public static int entry() {\n"
+                + "        return testedMethod(41);\n"
+                + "    }\n"
+                + "\n"
+                + "    public static int testedMethod(Integer val) {\n"
+                + "        Contract.ensures(Contract.result(int.class) == Contract.old(val) + 2);\n"
+                + "        return val + 1;\n"
+                + "    }\n"
+                + "}\n";
+
+        Throwable thrown = catchThrowable(
+                () -> CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+
+        assertThat(thrown)
+                .isInstanceOf(ContractFailedException.class);
+    }
+
+    @DisplayName("Postcondition with Contract.old on primitive type passes")
+    @Test
+    void shouldReturnResultWhenPostconditionWithContractOldOnPrimitiveTypePasses()
+            throws Throwable {
+
+        String code = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import pl.coco.api.code.Contract;\n"
+                + "\n"
+                + "public class Test {\n"
+                + "\n"
+                + "    public static int entry() {\n"
+                + "        return testedMethod(41);\n"
+                + "    }\n"
+                + "\n"
+                + "    public static int testedMethod(int val) {\n"
+                + "        Contract.ensures(Contract.result(int.class) == Contract.old(val) + 1);\n"
+                + "        return val + 1;\n"
+                + "    }\n"
+                + "}\n";
+
+        Object actual = CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code);
+
+        assertThat(actual).isEqualTo(RESULT);
     }
 }

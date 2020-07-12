@@ -13,11 +13,13 @@ import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 import com.sun.tools.javac.tree.JCTree.JCStatement;
 import com.sun.tools.javac.util.List;
 
+import pl.coco.compiler.instrumentation.invocation.internal.old.OldValue;
 import pl.coco.compiler.instrumentation.methodbody.InstrumentedMethodBodyGenerator;
 import pl.coco.compiler.instrumentation.methodbody.MethodBodyGeneratorInput;
 import pl.coco.compiler.instrumentation.methodbody.ResultSymbolProvider;
 import pl.coco.compiler.instrumentation.synthetic.ContractSyntheticMethods;
 import pl.coco.compiler.instrumentation.synthetic.ContractSyntheticMethodsGenerator;
+import pl.coco.compiler.instrumentation.synthetic.OldValuesProcessor;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.util.InvariantUtil;
 import pl.compiler.commons.util.AstUtil;
@@ -28,16 +30,19 @@ public class MethodLevelProcessor {
     private static final Logger log = LoggerFactory.getLogger(MethodLevelProcessor.class);
 
     private final ContractAnalyzer contractAnalyzer;
+    private final OldValuesProcessor oldValuesProcessor;
     private final ContractSyntheticMethodsGenerator syntheticGenerator;
     private final ResultSymbolProvider resultSymbolProvider;
     private final InstrumentedMethodBodyGenerator methodBodyGenerator;
 
     @Inject
     public MethodLevelProcessor(ContractAnalyzer contractAnalyzer,
+            OldValuesProcessor oldValuesProcessor,
             ContractSyntheticMethodsGenerator syntheticGenerator,
             ResultSymbolProvider resultSymbolProvider,
             InstrumentedMethodBodyGenerator methodBodyGenerator) {
         this.contractAnalyzer = contractAnalyzer;
+        this.oldValuesProcessor = oldValuesProcessor;
         this.syntheticGenerator = syntheticGenerator;
         this.resultSymbolProvider = resultSymbolProvider;
         this.methodBodyGenerator = methodBodyGenerator;
@@ -72,12 +77,13 @@ public class MethodLevelProcessor {
         log.debug("Detected contracts in method {}.{}",
                 clazz.sym.getQualifiedName(), method.getName());
 
+        java.util.List<OldValue> oldValues = oldValuesProcessor.processOldValues(method);
         ContractSyntheticMethods syntheticMethods =
-                syntheticGenerator.generateMethods(clazz, method);
+                syntheticGenerator.generateMethods(clazz, method, oldValues);
         addSyntheticMethodsToClass(syntheticMethods, clazz);
 
         java.util.List<JCStatement> instrumentedStmts =
-                generateInstrumentedMethodBody(clazz, method, syntheticMethods);
+                generateInstrumentedMethodBody(clazz, method, syntheticMethods, oldValues);
 
         body.stats = List.from(instrumentedStmts);
     }
@@ -90,12 +96,14 @@ public class MethodLevelProcessor {
     }
 
     private java.util.List<JCStatement> generateInstrumentedMethodBody(JCClassDecl clazz,
-            JCMethodDecl originalMethod, ContractSyntheticMethods syntheticMethods) {
+            JCMethodDecl originalMethod, ContractSyntheticMethods syntheticMethods,
+            java.util.List<OldValue> oldValues) {
 
         Symbol.VarSymbol resultSymbol =
                 resultSymbolProvider.getResultSymbol(syntheticMethods.getTarget());
         MethodBodyGeneratorInput input =
-                new MethodBodyGeneratorInput(syntheticMethods, clazz, originalMethod, resultSymbol);
+                new MethodBodyGeneratorInput(syntheticMethods, clazz, originalMethod, resultSymbol,
+                        oldValues);
 
         return methodBodyGenerator.generateBody(input);
     }

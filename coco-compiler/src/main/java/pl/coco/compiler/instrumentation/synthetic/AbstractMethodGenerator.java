@@ -5,7 +5,6 @@ import static java.util.stream.Collectors.toList;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.tools.javac.code.Flags;
-import com.sun.tools.javac.tree.JCTree.JCClassDecl;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
 import com.sun.tools.javac.tree.JCTree.JCIdent;
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
@@ -22,8 +21,6 @@ public abstract class AbstractMethodGenerator {
         this.treeMaker = treeMaker;
         this.names = names;
     }
-
-    public abstract JCMethodDecl generate(JCClassDecl clazz, JCMethodDecl method);
 
     protected long getProtectedMethodFlags(JCMethodDecl originalMethod) {
         long result = originalMethod.sym.flags();

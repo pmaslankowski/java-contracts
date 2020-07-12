@@ -12,4 +12,8 @@ public class CocoTestUtils {
         return JavacTestUtils.compileAndRun(qualifiedClassName, methodName, code, new Class<?>[] {},
                 new Object[] {}, CONTRACTS_ENABLED);
     }
+
+    public static byte[] compile(String qualifiedClassName, String code) {
+        return JavacTestUtils.compile(qualifiedClassName, code, CONTRACTS_ENABLED);
+    }
 }

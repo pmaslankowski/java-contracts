@@ -21,6 +21,7 @@ import com.sun.tools.javac.tree.JCTree.JCReturn;
 import com.sun.tools.javac.tree.JCTree.JCVariableDecl;
 import com.sun.tools.javac.tree.TreeMaker;
 
+import pl.coco.compiler.instrumentation.invocation.internal.old.OldValue;
 import pl.coco.compiler.instrumentation.synthetic.ContractSyntheticMethods;
 import pl.coco.compiler.util.InvariantUtil;
 import pl.compiler.commons.util.AstUtil;
@@ -32,25 +33,31 @@ public class InstrumentedMethodBodyGenerator {
     private final TreeMaker treeMaker;
     private final InvocationStatementGenerator invocationStmtGenerator;
     private final PrimitiveBoxer boxer;
+    private final OldValueCloningInstrumenter oldValueCloningInstrumenter;
 
     @Inject
     public InstrumentedMethodBodyGenerator(TreeMaker treeMaker,
             InvocationStatementGenerator invocationStmtGenerator,
-            PrimitiveBoxer boxer) {
+            PrimitiveBoxer boxer, OldValueCloningInstrumenter oldValueCloningInstrumenter) {
 
         this.treeMaker = treeMaker;
         this.invocationStmtGenerator = invocationStmtGenerator;
         this.boxer = boxer;
+        this.oldValueCloningInstrumenter = oldValueCloningInstrumenter;
     }
 
     public List<JCStatement> generateBody(MethodBodyGeneratorInput input) {
+
         List<JCStatement> processed = new ArrayList<>();
 
         JCMethodDecl originalMethod = input.getOriginalMethod();
+        List<OldValue> oldValues = input.getOldValues();
 
         if (AstUtil.isConstructor(originalMethod)) {
             addSuperCallFromOriginalMethod(originalMethod, processed);
         }
+
+        addOldValuesCloningStmts(oldValues, processed, originalMethod);
 
         if (!AstUtil.isConstructor(originalMethod) && !AstUtil.isStatic(originalMethod)) {
             addInvariantInvocationIfNeeded(input.getClazz(), processed, InvariantPoint.BEFORE);
@@ -58,8 +65,8 @@ public class InstrumentedMethodBodyGenerator {
 
         addPreconditionInvocation(input, processed);
         addTargetInvocation(input, processed);
-        addPostconditionInvocation(input, processed);
-        addSelfPostconditionInvocation(input, processed);
+        addPostconditionInvocation(input, processed, oldValues);
+        addSelfPostconditionInvocation(input, processed, oldValues);
 
         if (!AstUtil.isStatic(originalMethod)) {
             addInvariantInvocationIfNeeded(input.getClazz(), processed, InvariantPoint.AFTER);
@@ -70,6 +77,14 @@ public class InstrumentedMethodBodyGenerator {
         }
 
         return processed;
+    }
+
+    private void addOldValuesCloningStmts(List<OldValue> oldValues, List<JCStatement> processed,
+            JCMethodDecl originalMethod) {
+
+        List<JCStatement> cloningStmts = oldValueCloningInstrumenter
+                .getOldValuesCloningStatements(originalMethod, oldValues);
+        processed.addAll(cloningStmts);
     }
 
     private void addSuperCallFromOriginalMethod(JCMethodDecl originalMethod,
@@ -107,38 +122,43 @@ public class InstrumentedMethodBodyGenerator {
     }
 
     private void addPostconditionInvocation(MethodBodyGeneratorInput input,
-            List<JCStatement> processed) {
+            List<JCStatement> processed, List<OldValue> oldValues) {
         ContractSyntheticMethods syntheticMethods = input.getSyntheticMethods();
         JCMethodDecl postconditions = syntheticMethods.getPostconditions();
-        List<JCExpression> parameters = getParameters(input);
+        List<JCExpression> parameters = getParameters(input, oldValues);
         JCStatement postconditionsInvocationStmt =
                 invocationStmtGenerator.generateWithParameters(postconditions, parameters);
         processed.add(postconditionsInvocationStmt);
     }
 
     private void addSelfPostconditionInvocation(MethodBodyGeneratorInput input,
-            List<JCStatement> processed) {
+            List<JCStatement> processed, List<OldValue> oldValues) {
 
         ContractSyntheticMethods syntheticMethods = input.getSyntheticMethods();
         JCMethodDecl selfPostconditions = syntheticMethods.getSelfPostconditions();
-        List<JCExpression> parameters = getParameters(input);
+        List<JCExpression> parameters = getParameters(input, oldValues);
         JCStatement selfPostconditionsInvocationStmt =
                 invocationStmtGenerator.generateWithParameters(selfPostconditions, parameters);
         processed.add(selfPostconditionsInvocationStmt);
     }
 
-    private List<JCExpression> getParameters(MethodBodyGeneratorInput input) {
+    private List<JCExpression> getParameters(MethodBodyGeneratorInput input,
+            List<OldValue> oldValues) {
+
         JCMethodDecl originalMethod = input.getOriginalMethod();
-        List<JCExpression> originalParameters = originalMethod.getParameters().stream()
+        List<JCExpression> parameters = originalMethod.getParameters().stream()
                 .map(this::toIdentifier)
                 .collect(Collectors.toCollection(ArrayList::new));
 
+        oldValues.forEach(
+                oldValue -> parameters.add(toIdentifier(oldValue.getClonedOriginalMethodVar())));
+
         if (!AstUtil.isVoid(originalMethod)) {
             JCExpression result = treeMaker.Ident(input.getResultSymbol());
-            originalParameters.add(boxer.boxIfNeeded(result, originalMethod));
+            parameters.add(boxer.boxIfNeeded(result, originalMethod));
         }
 
-        return originalParameters;
+        return parameters;
     }
 
     private JCIdent toIdentifier(VariableTree param) {

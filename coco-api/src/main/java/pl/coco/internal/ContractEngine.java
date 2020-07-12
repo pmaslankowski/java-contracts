@@ -1,9 +1,12 @@
 package pl.coco.internal;
 
+import com.rits.cloning.Cloner;
+
 import pl.coco.api.ContractFailedException;
 
 public class ContractEngine {
 
+    private static Cloner cloner = new Cloner();
     private static ThreadLocal<Boolean> isContractUnderEvaluation = new ThreadLocal<>();
     static {
         isContractUnderEvaluation.set(false);
@@ -57,5 +60,9 @@ public class ContractEngine {
         } finally {
             isContractUnderEvaluation.set(false);
         }
+    }
+
+    public static <T> T deepClone(T obj) {
+        return cloner.deepClone(obj);
     }
 }

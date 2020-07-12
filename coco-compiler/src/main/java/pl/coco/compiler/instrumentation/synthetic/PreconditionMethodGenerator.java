@@ -51,7 +51,6 @@ public class PreconditionMethodGenerator extends AbstractMethodGenerator {
         this.nameGenerator = nameGenerator;
     }
 
-    @Override
     public JCMethodDecl generate(JCClassDecl clazz, JCMethodDecl method) {
         MethodSymbol wrapperSymbol = getPreconditionSymbol(method);
         JCMethodDecl wrapper = treeMaker.MethodDef(wrapperSymbol, wrapperSymbol.type, null);

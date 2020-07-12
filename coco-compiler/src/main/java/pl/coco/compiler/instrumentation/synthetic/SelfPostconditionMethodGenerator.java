@@ -21,6 +21,7 @@ import com.sun.tools.javac.util.Name;
 import com.sun.tools.javac.util.Names;
 
 import pl.coco.compiler.instrumentation.ContractMethod;
+import pl.coco.compiler.instrumentation.invocation.internal.old.OldValue;
 import pl.coco.compiler.instrumentation.invocation.internal.postcondition.EnsuresInvocationBuilder;
 import pl.coco.compiler.model.ContractInvocation;
 import pl.coco.compiler.util.ContractAstUtil;
@@ -48,41 +49,61 @@ public class SelfPostconditionMethodGenerator extends AbstractMethodGenerator {
         this.types = types;
     }
 
-    @Override
-    public JCMethodDecl generate(JCClassDecl clazz, JCMethodDecl method) {
-        MethodSymbol wrapperSymbol = getMethodSymbol(method);
+    public JCMethodDecl generate(JCClassDecl clazz, JCMethodDecl method,
+            java.util.List<OldValue> oldValues) {
+        MethodSymbol wrapperSymbol = getMethodSymbol(method, oldValues);
         JCMethodDecl wrapper = treeMaker.MethodDef(wrapperSymbol, wrapperSymbol.type, null);
         wrapper.body = generateMethodBody(wrapper, method);
         return wrapper;
     }
 
-    private MethodSymbol getMethodSymbol(JCMethodDecl originalMethod) {
+    private MethodSymbol getMethodSymbol(JCMethodDecl originalMethod,
+            java.util.List<OldValue> oldValues) {
+
         Name methodName = nameGenerator.getSelfPostconditionMethodName(originalMethod);
         long flags = getProtectedMethodFlags(originalMethod);
-        MethodType type = getMethodType(originalMethod);
+        MethodType type = getMethodType(originalMethod, oldValues);
 
-        MethodSymbol result =
-                new MethodSymbol(flags, methodName, type, originalMethod.sym.owner);
+        MethodSymbol result = new MethodSymbol(flags, methodName, type, originalMethod.sym.owner);
 
         result.params = originalMethod.sym.params;
-        if (AstUtil.isVoid(originalMethod)) {
-            return result;
-        } else {
-            VarSymbol resultSymbol = createResultSymbol(originalMethod, result);
-            result.params = result.params.append(resultSymbol);
-            return result;
+        addOldValuesAsMethodParams(originalMethod, oldValues, result);
+
+        if (!AstUtil.isVoid(originalMethod)) {
+            addResultAsMethodParam(originalMethod, result);
         }
+
+        return result;
+    }
+
+    private void addOldValuesAsMethodParams(JCMethodDecl originalMethod,
+            java.util.List<OldValue> oldValues, MethodSymbol result) {
+
+        for (OldValue oldValue : oldValues) {
+            VarSymbol oldValueCopySym = oldValue.getClonedPostconditionMethodParamSym();
+            int paramNum = result.params.length();
+            oldValueCopySym.adr = getSymbolAdr(originalMethod, paramNum);
+            result.params = result.params.append(oldValueCopySym);
+        }
+    }
+
+    private int getSymbolAdr(JCMethodDecl method, int paramNum) {
+        if (method.sym.isStatic()) {
+            return paramNum;
+        } else {
+            return paramNum + 1;
+        }
+    }
+
+    private void addResultAsMethodParam(JCMethodDecl originalMethod, MethodSymbol result) {
+        VarSymbol resultSymbol = createResultSymbol(originalMethod, result);
+        result.params = result.params.append(resultSymbol);
     }
 
     private VarSymbol createResultSymbol(JCMethodDecl originalMethod, MethodSymbol result) {
         VarSymbol resultSymbol = new VarSymbol(0, names.fromString("result"),
                 getBoxedReturnType(originalMethod), result);
-
-        if (originalMethod.sym.isStatic()) {
-            resultSymbol.adr = result.params.length();
-        } else {
-            resultSymbol.adr = result.params.length() + 1;
-        }
+        resultSymbol.adr = getSymbolAdr(originalMethod, result.params.length());
         return resultSymbol;
     }
 
@@ -90,14 +111,20 @@ public class SelfPostconditionMethodGenerator extends AbstractMethodGenerator {
         return types.boxedTypeOrType(originalMethod.getReturnType().type);
     }
 
-    private MethodType getMethodType(JCMethodDecl originalMethod) {
-        List<Type> originalParamTypes = originalMethod.sym.type.getParameterTypes();
+    private MethodType getMethodType(JCMethodDecl originalMethod,
+                                     java.util.List<OldValue> oldValues) {
+
+        List<Type> paramTypes = originalMethod.sym.type.getParameterTypes();
+        for (OldValue oldValue : oldValues) {
+            paramTypes = paramTypes.append(oldValue.getClonedPostconditionMethodParamSym().type);
+        }
+
         if (!AstUtil.isVoid(originalMethod)) {
             Type returnType = getBoxedReturnType(originalMethod);
-            List<Type> paramTypes = originalParamTypes.append(returnType);
+            paramTypes = paramTypes.append(returnType);
             return new MethodType(paramTypes, VOID_TYPE, List.nil(), null);
         } else {
-            return new MethodType(originalParamTypes, VOID_TYPE, List.nil(), null);
+            return new MethodType(paramTypes, VOID_TYPE, List.nil(), null);
         }
     }
 

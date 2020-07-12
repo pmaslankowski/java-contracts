@@ -58,6 +58,18 @@ public class Contract {
     }
 
     /**
+     * Returns value of a specified method argument at the time of method invocation.
+     * Can be used inside {@link Contract#ensures} only.
+     * 
+     * @param arg method argument
+     * @param <T> type of method argument
+     * @return value of a method argument at the time of invocation
+     */
+    public static <T> T old(T arg) {
+        throw new IllegalStateException(MESSAGE);
+    }
+
+    /**
      * Specifies class invariant. Can be used inside invariant methods only.
      * 
      * @param condition condition
@@ -240,5 +252,4 @@ public class Contract {
     public static boolean implies(boolean premise, boolean conclusion) {
         return !premise || conclusion;
     }
-
 }

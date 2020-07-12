@@ -30,4 +30,14 @@ public class JavacTestUtils {
 
         return runner.run(compiled, qualifiedClassName, methodName, argumentTypes, arguments);
     }
+
+    public static byte[] compile(String qualifiedClassName, String code, String pluginArg) {
+        TestCompiler compiler = new TestCompiler();
+        TestCompilerInput input = new TestCompilerInput.Builder()
+                .addCompilationUnit(qualifiedClassName, code)
+                .withPluginArg(pluginArg)
+                .build();
+        CompiledClasses compiled = compiler.compile(input);
+        return compiled.getCompiledClass(qualifiedClassName);
+    }
 }
