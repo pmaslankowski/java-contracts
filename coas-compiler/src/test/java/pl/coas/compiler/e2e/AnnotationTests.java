@@ -39,7 +39,7 @@ class AnnotationTests {
                 + "        return jp.proceed()\n;"
                 + "    }\n"
                 + "\n"
-                + "   @Advice(on = \"method(* *.tested*(..))\", type=AspectType.PROTOTYPE, order=1)\n"
+                + "   @Advice(on = \"method(* *.tested*(..))\", type=AspectType.TRANSIENT, order=1)\n"
                 + "   public Object advice1(JoinPoint jp) {\n"
                 + "        jp.getArguments()[0] = (int) jp.getArguments()[0] + 1;\n"
                 + "        return jp.proceed()\n;"

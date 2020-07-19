@@ -8,9 +8,9 @@ package pl.coas.api;
 public enum AspectType {
 
     /**
-     * Prototype aspects use new aspect instance on each advised join point.
+     * Transient aspects use new aspect instance on each advised join point.
      */
-    PROTOTYPE,
+    TRANSIENT,
 
     /**
      * Singleton aspects use the same aspect instance on each advised joinpoint.

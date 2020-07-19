@@ -274,7 +274,7 @@ public class JoinpointInstrumenter {
         Name typeName = clazz.type.tsym.getQualifiedName();
         JCExpression aspectAccess = accessBuilder.build(typeName.toString());
 
-        if (aspect.getType() == AspectType.PROTOTYPE) {
+        if (aspect.getType() == AspectType.TRANSIENT) {
             return tm.NewClass(null, com.sun.tools.javac.util.List.nil(),
                     aspectAccess, com.sun.tools.javac.util.List.nil(), null);
         } else {

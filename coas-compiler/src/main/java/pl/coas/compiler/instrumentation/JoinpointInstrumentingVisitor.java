@@ -49,6 +49,7 @@ public class JoinpointInstrumentingVisitor extends TreeScanner<Void, Void> {
         attributer.attribClass(clazz.pos(), clazz.sym);
     }
 
+    @SuppressWarnings("unchecked")
     private void disableUncheckedWarnings(Attr attributer) {
         // unfortunately API is package private so in order to disable unchecked warnings we have to
         // use reflection hacking
