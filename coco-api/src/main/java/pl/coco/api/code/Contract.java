@@ -6,6 +6,14 @@ import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
+// Opis pracy:
+// TODO: opisać w pracy metodologię testów i przykładowe testy (np. dla metody ForAll itp.,
+// niezmienniki itp.)
+// TODO: Wzmianka o API do pluginów kompilatora
+// TODO: opis części deklaratywnej i imperatywnej
+// TODO: opis architektury (np. diagram architektury + odnośniki do kodu)
+// TODO: opis implementacji (np. przykłady zainstrumentowanego kodu)
+// TODO: Wzmianka o tym jak działają kontrakty (przykład np. z Eifella)
 /**
  * Class providing the imperative API for specifying contracts.
  *
