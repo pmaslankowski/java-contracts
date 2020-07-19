@@ -90,7 +90,7 @@ public class Pointcut {
      * 
      * @param expr class pointcut expression
      */
-    public static boolean target(String expr) {
+    public static boolean targetClass(String expr) {
         throw new IllegalStateException(MESSAGE);
     }
 
@@ -98,11 +98,11 @@ public class Pointcut {
      * Represents pointcut dynamically matching all methods declared in a specific class.
      * <br><br>
      * Difference between dynamic and static matching of pointcut expressions is described in
-     * {@link Pointcut#target(String)}.
+     * {@link Pointcut#targetClass(String)}.
      *
      * @param type type of matching class
      */
-    public static boolean target(Class<?> type) {
+    public static boolean targetClass(Class<?> type) {
         throw new IllegalStateException(MESSAGE);
     }
 
@@ -132,7 +132,7 @@ public class Pointcut {
      * 
      * @param annotationType type of matching annotation
      */
-    public static boolean annotation(Class<?> annotationType) {
+    public static boolean annotatedMethod(Class<?> annotationType) {
         throw new IllegalStateException(MESSAGE);
     }
 
@@ -144,7 +144,7 @@ public class Pointcut {
      * 
      * @param expr annotation pointcut expression
      */
-    public static boolean annotation(String expr) {
+    public static boolean annotatedMethod(String expr) {
         throw new IllegalStateException(MESSAGE);
     }
 
@@ -153,7 +153,7 @@ public class Pointcut {
      * 
      * @param annotationType type of matching annotation
      */
-    public static boolean annotatedType(Class<?> annotationType) {
+    public static boolean annotatedClass(Class<?> annotationType) {
         throw new IllegalStateException(MESSAGE);
     }
 
@@ -165,10 +165,11 @@ public class Pointcut {
      * 
      * @param expr annotation pointcut expression
      */
-    public static boolean annotatedType(String expr) {
+    public static boolean annotatedClass(String expr) {
         throw new IllegalStateException(MESSAGE);
     }
 
+    // TODO: sprawdzić wszystkie możliwości
     /**
      * Represents pointcut matching all methods with arguments annotated with given annotations.
      * 

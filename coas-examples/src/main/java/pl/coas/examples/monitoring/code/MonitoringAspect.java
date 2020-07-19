@@ -12,7 +12,7 @@ import pl.coas.examples.monitoring.Monitored;
 public class MonitoringAspect {
 
     public Object onMonitored(JoinPoint jp) {
-        Aspect.on(Pointcut.annotation(Monitored.class));
+        Aspect.on(Pointcut.annotatedMethod(Monitored.class));
 
         StringJoiner joiner = new StringJoiner(",");
         for (Object arg : jp.getArguments()) {

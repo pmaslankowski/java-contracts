@@ -12,7 +12,7 @@ import pl.coas.examples.auth.Sensitive;
 public class SecurityAspect {
 
     public Object onSecuredMethodWithSensitiveArgs(JoinPoint jp) {
-        Aspect.on(Pointcut.target("pl.coas.examples.auth.Secure*")
+        Aspect.on(Pointcut.targetClass("pl.coas.examples.auth.Secure*")
                 && Pointcut.annotatedArgs(Sensitive.class));
 
         if (!Authorizer.isAuthorized()) {

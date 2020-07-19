@@ -76,16 +76,16 @@ public class PointcutFactory {
         if (methodName.contentEquals("method")) {
             return newMethodPointcut(invocation);
         }
-        if (methodName.contentEquals("target")) {
+        if (methodName.contentEquals("targetClass")) {
             return newTargetPointcut(invocation);
         }
         if (methodName.contentEquals("args")) {
             return newArgsPointcut(invocation);
         }
-        if (methodName.contentEquals("annotation")) {
+        if (methodName.contentEquals("annotatedMethod")) {
             return newAnnotatedMethodPointcut(invocation);
         }
-        if (methodName.contentEquals("annotatedType")) {
+        if (methodName.contentEquals("annotatedClass")) {
             return newAnnotatedTypePointcut(invocation);
         }
         if (methodName.contentEquals("annotatedArgs")) {

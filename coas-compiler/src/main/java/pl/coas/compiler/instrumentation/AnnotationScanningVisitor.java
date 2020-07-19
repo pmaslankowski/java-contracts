@@ -96,7 +96,7 @@ public class AnnotationScanningVisitor extends TreeScanner<Void, Void> {
 
             if (key.getName().contentEquals("type")) {
                 JCFieldAccess typeAsFieldAccess = (JCFieldAccess) property.rhs;
-                if (typeAsFieldAccess.name.contentEquals("PROTOTYPE")) {
+                if (typeAsFieldAccess.name.contentEquals("TRANSIENT")) {
                     type = AspectType.TRANSIENT;
                 }
             }
