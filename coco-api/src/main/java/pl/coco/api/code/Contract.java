@@ -75,7 +75,7 @@ public class Contract {
      * @param condition condition
      * @see InvariantMethod
      */
-    public static void invariant(boolean condition) {
+    public static void classInvariant(boolean condition) {
         throw new IllegalStateException(MESSAGE);
     }
 
@@ -84,7 +84,7 @@ public class Contract {
      * 
      * @param condition condition
      */
-    public static void asserts(boolean condition) {
+    public static void invariant(boolean condition) {
         throw new IllegalStateException(MESSAGE);
     }
 

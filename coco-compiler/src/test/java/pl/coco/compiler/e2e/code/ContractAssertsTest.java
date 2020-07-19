@@ -28,7 +28,7 @@ class ContractAssertsTest {
                 + "    }\n"
                 + "\n"
                 + "    public static int testedMethod(int arg) {\n"
-                + "        Contract.asserts(arg > 0);\n"
+                + "        Contract.invariant(arg > 0);\n"
                 + "        return 42;\n"
                 + "    }\n"
                 + "}\n";
@@ -55,7 +55,7 @@ class ContractAssertsTest {
                 + "    }\n"
                 + "\n"
                 + "    public static int testedMethod(int arg) {\n"
-                + "        Contract.asserts(arg >= 0);\n"
+                + "        Contract.invariant(arg >= 0);\n"
                 + "        return 42;\n"
                 + "    }\n"
                 + "}\n";

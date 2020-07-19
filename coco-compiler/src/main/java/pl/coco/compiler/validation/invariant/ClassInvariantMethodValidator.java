@@ -12,13 +12,13 @@ import pl.coco.compiler.validation.ContractError;
 import pl.coco.compiler.validation.ContractValidationException;
 import pl.compiler.commons.util.AstUtil;
 
-public class InvariantMethodValidator extends TreeScanner {
+public class ClassInvariantMethodValidator extends TreeScanner {
 
     private final ClassValidationInput input;
 
     private boolean invariantAlreadyMethodOccurred = false;
 
-    public InvariantMethodValidator(ClassValidationInput input) {
+    public ClassInvariantMethodValidator(ClassValidationInput input) {
         this.input = input;
     }
 
@@ -38,7 +38,7 @@ public class InvariantMethodValidator extends TreeScanner {
         if (AstUtil.isConstructor(method) || !AstUtil.isVoid(method)
                 || !method.type.getParameterTypes().isEmpty()) {
 
-            throw new ContractValidationException(ContractError.BAD_INVARIANT_METHOD_SIGNATURE,
+            throw new ContractValidationException(ContractError.BAD_CLASS_INVARIANT_METHOD_SIGNATURE,
                     method, input.getCompilationUnit());
         }
     }
@@ -46,7 +46,7 @@ public class InvariantMethodValidator extends TreeScanner {
     private void checkIfInvariantMethodIsUnique(JCMethodDecl method) {
         if (invariantAlreadyMethodOccurred) {
             throw new ContractValidationException(
-                    ContractError.MULTIPLE_INVARIANT_METHODS_IN_THE_SAME_CLASS, method,
+                    ContractError.MULTIPLE_CLASS_INVARIANT_METHODS_IN_THE_SAME_CLASS, method,
                     input.getCompilationUnit());
         }
     }
@@ -59,7 +59,7 @@ public class InvariantMethodValidator extends TreeScanner {
 
             ContractMethod contract = ContractAstUtil.getContractInvocation(statement)
                     .getContractMethod();
-            if (contract != ContractMethod.INVARIANT) {
+            if (contract != ContractMethod.CLASS_INVARIANT) {
                 throwInvariantHasToContainInvariantMethodsOnlyException(statement);
             }
         }
@@ -67,7 +67,7 @@ public class InvariantMethodValidator extends TreeScanner {
 
     private void throwInvariantHasToContainInvariantMethodsOnlyException(JCStatement statement) {
         throw new ContractValidationException(
-                ContractError.INVARIANT_METHOD_MUST_CONTAIN_INVARIANTS_ONLY, statement,
+                ContractError.CLASS_INVARIANT_METHOD_MUST_CONTAIN_INVARIANTS_ONLY, statement,
                 input.getCompilationUnit());
     }
 }

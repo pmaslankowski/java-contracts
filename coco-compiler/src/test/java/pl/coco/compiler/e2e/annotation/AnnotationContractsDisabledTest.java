@@ -72,9 +72,9 @@ class AnnotationContractsDisabledTest {
     void shouldReturnResultEvenThoughInvariantFails() throws Throwable {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.annotation.Invariant;\n"
+                + "import pl.coco.api.annotation.ClassInvariant;\n"
                 + "\n"
-                + "@Invariant(\"val >= 0\")"
+                + "@ClassInvariant(\"val >= 0\")"
                 + "public class Test {\n"
                 + "\n"
                 + "    private static int val = 0;\n"

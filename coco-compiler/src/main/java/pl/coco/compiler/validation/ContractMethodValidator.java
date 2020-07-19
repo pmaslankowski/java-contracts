@@ -12,7 +12,7 @@ import pl.coco.compiler.instrumentation.ContractMethod;
 import pl.coco.compiler.model.ContractInvocation;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.validation.forallexists.ForAllExistsValidator;
-import pl.coco.compiler.validation.invariant.InvariantCallValidator;
+import pl.coco.compiler.validation.invariant.ClassInvariantCallValidator;
 import pl.coco.compiler.validation.old.OldArgsValidator;
 import pl.coco.compiler.validation.old.OldValidator;
 import pl.coco.compiler.validation.result.ContractResultValidator;
@@ -138,7 +138,7 @@ public class ContractMethodValidator {
 
     private void checkIfInvariantsOccursInsideInvariantMethodsOnly(MethodValidationInput input) {
         JCMethodDecl method = input.getMethod();
-        method.accept(new InvariantCallValidator(input));
+        method.accept(new ClassInvariantCallValidator(input));
     }
 
     private void checkIfOldOccursInsidePostconditionsOnly(MethodValidationInput input) {

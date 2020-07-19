@@ -91,7 +91,7 @@ class CodeContractsDisabledTest {
                 + "\n"
                 + "    @InvariantMethod"
                 + "    void invariantMethod() {\n"
-                + "        Contract.invariant(val >= 0);\n"
+                + "        Contract.classInvariant(val >= 0);\n"
                 + "    }\n"
                 + "\n"
                 + "}\n";

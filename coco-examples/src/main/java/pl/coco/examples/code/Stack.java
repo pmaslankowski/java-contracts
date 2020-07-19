@@ -40,7 +40,7 @@ public class Stack {
 
     @InvariantMethod
     private void invariant() {
-        Contract.invariant(top >= -1);
-        Contract.invariant(top <= arr.length);
+        Contract.classInvariant(top >= -1);
+        Contract.classInvariant(top <= arr.length);
     }
 }

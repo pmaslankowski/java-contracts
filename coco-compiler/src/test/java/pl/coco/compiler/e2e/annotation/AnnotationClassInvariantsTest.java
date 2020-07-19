@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import pl.coco.api.ContractFailedException;
 import pl.coco.util.CocoTestUtils;
 
-class AnnotationInvariantsTest {
+class AnnotationClassInvariantsTest {
 
     private static final String QUALIFIED_CLASS_NAME = "pl.coco.compiler.Test";
     private static final String ENTRY_POINT = "entry";
@@ -22,9 +22,9 @@ class AnnotationInvariantsTest {
 
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.annotation.Invariant;\n"
+                + "import pl.coco.api.annotation.ClassInvariant;\n"
                 + "\n"
-                + "@Invariant(\"val >= 0\")"
+                + "@ClassInvariant(\"val >= 0\")"
                 + "public class Test {\n"
                 + "\n"
                 + "    private static int val = -1;\n"
@@ -45,9 +45,9 @@ class AnnotationInvariantsTest {
     void shouldReturnResultFromInstanceMethodWhenInvariantPasses() throws Throwable {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.annotation.Invariant;\n"
+                + "import pl.coco.api.annotation.ClassInvariant;\n"
                 + "\n"
-                + "@Invariant(\"val >= 0\")"
+                + "@ClassInvariant(\"val >= 0\")"
                 + "public class Test {\n"
                 + "\n"
                 + "    private int val = 0;\n"
@@ -73,9 +73,9 @@ class AnnotationInvariantsTest {
     void shouldThrowExceptionFromInstanceMethodWhenInvariantFailsBefore() {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.annotation.Invariant;\n"
+                + "import pl.coco.api.annotation.ClassInvariant;\n"
                 + "\n"
-                + "@Invariant(\"val >= 0\")"
+                + "@ClassInvariant(\"val >= 0\")"
                 + "public class Test {\n"
                 + "\n"
                 + "    private static int val = 0;\n"
@@ -105,9 +105,9 @@ class AnnotationInvariantsTest {
     void shouldThrowExceptionFromInstanceMethodWhenInvariantFailsAfter() {
         String code = "package pl.coco.compiler;\n"
                 + "\n"
-                + "import pl.coco.api.annotation.Invariant;\n"
+                + "import pl.coco.api.annotation.ClassInvariant;\n"
                 + "\n"
-                + "@Invariant(\"val >= 0\")"
+                + "@ClassInvariant(\"val >= 0\")"
                 + "public class Test {\n"
                 + "\n"
                 + "    private static int val = 0;\n"

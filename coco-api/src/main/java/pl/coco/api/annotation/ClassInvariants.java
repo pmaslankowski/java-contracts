@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
-public @interface Invariants {
+public @interface ClassInvariants {
 
-    Invariant[] value();
+    ClassInvariant[] value();
 }

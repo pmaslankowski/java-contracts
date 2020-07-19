@@ -13,8 +13,8 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
-@Repeatable(value = Invariants.class)
-public @interface Invariant {
+@Repeatable(value = ClassInvariants.class)
+public @interface ClassInvariant {
 
     /**
      * Java expression specifying class invariant as string.

@@ -261,7 +261,7 @@ class ContractValidationTest {
         assertThat(actual).isEqualTo(42);
     }
 
-    @DisplayName("Compilation error when Contract.invariant is used outside of invariant method")
+    @DisplayName("Compilation error when Contract.classInvariant is used outside of invariant method")
     @Test
     void shouldProduceErrorWhenInvariantIsUsedOutsideInvariantMethod() {
 
@@ -276,7 +276,7 @@ class ContractValidationTest {
                 + "    }\n"
                 + "\n"
                 + "    public static int testedMethod(int arg, boolean flag) {\n"
-                + "        Contract.invariant(arg == 1);\n"
+                + "        Contract.classInvariant(arg == 1);\n"
                 + "        return 42;\n"
                 + "    }\n"
                 + "}\n";
@@ -287,7 +287,7 @@ class ContractValidationTest {
         assertThat(thrown)
                 .isInstanceOf(CompilationFailedException.class)
                 .hasMessageContaining(
-                        ContractError.INVARIANT_CAN_OCCUR_IN_INVARIANT_METHODS_ONLY.getMessage());
+                        ContractError.CLASS_INVARIANT_CAN_OCCUR_IN_INVARIANT_METHODS_ONLY.getMessage());
     }
 
     @DisplayName("Compilation error when there are multiple invariant methods in the class")
@@ -318,7 +318,7 @@ class ContractValidationTest {
         assertThat(thrown)
                 .isInstanceOf(CompilationFailedException.class)
                 .hasMessageContaining(
-                        ContractError.MULTIPLE_INVARIANT_METHODS_IN_THE_SAME_CLASS.getMessage());
+                        ContractError.MULTIPLE_CLASS_INVARIANT_METHODS_IN_THE_SAME_CLASS.getMessage());
     }
 
     @DisplayName("Compilation error when invariant method has wrong signature")
@@ -345,7 +345,7 @@ class ContractValidationTest {
 
         assertThat(thrown)
                 .isInstanceOf(CompilationFailedException.class)
-                .hasMessageContaining(ContractError.BAD_INVARIANT_METHOD_SIGNATURE.getMessage());
+                .hasMessageContaining(ContractError.BAD_CLASS_INVARIANT_METHOD_SIGNATURE.getMessage());
     }
 
     @DisplayName("Compilation error when invariant method contains non invariant statement")
@@ -374,7 +374,7 @@ class ContractValidationTest {
         assertThat(thrown)
                 .isInstanceOf(CompilationFailedException.class)
                 .hasMessageContaining(
-                        ContractError.INVARIANT_METHOD_MUST_CONTAIN_INVARIANTS_ONLY.getMessage());
+                        ContractError.CLASS_INVARIANT_METHOD_MUST_CONTAIN_INVARIANTS_ONLY.getMessage());
     }
 
     @DisplayName("Compilation error when Contract.forAll(array, pred) is used outside of contracts")

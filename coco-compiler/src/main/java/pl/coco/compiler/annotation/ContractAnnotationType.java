@@ -4,7 +4,7 @@ public enum ContractAnnotationType {
 
     REQUIRES("Requires", "pl.coco.api.code.Contract.requires"),
     ENSURES("Ensures", "pl.coco.api.code.Contract.ensures"),
-    INVARIANT("Invariant", "pl.coco.api.code.Contract.invariant");
+    INVARIANT("ClassInvariant", "pl.coco.api.code.Contract.classInvariant");
 
     private final String name;
     private final String correspondingMethod;

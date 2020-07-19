@@ -16,16 +16,16 @@ public enum ContractError {
     RESULT_TYPE_MUST_MATCH_METHOD_TYPE(
             "Contract.result(...) type must match containing method return type"),
 
-    INVARIANT_CAN_OCCUR_IN_INVARIANT_METHODS_ONLY(
-            "Contract.invariant(...) can occur in invariant methods only"),
+    CLASS_INVARIANT_CAN_OCCUR_IN_INVARIANT_METHODS_ONLY(
+            "Contract.classInvariant(...) can occur in class invariant methods only"),
 
-    MULTIPLE_INVARIANT_METHODS_IN_THE_SAME_CLASS(
-            "There can be at most one invariant method in a class"),
+    MULTIPLE_CLASS_INVARIANT_METHODS_IN_THE_SAME_CLASS(
+            "There can be at most one class invariant method in a class"),
 
-    BAD_INVARIANT_METHOD_SIGNATURE(
+    BAD_CLASS_INVARIANT_METHOD_SIGNATURE(
             "Invariant type must have the following signature: void()"),
 
-    INVARIANT_METHOD_MUST_CONTAIN_INVARIANTS_ONLY(
+    CLASS_INVARIANT_METHOD_MUST_CONTAIN_INVARIANTS_ONLY(
             "Invariant method must contain invariants only"),
 
     CONTRACT_STATEMENT_OUTSIDE_OF_CONTRACTS(

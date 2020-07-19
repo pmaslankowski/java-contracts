@@ -5,7 +5,7 @@ import javax.inject.Singleton;
 
 import com.sun.tools.javac.tree.JCTree.JCClassDecl;
 
-import pl.coco.compiler.validation.invariant.InvariantMethodValidator;
+import pl.coco.compiler.validation.invariant.ClassInvariantMethodValidator;
 
 @Singleton
 public class ContractClassValidator {
@@ -29,6 +29,6 @@ public class ContractClassValidator {
 
     private void checkIfInvariantMethodsAreUnique(ClassValidationInput input) {
         JCClassDecl clazz = input.getClazz();
-        clazz.accept(new InvariantMethodValidator(input));
+        clazz.accept(new ClassInvariantMethodValidator(input));
     }
 }

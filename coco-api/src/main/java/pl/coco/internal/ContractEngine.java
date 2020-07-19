@@ -24,7 +24,7 @@ public class ContractEngine {
         evaluate(postcondition, "Postcondition \"{0}\" is not satisfied.", postconditionAsString);
     }
 
-    public static void invariant(ConditionSupplier condition, String conditionAsString,
+    public static void classInvariant(ConditionSupplier condition, String conditionAsString,
             boolean isBefore) {
 
         String when = isBefore ? "before" : "after";
@@ -32,7 +32,7 @@ public class ContractEngine {
                 conditionAsString, when);
     }
 
-    public static void asserts(ConditionSupplier condition, String conditionAsString) {
+    public static void invariant(ConditionSupplier condition, String conditionAsString) {
         evaluate(condition, "Assertion \"{0}\" is not satisfied.", conditionAsString);
     }
 

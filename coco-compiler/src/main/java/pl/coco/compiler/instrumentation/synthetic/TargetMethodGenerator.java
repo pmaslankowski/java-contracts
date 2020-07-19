@@ -67,11 +67,11 @@ public class TargetMethodGenerator {
 
     private boolean isTargetStatement(JCStatement statement) {
         return !ContractAstUtil.isContractInvocation(statement)
-                || ContractAstUtil.isContractInvocation(statement, ContractMethod.ASSERTS);
+                || ContractAstUtil.isContractInvocation(statement, ContractMethod.INVARIANT);
     }
 
     private JCStatement processStatement(JCStatement statement, JCMethodDecl currentMethod) {
-        if (ContractAstUtil.isContractInvocation(statement, ContractMethod.ASSERTS)) {
+        if (ContractAstUtil.isContractInvocation(statement, ContractMethod.INVARIANT)) {
             ContractInvocation asserts = ContractAstUtil.getContractInvocation(statement);
             return assertsInvocationBuilder.build(asserts, currentMethod);
         } else {

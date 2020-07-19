@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import pl.coco.api.ContractFailedException;
 import pl.coco.util.CocoTestUtils;
 
-class InvariantsTest {
+class ClassInvariantsTest {
 
     private static final String QUALIFIED_CLASS_NAME = "pl.coco.compiler.Test";
     private static final String ENTRY_POINT = "entry";
@@ -35,7 +35,7 @@ class InvariantsTest {
                 + "\n"
                 + "    @InvariantMethod\n"
                 + "    private void invariantMethod() {\n"
-                + "        Contract.invariant(val >= 0);\n"
+                + "        Contract.classInvariant(val >= 0);\n"
                 + "    }\n"
                 + "\n"
                 + "}\n";
@@ -64,7 +64,7 @@ class InvariantsTest {
                 + "\n"
                 + "    @InvariantMethod"
                 + "    private void invariantMethod() {\n"
-                + "        Contract.invariant(val >= 0);\n"
+                + "        Contract.classInvariant(val >= 0);\n"
                 + "    }\n"
                 + "\n"
                 + "    private int testedMethod() {\n"
@@ -102,7 +102,7 @@ class InvariantsTest {
                 + "\n"
                 + "    @InvariantMethod"
                 + "    void invariantMethod() {\n"
-                + "        Contract.invariant(val >= 0);\n"
+                + "        Contract.classInvariant(val >= 0);\n"
                 + "    }\n"
                 + "\n"
                 + "}\n";
@@ -139,7 +139,7 @@ class InvariantsTest {
                 + "\n"
                 + "    @InvariantMethod"
                 + "    void invariantMethod() {\n"
-                + "        Contract.invariant(val >= 0);\n"
+                + "        Contract.classInvariant(val >= 0);\n"
                 + "    }\n"
                 + "\n"
                 + "}\n";
