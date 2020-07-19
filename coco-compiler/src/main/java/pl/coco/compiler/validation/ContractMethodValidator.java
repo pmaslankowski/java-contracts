@@ -13,6 +13,8 @@ import pl.coco.compiler.model.ContractInvocation;
 import pl.coco.compiler.util.ContractAstUtil;
 import pl.coco.compiler.validation.forallexists.ForAllExistsValidator;
 import pl.coco.compiler.validation.invariant.InvariantCallValidator;
+import pl.coco.compiler.validation.old.OldArgsValidator;
+import pl.coco.compiler.validation.old.OldValidator;
 import pl.coco.compiler.validation.result.ContractResultValidator;
 import pl.coco.compiler.validation.result.ResultTypeValidator;
 import pl.coco.compiler.validation.result.ResultTypeValidatorFactory;
@@ -46,6 +48,8 @@ public class ContractMethodValidator {
             checkIfResultTypeMatchesMethodType(input);
             checkIfForAllAndExistsOccursInsideContractSpecificationsOnly(input);
             checkIfInvariantsOccursInsideInvariantMethodsOnly(input);
+            checkIfOldOccursInsidePostconditionsOnly(input);
+            checkIfOldIsUsedOnMethodArgsOnly(input);
             return true;
         } catch (ContractValidationException ex) {
             errorProducer.produceErrorMessage(ex);
@@ -55,7 +59,7 @@ public class ContractMethodValidator {
 
     private boolean doesContainContracts(JCMethodDecl method) {
         return method.getBody().getStatements().stream()
-                .anyMatch(ContractAstUtil::isContractInvocation);
+                .anyMatch(statement -> statement.accept(new ContractDetectingVisitor(), null));
     }
 
     private void checkIfAllContractsAreInOneBlockAtTheBeginningOfMethod(
@@ -135,5 +139,15 @@ public class ContractMethodValidator {
     private void checkIfInvariantsOccursInsideInvariantMethodsOnly(MethodValidationInput input) {
         JCMethodDecl method = input.getMethod();
         method.accept(new InvariantCallValidator(input));
+    }
+
+    private void checkIfOldOccursInsidePostconditionsOnly(MethodValidationInput input) {
+        JCMethodDecl method = input.getMethod();
+        method.accept(new OldValidator(input));
+    }
+
+    private void checkIfOldIsUsedOnMethodArgsOnly(MethodValidationInput input) {
+        JCMethodDecl method = input.getMethod();
+        method.accept(new OldArgsValidator(input));
     }
 }

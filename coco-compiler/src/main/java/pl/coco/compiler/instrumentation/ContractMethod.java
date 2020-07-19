@@ -6,29 +6,31 @@ import pl.compiler.commons.model.SimpleMethodInvocation;
 
 public enum ContractMethod {
 
-    REQUIRES("requires", true, false, true),
-    ENSURES("ensures", true, false, true),
-    ENSURES_SELF("ensuresSelf", true, false, true),
-    INVARIANT("invariant", true, false, true),
-    ASSERTS("asserts", true, false, false),
-    RESULT("result", false, true, false),
-    OLD("old", false, true, false),
-    FOR_ALL("forAll", false, true, false),
-    EXISTS("exists", false, true, false);
+    REQUIRES("requires", true, false, false, true),
+    ENSURES("ensures", true, true, false, true),
+    ENSURES_SELF("ensuresSelf", true, true, false, true),
+    INVARIANT("invariant", true, false, false, true),
+    ASSERTS("asserts", true, false, false, false),
+    RESULT("result", false, false, true, false),
+    OLD("old", false, false, true, false),
+    FOR_ALL("forAll", false, false, true, false),
+    EXISTS("exists", false, false, true, false);
 
     private static final String API_CLASS_NAME = "pl.coco.api.code.Contract";
     private static final String INTERNAL_CLASS_NAME = "pl.coco.internal.ContractEngine";
 
     private final String methodName;
     private final boolean isContractSpecification;
+    private final boolean isPostcondition;
     private final boolean canOccurInsideSpecificationOnly;
     private final boolean canOccurAtTheBeginningOfTheMethodOnly;
 
     ContractMethod(String methodName, boolean isContractSpecification,
-            boolean canOccurInsideSpecificationOnly,
-            boolean canOccurAtTheBeginningOfTheMethodOnly) {
+                   boolean isPostcondition, boolean canOccurInsideSpecificationOnly,
+                   boolean canOccurAtTheBeginningOfTheMethodOnly) {
         this.methodName = methodName;
         this.isContractSpecification = isContractSpecification;
+        this.isPostcondition = isPostcondition;
         this.canOccurInsideSpecificationOnly = canOccurInsideSpecificationOnly;
         this.canOccurAtTheBeginningOfTheMethodOnly = canOccurAtTheBeginningOfTheMethodOnly;
     }
@@ -55,6 +57,8 @@ public enum ContractMethod {
     public String getInternalClassName() {
         return INTERNAL_CLASS_NAME;
     }
+
+    public boolean isPostcondition() { return isPostcondition; }
 
     public boolean isContractSpecification() {
         return isContractSpecification;

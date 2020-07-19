@@ -478,4 +478,122 @@ class ContractValidationTest {
                 .hasMessageContaining(
                         ContractError.CONTRACT_STATEMENT_OUTSIDE_OF_CONTRACTS.getMessage());
     }
+
+    @DisplayName("Compilation error when Contract.old() is used outside contracts")
+    @Test
+    void shouldProduceErrorWhenOldIsUsedOutsideContracts() {
+        String code = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import java.util.Collections;\n"
+                + "import pl.coco.api.code.Contract;\n"
+                + "\n"
+                + "public class Test {\n"
+                + "\n"
+                + "    public static void entry() {\n"
+                + "        method(0);\n"
+                + "    }\n"
+                + "\n"
+                + "    public static boolean method(int x) {\n"
+                + "        return Contract.old(x) == 5;\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        Throwable thrown = catchThrowable(
+                () -> CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+
+        assertThat(thrown)
+                .isInstanceOf(CompilationFailedException.class)
+                .hasMessageContaining(
+                        ContractError.CONTRACT_STATEMENT_OUTSIDE_OF_CONTRACTS.getMessage());
+    }
+
+    @DisplayName("Compilation error when Contract.old(..) is used outside postconditions")
+    @Test
+    void shouldProduceErrorWhenOldIsUsedOutsidePostconditions() {
+        String code = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import java.util.Collections;\n"
+                + "import pl.coco.api.code.Contract;\n"
+                + "\n"
+                + "public class Test {\n"
+                + "\n"
+                + "    public static void entry() {\n"
+                + "        method(0);\n"
+                + "    }\n"
+                + "\n"
+                + "    public static boolean method(int x) {\n"
+                + "        Contract.requires(Contract.old(x) == 5);\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        Throwable thrown = catchThrowable(
+                () -> CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+
+        assertThat(thrown)
+                .isInstanceOf(CompilationFailedException.class)
+                .hasMessageContaining(
+                        ContractError.OLD_CAN_OCCUR_IN_POSTCONDITIONS_ONLY.getMessage());
+    }
+
+    @DisplayName("Compilation error when Contract.old(...) is used on literal instead of the method argument")
+    @Test
+    void shouldProduceErrorWhenOldIsUsedOnLiteral() {
+        String code = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import java.util.Collections;\n"
+                + "import pl.coco.api.code.Contract;\n"
+                + "\n"
+                + "public class Test {\n"
+                + "\n"
+                + "    public static void entry() {\n"
+                + "        method(0);\n"
+                + "    }\n"
+                + "\n"
+                + "    public static void method(int x) {\n"
+                + "        Contract.ensures(Contract.old(2) == 5);\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        Throwable thrown = catchThrowable(
+                () -> CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+
+        assertThat(thrown)
+                .isInstanceOf(CompilationFailedException.class)
+                .hasMessageContaining(
+                        ContractError.OLD_CAN_BE_USED_ON_THE_METHOD_ARGS_ONLY.getMessage());
+    }
+
+    @DisplayName("Compilation error when Contract.old(...) is used on field")
+    @Test
+    void shouldProduceErrorWhenOldIsUsedOnLocalVariableInsteadOfMethodArg() {
+        String code = "package pl.coco.compiler;\n"
+                + "\n"
+                + "import java.util.Collections;\n"
+                + "import pl.coco.api.code.Contract;\n"
+                + "\n"
+                + "public class Test {\n"
+                + "\n"
+                + "    private static String field;\n"
+                + "\n"
+                + "    public static void entry() {\n"
+                + "        method(0);\n"
+                + "    }\n"
+                + "\n"
+                + "    public static void method(int x) {\n"
+                + "        Contract.ensuresSelf(Contract.old(field) == 5);\n"
+                + "    }\n"
+                + "\n"
+                + "}\n";
+
+        Throwable thrown = catchThrowable(
+                () -> CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code));
+
+        assertThat(thrown)
+                .isInstanceOf(CompilationFailedException.class)
+                .hasMessageContaining(
+                        ContractError.OLD_CAN_BE_USED_ON_THE_METHOD_ARGS_ONLY.getMessage());
+    }
 }

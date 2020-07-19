@@ -29,7 +29,13 @@ public enum ContractError {
             "Invariant method must contain invariants only"),
 
     CONTRACT_STATEMENT_OUTSIDE_OF_CONTRACTS(
-            "This statement can be used inside other contract statements only");
+            "This statement can be used inside other contract statements only"),
+
+    OLD_CAN_OCCUR_IN_POSTCONDITIONS_ONLY(
+            "Contract.old(...) can occur in postcondition specifications only"),
+
+    OLD_CAN_BE_USED_ON_THE_METHOD_ARGS_ONLY(
+            "Contract.old(...) can be used on the method arguments only");
 
     private final String message;
 
