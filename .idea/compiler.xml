@@ -2,7 +2,9 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
+      <module name="coco-perf-tests" target="1.5" />
       <module name="java-contracts.coas-compiler.generated" target="1.8" />
+      <module name="java-contracts.coco-perf-tests.dependencies" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
