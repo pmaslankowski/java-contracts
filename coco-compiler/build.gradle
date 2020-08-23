@@ -3,7 +3,11 @@ import javax.tools.ToolProvider
 plugins {
     id 'java'
     id 'idea'
+    id 'maven'
 }
+
+group = "coco-compiler"
+version = "1.0"
 
 repositories {
     jcenter()

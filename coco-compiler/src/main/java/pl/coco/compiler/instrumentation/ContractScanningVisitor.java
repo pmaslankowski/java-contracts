@@ -1,5 +1,8 @@
 package pl.coco.compiler.instrumentation;
 
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -12,6 +15,8 @@ import com.sun.tools.javac.tree.JCTree.JCClassDecl;
 
 @Singleton
 public class ContractScanningVisitor extends TreeScanner<Void, Void> {
+
+    private final Set<String> attributed = ConcurrentHashMap.newKeySet();
 
     private final ContractScanner scanner;
 
@@ -38,7 +43,14 @@ public class ContractScanningVisitor extends TreeScanner<Void, Void> {
         // ENTER phase ends. ContractScanner needs type information not only on method and class
         // declarations but also on expressions inside methods' bodies. Therefore we need to
         // perform one additional class attribution here
-        attributer.attribClass(this.clazz.pos(), this.clazz.sym);
+        // We also have to check whether we did not perform attribution earlier - in case of
+        // annotation processors some classes can be entered more than once and multiple
+        // attributions for the same class needs to errors
+        String className = this.clazz.sym.fullname.toString();
+        if (!attributed.contains(className)) {
+            attributer.attribClass(this.clazz.pos(), this.clazz.sym);
+            attributed.add(className);
+        }
         return super.visitClass(clazz, aVoid);
     }
 

@@ -37,6 +37,8 @@ public class JoinpointInstrumentingVisitor extends TreeScanner<Void, Void> {
 
         attributeClass(clazz);
 
+        System.out.println("Join point after instrumentation");
+        System.out.println(classTree.toString());
         return null;
     }
 

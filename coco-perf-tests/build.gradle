@@ -1,0 +1,31 @@
+plugins {
+    id 'java'
+    id "me.champeau.gradle.jmh" version "0.5.0"
+}
+
+version 'unspecified'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+compileJava {
+    options.compilerArgs << '-Xplugin:coco'
+}
+
+compileJmhJava {
+    options.compilerArgs << '-Xplugin:coco'
+}
+
+dependencies {
+    implementation project(':coco-api')
+    implementation project(':coco-compiler')
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+jmh {
+    duplicateClassesStrategy = 'exclude' // Strategy to apply when encountring duplicate classes during creation of the fat jar (i.e. while executing jmhJar task)
+}

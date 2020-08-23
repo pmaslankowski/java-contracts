@@ -1,5 +1,7 @@
 package pl.coco.compiler.listeners;
 
+import java.util.Optional;
+
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -48,7 +50,9 @@ public class InstrumentationListener implements TaskListener {
         }
 
         if (taskEvent.getKind() == TaskEvent.Kind.ANALYZE) {
-            boolean isValid = taskEvent.getCompilationUnit().accept(validatingVisitor, null);
+            boolean isValid = Optional
+                    .ofNullable(taskEvent.getCompilationUnit().accept(validatingVisitor, null))
+                    .orElse(true);
             if (isValid) {
                 taskEvent.getCompilationUnit().accept(contractProcessingVisitor, null);
                 System.out.println(taskEvent.getCompilationUnit());

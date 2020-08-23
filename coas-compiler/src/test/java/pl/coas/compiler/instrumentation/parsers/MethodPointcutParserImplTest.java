@@ -12,6 +12,7 @@ import pl.coas.compiler.instrumentation.model.pointcut.RegularMethodArguments;
 import pl.coas.compiler.instrumentation.model.pointcut.WildcardString;
 import pl.coas.compiler.instrumentation.parsers.util.MethodArgumentsFactory;
 
+// TODO: więcej testów
 class MethodPointcutParserImplTest {
 
     private MethodArgumentsFactory methodArgumentsFactory = new MethodArgumentsFactory();

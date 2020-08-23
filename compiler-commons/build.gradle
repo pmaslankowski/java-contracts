@@ -2,7 +2,11 @@ import javax.tools.ToolProvider
 
 plugins {
     id 'java'
+    id 'maven'
 }
+
+group = "compiler-commons"
+version = "1.0"
 
 repositories {
     jcenter()
