@@ -10,29 +10,29 @@ import org.openjdk.jmh.infra.Blackhole;
 public class BenchmarkInvariant {
 
     @Benchmark
-    @Warmup(iterations = 3, time = 3)
-    @Measurement(iterations = 5, time = 5)
+    @Warmup(iterations = 1, time = 1)
+    @Measurement(iterations = 3, time = 3)
     public void base(Blackhole hole, Input input) {
         hole.consume(input.subject.target(input.x));
     }
 
     @Benchmark
-    @Warmup(iterations = 3, time = 3)
-    @Measurement(iterations = 5, time = 5)
+    @Warmup(iterations = 1, time = 1)
+    @Measurement(iterations = 3, time = 3)
     public void invariant_10(Blackhole hole, Input input) {
         hole.consume(input.subject10.target(input.x));
     }
 
     @Benchmark
-    @Warmup(iterations = 3, time = 3)
-    @Measurement(iterations = 5, time = 5)
+    @Warmup(iterations = 1, time = 1)
+    @Measurement(iterations = 3, time = 3)
     public void invariant_100(Blackhole hole, Input input) {
         hole.consume(input.subject100.target(input.x));
     }
 
     @Benchmark
-    @Warmup(iterations = 3, time = 3)
-    @Measurement(iterations = 5, time = 5)
+    @Warmup(iterations = 1, time = 1)
+    @Measurement(iterations = 3, time = 3)
     public void invariant_1000(Blackhole hole, Input input) {
         hole.consume(input.subject1000.target(input.x));
     }

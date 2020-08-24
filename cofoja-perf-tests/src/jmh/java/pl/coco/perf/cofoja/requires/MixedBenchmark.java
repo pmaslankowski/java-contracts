@@ -12,22 +12,22 @@ import pl.coco.perf.MixedSubject;
 public class MixedBenchmark {
 
     @Benchmark
-    @Warmup(iterations = 3, time = 3)
-    @Measurement(iterations = 5, time = 5)
+    @Warmup(iterations = 1, time = 1)
+    @Measurement(iterations = 3, time = 3)
     public void base(Blackhole hole, Input input) {
         hole.consume(input.subject.target(input.x));
     }
 
     @Benchmark
-    @Warmup(iterations = 3, time = 3)
-    @Measurement(iterations = 5, time = 5)
+    @Warmup(iterations = 1, time = 1)
+    @Measurement(iterations = 3, time = 3)
     public void mixed_10(Blackhole hole, Input input) {
         hole.consume(input.subject.target10(input.x));
     }
 
     @Benchmark
-    @Warmup(iterations = 3, time = 3)
-    @Measurement(iterations = 5, time = 5)
+    @Warmup(iterations = 1, time = 1)
+    @Measurement(iterations = 3, time = 3)
     public void mixed_100(Blackhole hole, Input input) {
         hole.consume(input.subject.target100(input.x));
     }
