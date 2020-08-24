@@ -50,6 +50,8 @@ public class AspectClassesInstrumentingVisitor extends TreeScanner<Void, Void> {
 
     public void instrument(JCClassDecl clazz) {
         addInstanceField(clazz);
+        System.out.println("Aspect class after instrumentation:");
+        System.out.println(clazz.toString());
     }
 
     private void addInstanceField(JCClassDecl clazz) {

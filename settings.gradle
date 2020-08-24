@@ -2,4 +2,5 @@ rootProject.name = 'java-contracts'
 
 include 'coco-api', 'coco-compiler', 'coco-examples', 'coas-api', 'coas-compiler', 'coas-examples', 'compiler-commons', 'test-compiler-commons'
 include 'coco-perf-tests'
+include 'cofoja-perf-tests'
 

@@ -1,4 +1,4 @@
-package pl.coco.coco.invariant;
+package pl.coco.perf.cofoja.requires;
 
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Measurement;
@@ -7,7 +7,12 @@ import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.infra.Blackhole;
 
-public class BenchmarkInvariant {
+import pl.coco.perf.InvariantSubject;
+import pl.coco.perf.InvariantSubject10;
+import pl.coco.perf.InvariantSubject100;
+import pl.coco.perf.InvariantSubject1000;
+
+public class InvariantBenchmark {
 
     @Benchmark
     @Warmup(iterations = 3, time = 3)
@@ -19,21 +24,21 @@ public class BenchmarkInvariant {
     @Benchmark
     @Warmup(iterations = 3, time = 3)
     @Measurement(iterations = 5, time = 5)
-    public void invariant_10(Blackhole hole, Input input) {
+    public void invariants_10(Blackhole hole, Input input) {
         hole.consume(input.subject10.target(input.x));
     }
 
     @Benchmark
     @Warmup(iterations = 3, time = 3)
     @Measurement(iterations = 5, time = 5)
-    public void invariant_100(Blackhole hole, Input input) {
+    public void invariants_100(Blackhole hole, Input input) {
         hole.consume(input.subject100.target(input.x));
     }
 
     @Benchmark
     @Warmup(iterations = 3, time = 3)
     @Measurement(iterations = 5, time = 5)
-    public void invariant_1000(Blackhole hole, Input input) {
+    public void invariants_1000(Blackhole hole, Input input) {
         hole.consume(input.subject1000.target(input.x));
     }
 
@@ -44,6 +49,7 @@ public class BenchmarkInvariant {
         public InvariantSubject10 subject10 = new InvariantSubject10();
         public InvariantSubject100 subject100 = new InvariantSubject100();
         public InvariantSubject1000 subject1000 = new InvariantSubject1000();
+
         public int x = -1;
     }
 }

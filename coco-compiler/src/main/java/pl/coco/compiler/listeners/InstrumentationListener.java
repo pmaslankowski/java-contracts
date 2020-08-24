@@ -55,7 +55,6 @@ public class InstrumentationListener implements TaskListener {
                     .orElse(true);
             if (isValid) {
                 taskEvent.getCompilationUnit().accept(contractProcessingVisitor, null);
-                System.out.println(taskEvent.getCompilationUnit());
                 log.debug("Instrumented compilation unit:\n{}", taskEvent.getCompilationUnit());
             }
         }

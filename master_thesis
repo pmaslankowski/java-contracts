@@ -1,0 +1,1418 @@
+% Opcje klasy 'iithesis' opisane sa w komentarzach w pliku klasy. Za ich pomoca
+% ustawia sie przede wszystkim jezyk i rodzaj (lic/inz/mgr) pracy, oraz czy na
+% drugiej stronie pracy ma byc skladany wzor oswiadczenia o autorskim wykonaniu.
+\documentclass[declaration,shortabstract, mgr, english]{iithesis}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{adjustbox}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{graphicx}
+\usepackage{subcaption} 
+\usepackage[ruled]{algorithm2e}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage[section]{placeins}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+
+\newcommand{\centered}[1]{\begin{tabular}{l} #1 \end{tabular}}
+
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+
+
+
+%%%%% DANE DO STRONY TYTUŁOWEJ
+% Niezaleznie od jezyka pracy wybranego w opcjach klasy, tytul i streszczenie
+% pracy nalezy podac zarowno w jezyku polskim, jak i angielskim.
+% Pamietaj o madrym (zgodnym z logicznym rozbiorem zdania oraz estetyka) recznym
+% zlamaniu wierszy w temacie pracy, zwlaszcza tego w jezyku pracy. Uzyj do tego
+% polecenia \fmlinebreak.
+\polishtitle    {Implementacja silnika wspierającego programowanie aspektowe dla platformy Java z wykorzystaniem mechanizmu rozszerzeń kompilatora}
+\englishtitle   {Implementation of an aspect programming engine for the Java platform using compiler plug-in mechanism }
+
+\polishabstract {TODO}
+
+\englishabstract{TODO}
+
+% tutaj kiedyś był cytat do (\cite{hoang}, \cite{snelleman})
+
+
+% w pracach wielu autorow nazwiska mozna oddzielic poleceniem \and
+\author         {Piotr Maślankowski}
+% w przypadku kilku promotorow, lub koniecznosci podania ich afiliacji, linie
+% w ponizszym poleceniu mozna zlamac poleceniem \fmlinebreak
+\advisor        {dr Wiktor Zychla}
+%\date          {}                     % Data zlozenia pracy
+% Dane do oswiadczenia o autorskim wykonaniu
+%\transcriptnum {}                     % Numer indeksu
+%\advisorgen    {dr. Jana Kowalskiego} % Nazwisko promotora w dopelniaczu
+%%%%%
+
+%%%%% WLASNE DODATKOWE PAKIETY
+%
+%\usepackage{graphicx,listings,amsmath,amssymb,amsthm,amsfonts,tikz}
+%
+%%%%% WŁASNE DEFINICJE I POLECENIA
+%
+%\theoremstyle{definition} \newtheorem{definition}{Definition}[chapter]
+%\theoremstyle{remark} \newtheorem{remark}[definition]{Observation}
+%\theoremstyle{plain} \newtheorem{theorem}[definition]{Theorem}
+%\theoremstyle{plain} \newtheorem{lemma}[definition]{Lemma}
+%\renewcommand \qedsymbol {\ensuremath{\square}}
+% ...
+
+\makeatletter
+\newcommand{\dynscriptsize}{\check@mathfonts\fontsize{\sf@size}{\z@}\selectfont}
+\makeatother
+\newcommand\textunderset[2]{%
+  \leavevmode
+  \vtop{\offinterlineskip
+    \halign{%
+      \hfil##\hfil\cr % center
+      \strut#2\cr
+      \noalign{\kern-.3ex}
+      \dynscriptsize\strut#1\cr
+    }%
+  }%
+}
+\newcommand\textoverset[2]{%
+  \leavevmode
+  \vbox{\offinterlineskip
+    \halign{%
+      \hfil##\hfil\cr % center
+      \dynscriptsize\strut#1\cr
+      \noalign{\kern-.3ex}
+      \strut#2\cr
+    }%
+  }%
+}
+
+\newcommand{\op}[1]{\skew{-7}\tilde{#1}}
+
+%%%%%
+
+\begin{document}
+
+%%%%% POCZĄTEK ZASADNICZEGO TEKSTU PRACY
+
+
+\chapter{Introduction}
+
+\section{Goal}
+Cel pracy
+
+\chapter{Introduction to Design by Contract and Aspect Oriented Programming}
+
+\section{Design by Contract}
+Design by Contract is a software design methodology originally proposed by Bertrand Mayer and implemented in the Eiffel programming language \cite{dbc}. It aims to increase the reliability of a software system by defining clear contracts for each of the system components.\\
+The simplest form of contract for a part of a system (e.g class in an object-oriented language) can consist of:
+\begin{itemize}
+    \item Preconditions - conditions that have to be met when given method is called. 
+    \item Postconditions - conditions that are guaranteed to be satisfied after the method invocation.  
+    \item Invariants - conditions that are guaranteed to be met before and after the method call
+\end{itemize}
+All these conditions can involve method arguments, class instance fields and even some parts of a global application state. Contracts don't have to contain all three types of conditions - some components may define only a subset of them. In the Design by Contract methodology contracts become a part of a component public interface.\\
+Software systems typically contain a lot of components which cooperate with one another in order to achieve the intended goal. Well-defined contracts make it easier to compose these elements because the knowledge required to use a component is clearly expressed by the contract.\\\\
+Example Eiffel code which uses contracts is presented in the snippet below (the example comes from \cite{eifell}):
+\begin{lstlisting}[language=Eiffel]
+feature -- Access
+
+    hour: INTEGER
+            -- Hour expressed as 24-hour value
+
+    minute: INTEGER
+            -- Minutes past the hour
+
+    second: INTEGER
+            -- Seconds past the minute
+            
+    set_second (s: INTEGER)
+            -- Set the second from `s'.
+        require
+            valid_argument_for_second: 0 <= s and s <= 59
+        do
+            second := s
+        ensure
+            second_set: second = s
+        end
+    
+    invariant
+        hour_valid: 0 <= hour and hour <= 23
+        minute_valid: 0 <= minute and minute <= 59
+        second_valid: 0 <= second and second <= 59
+
+\end{lstlisting}
+
+\noindent
+Method \textit{set\_second} specifies a precondition inside the \textit{require} block. In our example the contract states that a valid value for second must be greater than $0$ and less or equal to $59$. Similarily in the \textit{ensure} block there is a postcondition defined: \textit{set\_second} method guarantees that \textit{second} value will be equal to the method argument after the method had been called. Class invariants are defined at the bottom of the snippet, in the \textit{invariant} block.
+
+\noindent
+Design by Contract methodology requires relevant tools in order to show its full potential. These tools should allow to check if all specified contracts are satisfied during the application execution. If a contract gets violated, program flow should stop abnormally with appropriate information for users and developers. Although contracts should ideally be checked in all program runs, contract checking can affect the application performance and consequently Design by Contract engine should allow developers to disable contract verification in production versions of their software.
+
+\noindent
+Implementations of Design by Contract engines exist for many popular programming languages:
+
+\begin{itemize}
+    \item .NET languages: \textit{Code Contracts} (\cite{codecontracts})
+    
+    \item Java: \textit{cofoja} (\cite{cofoja}), \textit{Modern Jass} (\cite{mjass}), \textit{iContract} (\cite{icontract}),
+    \textit{contract4j} (\cite{contract4j})
+    
+    \item JavaScript: \textit{jscontract} (\cite{jscontract}), \textit{dbc-code-contracts} (\cite{dbccodecontracts})
+    
+    \item Python: \textit{PyContracts} (\cite{pycontracts}), \textit{dpcontracts} (\cite{dpcontracts}). There is even \textit{Python Enhancement Proposal} regarding native support for Design by Contract in Python (\cite{dbcpep}).
+\end{itemize}
+
+\noindent
+Even though all the tools mentioned above differ in used mechanisms, techniques and programming languages, they also have a lot in common. Essential features of a robust Design by Contract engine emerging from the analysis of the above solutions consist of:
+
+\begin{enumerate}
+    \item Method preconditions support
+    
+    \item Advanced method postconditions support: postconditions should be able to refer to the method result and original values of the method arguments (as arguments could have been modified inside the method body)
+    
+    \item Class invariants support
+    
+    \item Expressive conditions language - all kinds of conditions should be specified in a language that is easy to use for a programmer. This language should support logical and arithmetic expressions, values comparison etc.  
+    
+    \item Invariants (assertions) support - it should be possible to express invariants in any place in the code, e.g inside loops, etc.
+    
+    \item Support of preconditions/postconditions inheritance - according to Liskov's substitution principle (\cite{liskov}), preconditions shouldn't be weakened in subtypes and postconditions shouldn't be strenghten in subtypes. Design by Contract engine should give at least partial support for this kind of inheritance. Full support may be hard to implement when conditions are somewhat complex because checking whether given conditions are weaker or stronger than others is compilcated and time-consuming
+    
+    \item Support of disabling contract checking - there should be no performance penalty associated with the usage of contracts in production code
+\end{enumerate}
+
+
+
+\noindent
+In this thesis there is \textit{Code Contracts for Java} presented. It is a Design by Contract engine exploiting javac compiler plug-in API in order to provide robust and efficient support for DbC methodology for Java.
+
+\section{Aspect Oriented Programming}
+Aspect Oriented Programming (AOP) is a programming paradigm which aims to improve application modularization by clear separation of cross-cutting concerns (\cite{aop}). 
+Typical enterprise applications are often decomposed into smaller functional subsystems. Some functionalities such as logging, transaction support, authorization etc. are common to majority of these subsystems. These common functionalities are called \textit{cross-cutting concerns} in the AOP terminology.
+
+\noindent
+In traditional object oriented applications, code related to cross-cutting concerns is often scattered throughout the whole codebase. AOP takes another approach: it tries to encapsulate cross-cutting concerns in form of \textit{aspects}. Aspects are responsible for given cross-cutting concerns and they define in which places they should be used.
+
+\noindent
+Aspect Oriented Programming can be easily understood with examples. The snippet below shows a simple class responsible for transfering money between bank accounts (for the sake of clarity the demonstrated class is simplified; in a real world application error handling should be implemented etc.)  
+
+\begin{lstlisting}[language=Java][language=Java, caption={TransactionService written in a standrd OO way},captionpos=b, label={lst:tsoop}]
+class TransferService {
+    
+    private final AccountRepository repository;
+    private final Authorizer authorizer;
+    private final TransactionManager transactionManager;
+    private final Logger log;
+    
+    // other methods, constructors etc. omitted for clarity
+    ...
+    
+    public void transfer(long srcAccountId, long destAccountId, Money amount) {
+        log.info("transfer started");
+        
+        if (!authorizer.doesCurrentUserHavePermission(Permissions.TRANSFER)) {
+            throw new AuthorizationException();
+        }
+        
+        Transaction transaction = transactionManager.newTransaction();
+        transaction.begin();
+        
+        Account srcAccount = repository.getAccount(srcAccountId);
+        Account destAccount = repository.getAccount(destAccountId);
+        
+        srcAccount.decreaseBalanceBy(amount);
+        destAccount.increaseBalanceBy(amount);
+
+        transaction.commit();
+        
+        log.info("transfer finished");        
+    }
+}
+\end{lstlisting}
+
+In the implementation above there are 3 cross-cutting concerns demonstrated:
+\begin{itemize}
+    \item logging - \textit{transfer} method logs the beginning and the end of the operation. It can be useful for example for debugging purposes.
+    
+    \item transaction support - transfering money from one account to another requires modification of both accounts balances. Accounts have to be updated atomically in transaction in order to prevent data consistency problems.
+    
+    \item authorization - not all users are authorized to make money transfers so the method has to verify if current user has required permissions
+    
+\end{itemize}
+
+We can imagine that similar code would be repeated in all other places when logging, transactions or authorization is needed. Moreover, in a real life application all the code should be properly tested, which leads to even more repetition in tests. 
+
+Usage of AOP techniques can simplify the code significantly. TransferService refactored to AOP style is shown in the listings \ref{lst:tsaop} and \ref{lst:taaop}.
+
+\begin{lstlisting}[language=Java, caption={TransferService written in AOP style},captionpos=b,label={lst:tsaop}]
+class TransferService {
+    
+    private final AccountRepository repository;
+
+    // other methods, constructors etc. are omitted for clarity
+    ...
+    
+    @RequiresPermission(Permissions.TRANSFER)
+    @Transactional
+    @Logged
+    public void transfer(long srcAccountId, long destAccountId, Money amount) {
+        Account srcAccount = repository.getAccount(srcAccountId);
+        Account destAccount = repository.getAccount(destAccountId);
+        
+        srcAccount.decreaseBalanceBy(amount);
+        destAccount.increaseBalanceBy(amount);
+    }
+}
+\end{lstlisting}
+
+
+\begin{lstlisting}[language=Java, caption={TransactionalAspect responsible  for transaction support},captionpos=b, label={lst:taaop}]
+class TransactionalAspect {
+    
+    private final TransactionManager transactionManager;
+
+    // other methods, constructors etc. ommited for clarity
+    ...
+    
+    @Advice(on = "annotation(Transactional)") 
+    public void onTransactional(Joinpoint jp) {
+        Transaction transaction = transactionManager.newTransaction();
+        transaction.begin();
+        
+        jp.proceed();
+        
+        transaction.commit();
+    }
+}
+\end{lstlisting}
+
+\noindent 
+In the latter example, all the code responsible for transaction management has been moved to \texttt{TransactionalAspect}. \texttt{@Advice} annotation on \texttt{onTransactional} method specifies, that this method should be executed before all methods with \texttt{@Transactional} annotation. \texttt{jp.proceed()} invocation at line $13$ in the listing \ref{lst:taaop} proceeds to the original method - \texttt{transfer} from \texttt{TransferService}. It means that whenever method with \texttt{@Transactional} annotation is invoked, \texttt{TransactionalAspect} takes care of transaction creation, execution of an original method and the transaction commitment. Aspects concerning logging and authorization would work in analogous way.
+
+\noindent
+The code after presented refactoring has one substantial adventage over the previous version - transaction management is handled in a single place in the codebase. When other components need to use transactions, appropriate methods can be marked with \texttt{@Transactional} annotation and no other changes are required. This creates generic declarative mechanism for transaction support in the whole application.  It leads to less code duplication and simplify unit testing - components don't have to test transaction support anymore, unit tests for \texttt{TransactionalAspect} should be completely sufficient.
+
+\noindent
+Aspect Oriented Programming paradigm comes with its own nomenclature which is briefly described below:
+\begin{itemize}
+    \item \textit{Aspect} - modularized code handling cross-cutting concerns, often expressed in form of a class (\texttt{TransactionAspect} from the example above)
+    
+    \item \textit{Advice} - part of an aspect that describes the action taken at specific points of program execution (\texttt{onTransactional} method from the example above)
+    
+    \item \textit{Joinpoint} - point of a program execution to which an advice can be applied. Joinpoints are typically method invocations, but some AOP frameworks support different kind of joinpoints such as exception handlers or field accesses.
+    
+    \item \textit{Pointcut} - expression specifying joinpoints at which given advice should be applied (in the example above, pointcut was specified inside \texttt{@Advice} annotation on \textt{onTransactional} method)
+\end{itemize}
+
+\noindent
+Although Aspect Oriented Programming can bring a lot of benefits to the application architecture, there is also some controversy over this paradigm. The paper (\cite{aopharm}) points out that AOP can lead to difficulties with understanding the application behavior, especially when it is misused. The paradigm makes it hard to reason about program state as this state can be arbitrarily modified by AOP advices. To make things worse, advices are transparent - programmer needs to be aware of all aspects scattered through the code in order to understand the program behavior. 
+
+\noindent
+Aspect Oriented Programming requires appropriate tooling - the code cannot be compiled \textit{as is}, but it should be adequatly processed (\textit{weaved}) to make sure that aspects are invoked in all relevant places. Tools for Aspect Oriented Programming are available for the most popular programming languages:
+
+\begin{itemize}
+    \item Java - AspectJ (\cite{aop}), Spring AOP (\cite{springaop}), JBoss AOP (\cite{jbossaop})
+    \item C++ - AspectC++ (\cite{aopcpp}) , AOP++ (\cite{aoppp})
+    \item JavaScript - AspectJS (\cite{aspectjs}), meld (\cite{meld})
+\end{itemize}
+
+\noindent
+AOP frameworks mentioned above share some common traits which are essential for effective usage of this paradigm:
+
+\begin{figure}[t]
+\includegraphics[width=\textwidth]{images/aspects_chain.pdf}
+\caption{Diagram representing aspect chain from listing \ref{lst:tsaop}. Arguments provided by a caller are passed through all the aspects to the service. Each aspect can modify them or even break the chain by not proceeding to the next link. Similarily the result is passed back from the service to the caller.}
+\label{fig:chain}
+\end{figure}
+
+\begin{enumerate}
+    \item Powerful pointcut expression language - programmer should be able to specify pointcuts matching class and method names, argument types and names, method return types etc. 
+    
+    \item Advices should get full information about the joinpoint that they are applied at. This information should contain method name, method type, arguments, class instance etc.
+    
+    \item AOP framework should offer  posibility to execute code before and after the original method invocation. Advices should be able to modify method arguments and returned result.
+    
+    \item Advices should be also able to block the target method execution. This feature is useful in implementation of an \textit{authorization aspect} mentioned earlier (if caller is not authorized to call given method, the method call should be blocked by the aspect).
+    
+    \item Advices should be \textit{chainable} - if multiple advices match to given joinpoint, all advices should be executed one after another in the order defined by a programmer (as shown in the figure \ref{fig:chain})
+    
+\end{enumerate}
+
+This thesis presents \textit{Code Aspects for Java}. It is an efficient AOP framework exploiting javac compiler plug-in API.
+
+\chapter{Java code manipulation techniques}
+
+Java programming language supports different code transformation techniques which can be useful during implementation of DbC and AOP framework. This chapter presents brief survey and comparison of all available methods, the more detailed description of \textit{javac compiler plug-in API} and the introduction to the javac compilation pipeline. It provides a background required to understand the implementation details of both frameworks described in the thesis.
+
+\section {Overview of code transformations techniques available in Java}
+Java language supports \textit{reflection} \cite{javarefdoc}, which is an ability of a program to introspect itself and even modify its own behavior during a run-time. Although reflection is not exactly a code transformation technique, it is one of the simplest methods to extend behavior of an arbitrary class in a dynamic and generic manner. Unfortunately reflection in Java has one serious drawback: performance. It involves dynamically resolved types so the compiler cannot perform certain optimizations. Some benchmarks show that reflection can be even $10$ times slower than regular non-reflexive code \cite{javaref}. In the context of DbC and AOP frameworks, reflection has another disadventage - it works during run-time so it cannot provide any information to a programmer at compile-time. These frameworks should ideally perform static validation of contracts and aspects to detect configuration and syntax errors in contract specifications or aspect definitions.
+
+\noindent
+Another more sophisticated dynamic code manipulation technique is the \textit{Runtime Java bytecode mainpulation}. This method allows to dynamicaly generate new java classes at run-time, extend existing classes behavior by modification of their code etc. There are libraries supporting this techniques such as \textit{ASM} \cite{asm} (example \textit{ASM} applications can be found in \cite{asmexamples}). Java bytecode manipulation may be better suited to AOP and DbC frameworks in terms of performance but it still cannot handle any compile-time checks.
+
+\noindent
+Code transformation can be also achieved with the usage of \textit{Pluggable Annotation Processor API} which was introduced in Java 1.6. This API enables programmers to extend a compilation process with custom code modifications based on annotations. Classes generated by annotation processing are as  efficient as regular java classes because they are normally compiled with all available optimizations. Therefore performance is not a problem in this case. Additionaly, annotation processors are capable of performing partial static analysis and validation of processed classes, but this analysis is quite limited. Annotation processors are mainly focused on annotations and cannot process arbitrary fragments of code. As annotations can be placed only in certain points of java programs (on classes, methods, fields, packages and method parameters), annotation processors are not able to analyze methods bodies etc. It means that it is impossible to implement features such as loop invariants in elegant way using annotation processor API as loop invariants require access to the method bodies.
+
+\noindent
+Release of the Java 1.8 platform has brought another code manipulation mechanism available for developers: \textit{javac compiler plug-in API}. Compiler plugins work from inside the \text{javac compiler} and have access to all its internal details. It makes them one of the most powerful techniques to manipulate the java code but it comes with a price of complexity - they require understanding of the javac compilation pipeline. Javac compiler plugins have not found any widely known usages yet. The API documentation is also not very clear and a programmer is often forced to read the compiler sources in order to understand the plugin behavior. Despite these flaws, this API has been chosen as a fundamental mechanism to implement \textit{Code Contracts for Java} and \textit{Code Aspects for Java} frameworks.
+
+\noindent
+In the context of DbC and AOP engines, it is also worth to note that a certain trade-off between static and dynamic framework capabilities has to be made. If the framework works completely at run-time, it cannot provide any static validation and compile-time checks, which makes it harder to use. All the errors in the framework configuration, contract specification etc. will be discovered late. On the other hand, run-time code processing allows to alter behavior of the classes that are already compiled (for example external libraries). \textit{Code Contracts for Java} and \textit{Code Aspects for Java} frameworks use the former approach - all the transformations are performed at the compile-time.
+
+\section {Overview of javac compilation pipeline}
+Development of javac compiler plugins requires at least a basic knowledge of the javac compilation pipeline.
+
+TODO: rysunek
+
+\noindent
+In the first phase of compilation, source files are converted to the stream of tokens. Parser reads this stream and builds \textit{Abstract Syntax Tree} representing the source file. Next, the \textit{enter} phase starts, which collects all class symbols to relevant scopes recursively. Then classes get \textit{completed}: class parameters, supertype and interfaces are determined and all symbols defined in a class (such as fields, local variables etc.) are recuresively entered. Next, the annotation processing step is performed - all annotation processors are executed and all classes created in this step are added to the compilation process. Then compiler starts the \textit{analyze} phase: top level classes are \textit{attributed} which means that types are assigned to the corresponding names, expressions and all nodes in syntax trees. Some semantic errors (including type errors) can be discovered in this step. Next, compiler performs some static analysis on processed trees: unreachable code blocks are detected etc. Generic types are eliminated from the trees in the process of type erasure \cite{typeerasure} and all "syntactic sugars" are simplified. Then, the final \textit{gen} step starts, which is responsible for the bytecode generation. More detailed description of the javac compilation pipeline can be found in \cite{javac}.
+
+\section {Javac compiler plug-in API}
+The compiler plug-in API was introduced in the Java 1.8 platform. Plugins can be developed by implementing the \texttt{com.sun.source.util.Plugin} interface:
+
+\begin{lstlisting}[language=Java, caption={The Plugin interface},captionpos=b]
+public interface Plugin {
+ 
+    public String getName();
+ 
+    public void init(JavacTask task, String... args);
+    
+}
+\end{lstlisting}
+
+\noindent
+The first method provides the plugin name. The plugin can be attached to the compilation process by providing a relevant flag with a plugin name to the javac command invocation as shown in the listing \ref{lst:javacinvocation}.
+
+\noindent
+The second method initializes plugin. It takes the \texttt{JavacTask} object (the main object representing the whole compilation task with all required information) and array of command line arguments passed to the plugin.
+
+\noindent
+The plugin is invoked by the compiler only once at the beginning of the compilation process. Then, the plugin can subscribe and provide callbacks to various compilation events. Those events are published by the compiler before and after following compilation phases: \textit{parse}, \textit{enter}, \textit{analyze}, \textit{annotation processing}, \textit{annotation processing round} and \textit{generate}. Each callback receives all the data about the compilation unit that is being processed. Plugins can use all internal classes used by the compiler itself which allows to modify a compiler behavior in a very flexible way.
+
+\begin{lstlisting}[language=bash,caption={javac invocation with examplePlugin compiling the \textit{source.java} file},label={lst:javacinvocation}]
+javac -Xplugin:examplePlugin source.java
+\end{lstlisting}
+
+\chapter{Contracts Evaluation Engine}
+This chapter contains description of the \textit{Code Contracts for Java} (\textit{coco}) - an efficient contract evaluation engine implemented with the usage of the \textit{compiler plug-in API}.
+
+\noindent
+The coco project is available in the author's github repository \footnote{https://github.com/pmaslankowski/java-contracts}. It consists of $5$ java modules containing $141$ java classes and about 11k lines of code.
+
+
+\section{Code Contracts for Java - API}
+\textit{Code Contracts for Java} comes with two different APIs: an \textit{imperative} API which uses static methods of the \texttt{Contract} class and with a \textit{declarative} API based on annotations. Imperative API is a little more flexible as it allows to specify invariants in aribtrary places in the code. It also offers greater IDE support because conditions are specified as regular java expressions. It means that convienient IDE features like syntax highlighting and code completion work for contract specifications too.
+
+\noindent 
+On the other hand, annotation based API is a more standard approach in the Java ecosystem and it doesn't affect the classes even if the code is compiled without the \textit{coco} plugin. When code using the imperative API is compiled without the \textit{coco} plugin, all contract specifications will throw exceptions with relevant messages at runtime as there are unprocessed contract invocations in the code. If the programmer wants to turn off the contract checking with the imperative API, they have to compile the code with the \textit{-disabled} flag passed to the plugin. This way all the contract specifications will be stripped out from the code.
+
+\subsection{Contract specification embedded in a program code}
+The imperative API uses the \texttt{Contract} class from the \texttt{pl.coco.api.code} package presented in the snippet below.
+
+\begin{lstlisting}[language=java, caption={The imperative interface for contract specifications}]
+public class Contract {
+
+    public static void requires(boolean precondition);
+
+    public static void ensures(boolean postcondition);
+
+    public static void ensuresSelf(boolean postcondition);
+
+    public static <T> T result(Class<T> type);
+
+    public static <T> T old(T arg);
+    
+    public static void classInvariant(boolean condition);
+
+    public static void invariant(boolean condition);
+
+    public static <T> boolean forAll(T[] objects, Predicate<? super T> predicate);
+
+    public static <T> boolean exists(T[] objects, Predicate<? super T> predicate);
+
+    public static Integer[] range(int high);
+
+    public static boolean implies(boolean premise, boolean conclusion);
+}
+\end{lstlisting}
+
+\noindent
+The first three methods: \texttt{requires}, \texttt{ensures} and \texttt{ensuresSelf} are used to define method preconditions and postconditions. They take a boolean expression which represents the condition to be checked. It is worth to note that there are no constraints regarding these conditions - they accept any valid java boolean expression. It means that programmer can specify potentially unsafe conditions involving expensive method invocations and side effects. Since there is no way to determine whether given java expression is side-effects free or not, the framework put no additional restrictions on these conditions. Specyfying this kind of unsafe conditions makes no sense in the context of \textit{Design by contract} methodology but this approach maximizes flexibility of the framework. Other possible solution would be to introduce additional \texttt{@AllowedInContracts} annotation and annotate all methods acceptable in contracts with it. Then the engine would be able to validate whether all method invocations used inside given expression are properly annotated. Unfortunately this solution does not work well when programmer wants to use a third-party method in the contract specification as they cannot add annotations to the methods they do not control.
+
+\noindent
+Methods \texttt{requires}, \texttt{ensures} and \texttt{ensuresSelf} can be used at the beginning of a method body only. Contract statements are part of the method public interface and as such they should be easily visible for programmers. If these methods are found in any other place in the code, then the compilation error will be raised.
+
+\noindent
+Both \texttt{ensures} and \texttt{ensuresSelf} methods can be used to express a method postcondition. They behave differently when a contract inheritance is taken into account:  postconditions specified with \texttt{ensures} are inherited in all subclasses, while postconditions expressed with \texttt{ensuresSelf} are local to the current class. 
+
+\noindent
+The \texttt{result} method from the \texttt{Contract} class can be used to refer to the current method result in a postcondition specification. The method takes a single argument - type marker of the method's return type. This type marker is neccessary due to java generics constraints but it has to match the actual method's return type -  otherwise compilation error will be raised. Similarily a compilation will fail when \texttt{result} method is used outside of a postcondition specification.
+
+\noindent
+The \texttt{old} method refers to the original value of a method argument in preconditions and postconditions specifications.
+
+\noindent
+The \texttt{classInvariant} method can be used to specify class invariants. In order to define a class invariant, programmer has to add additional \texttt{void} method to the class and annotate it with an \texttt{@InvariantMethod} annnotation. This method can contain the \texttt{Contract.classInvariant(...)} invocations only. All conditions specified in such a method will be checked before and after every method invocation.
+
+\noindent
+The \texttt{invariant} method specifies an arbitrary invariant such as a loop invariant. It basically does the same thing as java built-in \texttt{assert} instruction but it is controlled by the \textit{coco} framework.
+
+\noindent
+Last methods provided by the \texttt{Contract} class are simple utility functions - they have been added to simplify contract specifications development. The first two methods: \texttt{forAll} and \texttt{exist} serve to check if any element/all elements in a collection matches given predicate. These methods has additional overloads which are not listed in the code snippet above - interested reader can find them directly in the source code of the \texttt{Contract} class. The \texttt{range} method can be used to create an array of integers from given range, and the \texttt{implies} method expresses the logical implication operator.
+
+\subsection{Contract specification through annotations}
+The annotation based declarative interface for contract specification in the \textit{Code contracts for Java} framework consists of the following annotations:
+
+\begin{itemize}
+    \item \texttt{@Requires} - annotation for method precondition specification analogous to the \texttt{Contract.requires} method. This annotation can be placed on the method definitions and takes single \texttt{String} argument containing java boolean expression representing the condition expressed as a string
+    \item \texttt{@Ensures}, \texttt{@EnsuresSelf} - annotations for method postcondition specifications analogous to the \texttt{Contract.ensures} and \texttt{Contract.ensuresSelf} methods respectively. Can be placed on the method definitions only.
+    \item \texttt{@ClassInvariant} - annotation specyfying class invariants. Can be placed on class definitions only.
+\end{itemize}
+
+\noindent
+All annotations are \textit{repeatable} which means that they can be repeated in the same place. It is useful when a programmer needs to specify multiple preconditions or postconditions on the same method.
+
+\noindent
+The declarative API does not support invariants analogous to the \texttt{Contract.invariant} method as java annotations cannot be placed in arbitrary places in the code.
+
+
+\section{Code contracts for Java - examples}
+
+This subsection presents certain example usages of the \textit{Code Contract for Java} framework. More examples can be found in the author's github repository in the \textit{coco-examples} module.
+
+\noindent
+The first example demonstrates a simple postcondition on an array sorting method defined using the imperative API. The code is shown in the following snippet:
+
+\begin{lstlisting}[language=java, caption=Simple postcondition example]
+public class InplaceSorter {
+
+    public void sort(int[] arr) {
+        /* Contracts */
+        Contract.ensures(Contract.forAll(
+            Contract.range(1, arr.length),
+            i -> arr[i-1] <= arr[i]));
+        /* End of contracts */
+
+        Arrays.sort(arr);
+    }
+}
+\end{lstlisting}
+
+This postcondition makes sure that the array is correctly sorted after the method invocation: it checks if $a_{i-1} \leq a_{i}$ for $i \in \{1, \hdots, n-1\}$ where $n$ is the array length.
+
+\noindent
+A similar example using annotation API is presented in the snippet below:
+\begin{lstlisting}[language=java, caption=More complicated contracts specified using the annotation API. The postcondition is implemented in a suboptimal way for the sake of example - it has $O(n^2)$ computational complexity while the sorting algorithm has $O(nlogn)$ complexity. It shows more complex condition though.]
+
+public class SorterWithAnnotations {
+
+    @Requires("arr.length > 0")
+    @Ensures("Contract.forAll(Contract.range(arr.length), " +
+            "(i, j) -> Contract.implies(i < j, " +
+            "Contract.result(int[].class)[i] <= Contract.result(int[].class)[j])))")
+    public int[] sort(int[] arr) {
+        int[] result = arr.clone();
+        Arrays.sort(result);
+        return result;
+    }
+}
+\end{lstlisting}
+
+\noindent
+This example defines one precondition (specyfying that an array has to be non empty) and one postcondition about the elements order in the result. The postcondition is implemented in an inefficient way - it checks if the following condition: $i < j \implies a_i \leq a_j$ is satisfied for $i, j \in \{0, \hdots, n-1\}$ where $n$ is the array length. Let us note the usage of \texttt{Contract.result} invocations inside the postcondition specification - this contract is specified on the returned value. As we see from the example, the annotation based API is a little more awkward to use because of string literals involved in condition specifications.
+
+\noindent
+The last example shows a simple array-backed stack implementation containing a class invariant and contracts on public methods:
+
+\begin{lstlisting}[language=Java, caption=Simple array-backed stack implementation with class invariant and contracts on all public methods]
+public class Stack {
+
+    private static final int INITIAL_SIZE = 64;
+
+    private int top = -1;
+    private int[] arr = new int[INITIAL_SIZE];
+
+    public boolean isEmpty() {
+        return top < 0;
+    }
+
+    public void push(int x) {
+        Contract.ensures(!this.isEmpty());
+
+        if (top == (arr.length - 1)) {
+            arr = Arrays.copyOf(arr, 2 * arr.length);
+        }
+
+        arr[++top] = x;
+    }
+
+    public int pop() {
+        Contract.requires(!this.isEmpty());
+
+        return arr[top--];
+    }
+
+    public int peek() {
+        Contract.requires(!this.isEmpty());
+
+        return arr[top];
+    }
+
+    @InvariantMethod
+    private void invariant() {
+        Contract.classInvariant(top >= -1);
+        Contract.classInvariant(top <= arr.length);
+    }
+}
+\end{lstlisting}
+
+\noindent
+The contract for the \texttt{push} method ensures that the stack is not empty after \texttt{push} has been invoked. Similarily $pop$ and $peek$ methods' contracts require stack not to be empty when these methods are called. Additionaly there is a class invariant defined - it states that the current top element index should be always within the boundaries of the backing array or it can be equal to $-1$ when the stack is empty.
+
+\noindent
+Examples presented above show that \textit{Code contract for Java} framework allows to specify contracts in an easy and flexible manner.
+
+\section{Code contracts for Java - implementation}
+This section describes an implementation of the \textit{Code contracts for Java} library.
+
+\noindent
+\textit{Code contracts for java} has been written using Java 1.8. All modules were built using the \textit{gradle built tool}. It employes the following third party libraries: \textit{Google Guava} and \texit{Apache Commons Collections} as a common utility libraries, \textit{Google Guice} as a dependency injection framework, \textit{Apache Commons CLI} as a command-line argument parsing library. Test code dependencies consist of \textit{JUnit 5} and \textit{AssertJ}.
+
+
+\subsection{Overview}
+The coco framework can be logically divided into two parts: the API module (\textit{coco-api} module) and the javac plugin which performs required source code transformations (\textit{coco-compiler} module). Additionally, the API module contains a small internal part (\texttt{pl.coco.internal} package) which is not intended for the direct programmer usage but it contains certain classes used in the code after transformations.
+
+\noindent
+The core logic responsible for runtime contract checking is located in the \linebreak \texttt{pl.coco.internal.ContractEngine} class (in the \textit{coco-api} api module). The javac compiler plugin translates all annotations and \texttt{Contract} class invocations to appropriate methods calls from the \texttt{ContractEngine} class.
+
+\noindent
+The code transformation process executed by the coco compiler is shown in the diagram below.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{images/contracts-processing.pdf}
+    \caption{Ilustration of the contracts processing pipeline}
+    \label{fig:contractsprocessing}
+\end{figure}
+
+\noindent
+As the diagram shows, the process is divided into several phases:
+
+\begin{enumerate}
+    \item \textit{Annotation API processing} - this step translates declarative annotation based API into imperative API calls.
+    
+    \item \textit{Contracts scanning} - this phase scans the code looking for all \texttt{Contract} class invocations. It registers all found invocations in a \texttt{ContractsRegistry} for further processing. 
+    
+    \item \textit{Contracts validation} - this step checks whether contract specifications are written correctly. For example, the coco compiler checks if all \texttt{Contract.requires} and \texttt{Contract.ensures} invocations are placed at the beginning of method bodies and all \texttt{Contract.result} calls are used correctly. If case of any problems, a compilation error is raised and the transformation pipeline stops.
+    
+    \item \textit{Contracts instrumentation} - source code of classes containing contracts is appropriately transformed in this phase. All \texttt{Contract} class invocations are replaced by relevant \texttt{ContractEngine} calls. As it was mentioned earlier, the \texttt{ContractEngine} is responsible for runtime contract checking.
+\end{enumerate}
+
+\noindent
+An entrypoint to the coco plugin is placed in the \texttt{pl.coco.compiler.CocoPlugin} class. This class delegates command line arguments processing, setups the dependency injection framework and registers \texttt{InstrumentationListener} or \linebreak \texttt{StrippingListener} as a \texttt{JavacTask} listener. From this moment on, the \linebreak \texttt{CocoTaskListener} will be receiving information about compilation events such as a beginning or the end of compilation phases. The choice between \linebreak \texttt{InstrumentationListener} and \texttt{StrippingListener} depends on whether contract checking is enabled or not. If it is, then the \texttt{InstrumentationListener} is used. Otherwise the \texttt{StrippingListener}, responsible for removing all contracts specifications from the code, is used. 
+
+\noindent
+Implementation of the \texttt{InstrumentationListener} is rather straightforward: \texttt{started} and \texttt{finished} methods are invoked by compiler at the beginning and the end of each compilation phase. The class delegates event processing to relevant visitors. Each visitor is responsible for one of the contract processing steps described above. 
+
+\subsection{Annotation API processing}
+In the annotation API processing phase, all declarative API usages are translated to their imperative counterparts as declarative API is actually only a syntatic sugar. 
+
+\noindent
+This step is performed as soon as possible - just after the AST is built by compiler, at the end of the \textit{parse} compilation phase. Every compilation phase adds additional metadata to the AST and fills certain internal compiler structeres (like symbol tables) depending on the code processed so far. It means that if the coco plugin translated annotations to imperative API invocations later, it would have to fix those internal structures and AST manually. As the javac compilation process is not quite well documented, the manual fixes would be hard to implement correctly. Thus the end of the \textit{parse} phase is the best place to process declarative API usages.
+
+\noindent
+The \texttt{ContractAnnotationVisitor} delegates annotation processing to the \linebreak \texttt{ContractAnnotationProcessor} class. The latter class processes annotations placed on methods and classes (as the \texttt{@Invariant} annotation can be placed on a class definition). It gathers all contract annotations and delegates the translation to the \texttt{AnnotationTranslator} class. Because annotations are translated to \texttt{Contract} methods invocations, \texttt{AnnotationProcessor} has to ensure that the \texttt{Contract} class is imported to the source file. Therefore it adds appropriate import statement at the beginning of the source file if it finds any contract annotations. 
+
+\noindent
+The \textt{AnnotationTranslator} class uses an internal javac parser to parse the contract expression placed inside \texttt{@Requires} and \texttt{@Ensures} annotations and constructs puts appropriate \texttt{Contract} methods invocations in the AST. The mapping between annotations and corresponding \texttt{Contract} methods is encoded in the \linebreak \texttt{ContractAnnotationType} enum. 
+
+\noindent
+Processing of \texttt{@Invariant} annotations is slightly more compilcated because all \texttt{@Invariant} annotations have to be translated into additional invariant method. This translation is performed by the \texttt{InvariantTranslator} class and the process is similar to the \texttt{@Ensures} and \texttt{@Requires} annotations handling.
+
+\noindent
+When all contract annotations found in given compilation unit are appropriately translated, control is passed back to the compiler. Next, the \textit{enter} compilation phase starts.
+
+\subsection{Contract specifications detection}
+The contract specifications detection occurs when the \textit{enter} phase is finished. In this step metadata about contract specifications found in the code is placed in the \texttt{ContractRegistry}. This step cannot be performed along with the instrumentation easily, because in case of contracts inheritance, code transformations depend on contracts found in superclasses. Thus it is easier to collect all the contracts in one place upfront and then start the validation and instrumentation.
+
+\noindent
+Contracts detection process starts in the \texttt{ContractScanningVisitor} class. The class delegates actual logic to the \texttt{ContractScanner}. The process is actually straightforward - all contract statements occuring in method bodies are registered in the \texttt{ContractRegistry}. Registry is implemented as a thin wrapper around a hash map containing the mapping between methods and contracts.
+
+\noindent
+When this step finishes, compiler starts the next phase - \textit{analyze}. 
+
+\subsection{Contract specification validation}
+In this step contract specifications are validated in order to find syntax and semantic errors in them. This validation is performed when the \textit{analyze} phase finishes. At this point the plugin know that compiler did not found any errors in the code and the code does not violate any language rule. It is convienient to perform contract validation at that time, because the plugin can assume that expressions and types involved in contracts do not contain any language errors.
+
+\noindent
+The validation process checks whether all rules listed below are satisfied:
+
+\begin{enumerate}
+    \item All preconditions and postconditions concerning given method should be defined in a continous block of statements at the beginning of the method
+    
+    \item \textit{Contract.result} and \textit{Contract.old} invocations shold occur inside the postconditions specifications only.
+    
+    \item The type passed as an argument to the \textit{Contract.result} method should match the return type of the method
+    
+    \item \textit{Contract.old} expressions should be used on the method arguments only. These expressions refer to the old values of arguments and do not make sense outside of this context
+    
+    \item \textit{Contract.forAll} and \textit{Contract.exists} expressions should occur inside contract specifications (preconditions, postconditions, class invariants and invariants) only.
+    
+    \item \textit{Contract.classInvariant} invocations should occur in invariants method only (recall that invariant methods are methods annotated with the \textit{@InvariantMethod} annotation)
+    
+    \item There should be at most one invariant method defined in a class. Invariant methods contain class invariants and it is easier to understnad a contract of given class if all invariants are in one place. 
+    
+\end{enumerate}
+
+\noindent
+The contract validation process begins in the \texttt{ContractValidatingVisitor} class. The class delegates this process to the \texttt{ClassLevelValidator} and \texttt{MethodLevelValidator} components (through the \texttt{ContractValidator}). As the names suggest, \texttt{ClassLevelValidator} performs validations which have to be executed on the class level. There is only one such validation which check whether there is at most one invariant method defined in the class. All other validations are performed by the \texttt{MethodLevelValidator} since they do not require any information about the whole class context.
+
+\noindent
+For example, let us have a look at the third validation from the list above. This validation is performed by \texttt{ResultTypeValidator} class. Code of this class is presented below:
+
+\begin{lstlisting}[language=Java, caption = Code of the \texttt{ResultTypeValidator} class. It checks whether type marker passed as an argument to the \texttt{Contract.result} invocation matches the original method's return type]
+
+package pl.coco.compiler.validation.result;
+
+// import statements ommited for clarity
+
+public class ResultTypeValidator extends TreeScanner {
+
+  // MethodValidationInput contains information 
+  // about the enclosing method
+  private final MethodValidationInput input;
+  //internal javac utility tool for type related operations: 
+  private final Types types;
+
+  public ResultTypeValidator(
+      MethodValidationInput input,
+      Types types) {
+    this.input = input;
+    this.types = types;
+  }
+
+  @Override
+  public void visitApply(JCMethodInvocation invocation) {
+    if (ContractAstUtil.isContractInvocation(invocation)) {
+      ContractInvocation contract =
+        ContractAstUtil.getContractInvocation(invocation);
+      
+      if (contract.getContractMethod() == ContractMethod.RESULT) {
+
+        List<? extends ExpressionTree> arguments =
+          contract.getArguments();
+        JCExpression resultType =
+          (JCExpression) arguments.get(0);
+          
+        if (doesResultTypeMatchMethodType(resultType)) {
+          throw new ContractValidationException(
+            ContractError.RESULT_TYPE_MUST_MATCH_METHOD_TYPE,
+            resultType,
+            input.getCompilationUnit());
+        }
+      }
+    }
+    super.visitApply(invocation);
+  }
+
+  private boolean doesResultTypeMatchMethodType(JCExpression typeMarker) {
+    ClassType classType = (ClassType) typeMarker.type;
+    Type resultType = classType.getTypeArguments().get(0);
+    Type methodType = input.getMethod().getReturnType().type;
+    // boxing before type comparison:
+    Type boxedMethodType = types.boxedTypeOrType(methodType);
+    return !typesEqual(resultType, boxedMethodType);
+  }
+
+  private boolean typesEqual(Type type1, Type type2) {
+    return type1.tsym.flatName().contentEquals(type2.tsym.flatName());
+  }
+}
+
+\end{lstlisting}
+
+\noindent
+This class extends the internal javac utility class \texttt{TreeScanner}. It means that this class is a visitor of the AST and it is interested particurarly in nodes corresponding to method invocations. When it encounters a method invocation in the AST, it checks whether the invocation involves the \texttt{Contract.result} method. If it is the case, it checks whether the type marker passed to the \texttt{Contract.result} invocation matches enclosing method's return type. This check is performed in the \texttt{doesResultTypeMatchMethodType} method in the snippet above.
+
+\noindent
+The \texttt{doesResultTypeMatchMethodType} method has to take \textit{type autoboxing} into account. Java supports primitive (\texttt{int}, \texttt{char}, \texttt{double} etc.) and complex types. Each primitive type has its corresponding complex counterpart, for example \texttt{Integer} (complex) corresponds to \texttt{int} (primitive). Autoboxing is a mechanism which implicitly casts the types between the complex and primitive forms. The coco plugin should also follow this mechanism. Therefore \texttt{doesResultTypeMatchMethodType} method transforms both types (type from the type marker passed to a method and the enclosing method return type) to a \textit{boxed} (complex) form before making actual comparison.
+
+\noindent
+Let's also have a look at how the fifth validation from the list above is implemented. This validation checks if \texttt{Contract.forAll} and \texttt{Contract.exist} invocations occur inside contract specifications only. The \texttt{ForAllExistValidator} class is responsible for it:
+
+\begin{lstlisting}[language=Java, caption=The \texttt{ForAllExistsValidator} class responsible for checking whether \texttt{Contract.forAll} and \texttt{Contract.exists} invocations occur in contract specifications only]
+  
+package pl.coco.compiler.validation.forallexists;
+
+// imports omitted for clarity
+
+public class ForAllExistsValidator extends TreeScanner {
+
+  private final MethodValidationInput input;
+
+  private boolean isInsideSpecification = false;
+
+  public ForAllExistsValidator(MethodValidationInput input) {
+    this.input = input;
+  }
+
+  @Override
+  public void visitApply(JCMethodInvocation invocation) {
+    if (ContractAstUtil.isContractInvocation(invocation)) {
+      ContractInvocation contract =
+        ContractAstUtil.getContractInvocation(invocation);
+      ContractMethod contractMethod =
+        contract.getContractMethod();
+    
+      if (contractMethod.isContractSpecification()) {
+        handleContractSpecification(invocation);
+      } else {
+        if (contractMethod.canOccurInsideSpecificationOnly()) {
+          checkIfContractIsInsideSpecification(invocation);
+        }
+        super.visitApply(invocation);
+      }
+    }
+  }
+
+  private void handleContractSpecification(
+      JCMethodInvocation invocation) {
+    isInsideSpecification = true;
+    super.visitApply(invocation);
+        isInsideSpecification = false;
+    }
+
+  private void checkIfContractIsInsideSpecification(
+      JCMethodInvocation invocation) {
+    
+    if (!isInsideSpecification) {
+      throw new ContractValidationException(                    ContractError.CONTRACT_STATEMENT_OUTSIDE_OF_CONTRACTS,   invocation,
+        input.getCompilationUnit());
+    }
+  }
+}
+\end{lstlisting}
+
+\noindent
+This class is a visitor again - it visits all nodes corresponding to the method invocations in the AST. It traverses the AST from the root down to leaves and it remembers in its state (\texttt{isInsideSpecification} field) whether current subtree corresponds to expression inside the contract specification. 
+
+\noindent
+All other validations are somewhat similar to the ones presented above.
+
+\subsection{Code transformations}
+After the contracts validation step is finished, the actual code transformation phase begins. This step changes the code in order to introduce the runtime contract checking in all appropriate places. This process changes the AST actually as the source code is no longer needed at this stage - all required information is saved in the AST and internal compiler structures.
+
+\noindent
+The coco plugin takes the following approach during the code instrumentation phase. For each method in each class, the plugin checks if there are any contracts corresponding to this method (postconditions, preconditions and class invariants). If it is the case, the plugin duplicates this method without the contract specification block at the beginning. This duplicated method is added to the class. We will refer to this duplicated method as a \textit{target} method from now on. If the method contains any preconditions or postconditions, the \textit{postconditions} and \textit{preconditions} methods are added to the class too. These methods contain the contract checking code. Next, the original method is modified in such a way, that it executes the preconditions method, calls the target method and executes the postcondition method.
+
+\noindent
+This process is demonstrated on the simple example below:
+
+\begin{lstlisting}[language=Java, caption=Example class before contracts instrumentation,frame=tlrb, label=lst:cocobefore]{Name}
+package pl.coco.examples.paper;
+
+import pl.coco.api.code.Contract;
+
+public class Example {
+
+    public int foo(int arg) {
+        Contract.requires(arg > 0);
+        Contract.ensures(Contract.result(Integer.class) > 0);
+
+        return arg;
+    }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=Java, caption=Example class after contracts instrumentation,frame=tlrb, label=lst:cocoafter]{Name}
+public class Example {
+    
+    public int foo(int arg) {
+        coco$preconditions$foo(arg);
+        /*synthetic*/ int $result = coco$target$foo(arg);
+        coco$postconditions$foo(arg, new Integer($result));
+        coco$selfpostconditions$foo(arg, new Integer($result));
+        return $result;
+    }
+    
+    /*synthetic*/ 
+    public int coco$target$foo(int arg) {
+        return arg;
+    }
+    
+    /*synthetic*/ 
+    protected void coco$preconditions$foo(int arg) {
+        ContractEngine.requires(
+          ()->arg > 0, "arg > 0");
+    }
+    
+    /*synthetic*/ 
+    protected void coco$postconditions$foo(int arg, Integer result) {
+        ContractEngine.ensures(
+          ()->result > 0, "Contract.result(Integer.class) > 0");
+    }
+    
+    /*synthetic*/ 
+    protected void coco$selfpostconditions$foo(
+      int arg, Integer result) {
+    }
+}
+
+\end{lstlisting}
+
+\noindent
+As we see, the coco plugin added $4$ synthetic methods to the \texttt{Example} class:
+
+\begin{itemize}
+    \item \texttt{coco\$target\$foo(int  arg)} - this is the \textit{target} method. It contains the code from original method but without the contract specification block.
+    
+    \item \texttt{coco\$preconditions\$foo(int arg)} - the preconditions method. It contains \textit{ContractEngine} invocations corresponding to each precondition. Those calls will validate preconditions at runtime. The method takes the same arguments as the original method.
+    
+    \item \texttt{coco\$postconditions\$foo(int arg , Integer  result)} -  the postconditions method. It contains \textit{ContractEngine} invocation corresponding to every postcondition. Note that this method takes one additional argument: \texttt{result}. The postcondition refers to the result of the origial method so this result is passed to the postcondition method as the argument. \texttt{Contract.result} occurrances in postconditions are replaced with this value. Similar behavior would happen if postconditions used the \texttt{Contract.old} expression. This case will be described later.
+    
+    \item \texttt{coco\$selfpostconditions\$foo(int arg , Integer  result)} - the self postconditions method. If any self postcondition declared with \texttt{Contract.ensuresSelf} were declared, then the corresponding  \texttt{ContractEngine} invocation would be placed in this method.  
+    
+\end{itemize}
+
+\noindent
+Note that \texttt{ContractEngine} methods take $2$ arguments - lambda function and \texttt{String}. The first argument is used to evaluate the contract condition lazily. This condition cannot be evaluated eagerly as it can throw an exception or it can trigger mutually dependent contracts evaluation (these problems are covered in the \textit{Runtime contracts checking} section in detail). The latter argument is a string representation of a condition - it is added to the message shown to user if the contract fails.
+
+\noindent
+Similar code transformation is applied when there is an \textit{invariant method} defined in the class. Additional synthetic \textit{invariant} method is added to the class in this case. The synthetic invariant method invocation is added at the beginning and the end of each method in the class. It is invoked at the end of constructors as well. Transformation involving class invariants is shown in the code snippets below.
+
+\begin{lstlisting}[language=Java, caption=Example code containing class invariants before instrumentation]
+package pl.coco.examples.paper;
+
+import pl.coco.api.code.Contract;
+import pl.coco.api.code.InvariantMethod;
+
+public class InvariantExample {
+
+    private int x = 1;
+
+    public void foo() {
+        x += 1;
+    }
+
+    @InvariantMethod
+    private void invariants() {
+        Contract.classInvariant(x > 1);
+    }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=Java, caption=Example code containing class invariants after instrumentation]
+package pl.coco.examples.paper;
+
+import pl.coco.api.code.Contract;
+import pl.coco.api.code.InvariantMethod;
+
+public class InvariantExample {
+    
+    public InvariantExample() {
+        super();
+        coco$preconditions$$constructor$();
+        coco$target$$constructor$();
+        coco$postconditions$$constructor$();
+        coco$selfpostconditions$$constructor$();
+        coco$invariant(false);
+    }
+    private int x = 1;
+    
+    public void foo() {
+        coco$invariant(true);
+        coco$preconditions$foo();
+        coco$target$foo();
+        coco$postconditions$foo();
+        coco$selfpostconditions$foo();
+        coco$invariant(false);
+    }
+    
+    @InvariantMethod()
+    private void invariants() {
+        Contract.classInvariant(x > 1);
+    }
+    
+    /*synthetic*/ 
+    protected void coco$invariant(/*synthetic*/ boolean isBefore) {
+        ContractEngine.classInvariant(
+            ()->x > 1, "x > 1", isBefore);
+    }
+    
+    /*synthetic*/ 
+    public void coco$target$$constructor$() {
+    }
+    
+    /*synthetic*/ 
+    protected void coco$preconditions$$constructor$() {
+    }
+    
+    /*synthetic*/ 
+    protected void coco$postconditions$$constructor$() {
+    }
+    
+    /*synthetic*/ 
+    protected void coco$selfpostconditions$$constructor$() {
+    }
+    
+    /*synthetic*/ 
+    public void coco$target$foo() {
+        x += 1;
+    }
+    
+    /*synthetic*/ 
+    protected void coco$preconditions$foo() {
+    }
+    
+    /*synthetic*/ 
+    protected void coco$postconditions$foo() {
+    }
+    
+    /*synthetic*/ 
+    protected void coco$selfpostconditions$foo() {
+    }
+}
+\end{lstlisting}
+
+\noindent
+As we see in the snippets above, the synthetic invariant method is invoked in the class constructor and in the \texttt{foo()} method. All other synthetic methods were also added to the class even though in this example they are empty - there are no preconditions and postconditions defined in the code. The synthetic method takes only one argument - \texttt{isBefore} flag. This flag tells whether current invariant checking takes place before or after the method invocation. It is later passed to all \texttt{ContractEngine.classInvariant} methods in order to provide more descriptive message when contract fails. This way the message contains information whether invariant is violated before or after the method call.
+
+\noindent
+Another interesting code transformation happens when method postcondition uses \texttt{Contract.old} expressions. In this case method arguments are copied before the original method invocation. These copied values are later passed to the synthetic postcondition method and all \texttt{Contract.old} expressions are replaced with appropriate arguments. This transformation is shown in the snippets below.
+
+\begin{lstlisting}[language=Java, caption=The \texttt{Contract.old} example before code instrumentation]
+package pl.coco.examples.paper;
+
+import pl.coco.api.code.Contract;
+
+public class OldExample {
+
+    public int foo(int x, Bar y) {
+        Contract.ensures(Contract.old(y).bar != y.bar);
+        y.bar = "new value";
+        return x;
+    }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=Java, caption=The \texttt{Contract.old} example after code instrumentation, label={lst:oldafter}]
+
+package pl.coco.examples.paper;
+
+import pl.coco.api.code.Contract;
+
+public class OldExample {
+    
+    public OldExample() {
+        super();
+    }
+    
+    public int foo(int x, Bar y) {
+        Bar coco$old$y = ContractEngine.deepClone(y);
+        coco$preconditions$foo(x, y);
+        int $result = coco$target$foo(x, y);
+        coco$postconditions$foo(
+          x, y, coco$old$y, new Integer($result));
+        coco$selfpostconditions$foo(
+          x, y, coco$old$y, new Integer($result));
+        return $result;
+    }
+    
+    /*synthetic*/ 
+    public int coco$target$foo(int x, Bar y) {
+        y.bar = "new value";
+        return x;
+    }
+    
+    /*synthetic*/ 
+    protected void coco$preconditions$foo(int x, Bar y) {
+    }
+    
+    /*synthetic*/ 
+    protected void coco$postconditions$foo(
+      int x, Bar y, Bar coco$old$y, Integer result) {
+        ContractEngine.ensures(
+          ()->coco$old$y.bar != y.bar,
+          "Contract.old(y).bar != y.bar");
+    }
+    
+    /*synthetic*/ 
+    protected void coco$selfpostconditions$foo(
+      int x, Bar y, Bar coco$old$y, Integer result) {
+    }
+}
+
+\end{lstlisting}
+
+\noindent
+As we see at listing \ref{lst:oldafter}, old value of \texttt{y} argument is cloned in the line $13$. It is later passed to \textit{postconditions} and \textit{self postconditions} methods. This value replaces the \texttt{Contract.old(y)} expression from the original postcondition in the line $37$.
+
+\noindent
+Let us have a look at the last example of a code transformation which handles contracts inheritance.
+
+\begin{lstlisting}[language=Java, caption = Contract inheritance - base class before instrumentation]
+public class Base {
+
+    public int foo(int x) {
+        Contract.requires(x > 0);
+
+        return x;
+    }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=Java, caption = Contract inheritance - subclass before instrumentation]
+public class Subclass extends Base {
+
+    @Override
+    public int foo(int x) {
+        return x;
+    }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=Java, caption = Contract inheritance - base class after instrumentation]
+public class Base {
+    
+    public int foo(int x) {
+        coco$preconditions$foo(x);
+        int $result = coco$target$foo(x);
+        coco$postconditions$foo(x, new java.lang.Integer($result));
+        coco$selfpostconditions$foo(x, new java.lang.Integer($result));
+        return $result;
+    }
+    
+    /*synthetic*/ 
+    public int coco$target$foo(int x) {
+        return x;
+    }
+    
+    /*synthetic*/ 
+    protected void coco$preconditions$foo(int x) {
+        ContractEngine.requires(()->x > 0, "x > 0");
+    }
+    
+    /*synthetic*/ 
+    protected void coco$postconditions$foo(int x, Integer result) {
+    }
+    
+    /*synthetic*/
+    protected void coco$selfpostconditions$foo(int x, Integer result) {
+    }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=Java, caption = Contract inheritance - subclass after instrumentation]
+public class Subclass extends Base {
+    
+    @Override()
+    public int foo(int x) {
+        coco$preconditions$foo(x);
+        int $result = coco$target$foo(x);
+        coco$postconditions$foo(x, new Integer($result));
+        coco$selfpostconditions$foo(x, new Integer($result));
+        return $result;
+    }
+    
+    /*synthetic*/ 
+    public int coco$target$foo(int x) {
+        return x;
+    }
+    
+    /*synthetic*/ 
+    protected void coco$preconditions$foo(int x) {
+        Base.coco$preconditions$foo(x);
+    }
+    
+    /*synthetic*/ 
+    protected void coco$postconditions$foo(int x, Integer result) {
+        Base.coco$postconditions$foo(x, result);
+    }
+    
+    /*synthetic*/ 
+    protected void coco$selfpostconditions$foo(int x, Integer result) {
+    }
+}
+\end{lstlisting}
+
+\noindent
+As we see, the \texttt{Base} class defines one precondition and there are no contracts defined in \texttt{Subclass}. The former class is instrumented exactly as described previously. When the \texttt{Subclass} class is processed, the plugin detects that although there are no contracts defined in \texttt{Subclass} itself, there is one precondition in a superclass and thus the \texttt{Subclass} should be appropriately instrumented. The preconditions method in the subclass calls the preconditions method in the superclass. All contracts in the class hierarchy are inherited in this way.
+
+\noindent
+This process works similarily for postcondition inheritance. Algorithm is only slightly changed: according to the Liskov substitution principle, postconditions are always inherited but preconditions are inherited only when the class does not define its own preconditions as they can be relaxed by the subclass.
+
+\noindent
+The code instrumentation process starts in the \texttt{ContractProcessingVisitor} class. Actual implementation is divied in the two parts - \textit{class level instrumnetations} (class invariants) handled by the \texttt{ClassLevelProcessor} and \textit{method level instrumentations} handled by the \textt{MethodLevelProcessor}. \texttt{ClassLevelProcessor} delegates synthetic invariant method generation to the \texttt{InvariantMethodGenerator}.
+
+\noindent
+The \texttt{MethodLevelProcessor} decides whether a method should be instrumented: it checks if the method contains contract specifications or if the method should inherit any contracts from its superclasses. The class hierarchy traversal takes place in the \texttt{ContractAnalyzer} class. Next the instrumentation process starts. \texttt{OldValuesProcessor} finds all \texttt{Contract.old} invocations occuring in contract specifications. Those values are later needed to make deep copies of appropriate method arguments. Next it calls \texttt{ContractSyntheticMethodsGenerator} in order to create all synthetic methods: preconditions method, postconditions method, self postconditions method, invariant method and the target method. Actual implementation is delegated to relevant method generators such as \textt{TargetMethodGenerator}, \texttt{PreconditionsMethodGenerator} etc. In the last phase of method instrumentation, the method body is rewritten by \texttt{InstrumentedMethodBodyGenerator}. 
+
+
+\subsection{Runtime contracts checking}
+The actual contracts checking is performed at the runtime by the \texttt{ContractEngine} class. Its implementation is rather straighforward but it needs to take two problems into account.
+
+\noindent
+Since contract specifications can contain any valid Java expressions including methods invocations, it is possible that contract checking in one method can trigger contract checking in another methods. In pesimistic scenario this could lead to an infinite loop if contract specifications contained mutually dependent method calls as in the example below. To solve this problem, evaluation of contracts inside another contracts is disabled.
+
+\begin{lstlisting}[language=Java, caption=Mutually dependent contracts]
+public class InfiniteLoopExample {
+
+    public int foo(int x) {
+       Contract.requires(bar(x) > 0);
+       
+       return x;
+    }
+    
+    public int bar(int x) {
+        Contract.requires(foo(x) > 0);
+        
+        return x;
+    }
+}
+\end{lstlisting}
+
+\noindent
+Another problem addressed by the \texttt{ContractEngine} is exception handling during contract evaluation. Method calls inside contract specifications can throw exceptions and the coco plugin should handle them appropriately. All exceptions thrown during the contract evaluation process are treated as a contract failure and they are wrapped in the \texttt{ContractFailedException} class.
+
+
+
+\subsection{Testing methods}
+To ensure that the coco plugin works correctly, appropriate testing methodology has been developed. Since the javac plugin API relies heavily on the internal compiler structures, it would be very hard to write regular unit tests. This approach would require stubbing a lot of compiler classes which are not well documented and thus hard to stub. It would lead to unreliable tests because they would rely on unproven and potentially incorrect assumptions about compiler behavior. Therefore the coco plugin takes another approach - it employs integration tests which use the real compiler. This kind of tests are slower and harder to debug but they guarantee that the plugin works correctly.
+
+\noindent
+In order to write these integration tests, a testing infrastructure had to be prepared. The \textit{test-compiler-commons} contains all utility classes required to prepare the integration tests. An example integration test is presented below:
+
+\begin{lstlisting}[language=Java, caption = Example integration test concerning \texttt{Contract.requires} expressions]
+class ContractRequiresTest {
+    
+    \*...*\
+    
+    @DisplayName("Precondition on static method passes")
+    @Test
+    void shouldReturnResultWhenPreconditionOnStaticMethodPasses() throws Throwable {
+        String code = 
+            "package pl.coco.compiler;\n"
+          + "\n"
+          + "import pl.coco.api.code.Contract;\n"
+          + "\n"
+          + "public class Test {\n"
+          + "\n"
+          + "    public static int entry() {\n"
+          + "        return testedMethod(1, true);\n"
+          + "    }\n"
+          + "\n"
+          + "    public static int testedMethod(
+                   int arg, boolean flag) {\n"
+          + "        Contract.requires(arg >= 0 && flag);\n"
+          + "        return 42;\n"
+          + "    }\n"
+          + "}\n";
+
+        Object actual = CocoTestUtils.compileAndRun(QUALIFIED_CLASS_NAME, ENTRY_POINT, code);
+
+        assertThat(actual).isEqualTo(RESULT);
+    }
+    
+    /*... */
+}
+\end{lstlisting}
+
+\noindent
+The test contain a small java class embedded in a string variable. This class is compiled and run by a real compiler with the coco plugin configured. The \texttt{entry} method from this class is called and the test can make assertions about returned result.
+
+\noindent
+The test suite for the coco plugin contains $126$ integration tests (3,5k lines of code) which check all the plugin features.
+
+\section{Other Design by Contract tools for Java}
+In this section there is a comparison between \textit{coco} and the other design by contract tools shown.
+
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[h]
+\small
+\caption{Comparison of different Design by Contract solutions available in Java}
+\centering
+\label{table-2-1:super-glue}\begin{tabular}{p{0.15\textwidth}p{0.15\textwidth}p{0.15\textwidth}p{0.15\textwidth}p{0.15\textwidth}p{0.15\textwidth}}
+\toprule
+ & \textbf{coco} & \textbf{cofoja} & \textbf{modern jass} & \textbf{iContract} & \textbf{contract4j} \\
+\midrule
+
+\textbf{Contract API type} & java code and strings in annotations & strings in annotations & strings in annotations & custom docstrings & strings in annotations \\
+
+\textbf{Contract API \newline features} & preconditions, postconditions, invariants, class invariants & preconditions, postconditions, class invariants, contracts on exceptions (signals) &  preconditions, postconditions, class invariants, contracts on exceptions (signals) & preconditions, postconditions, class invariants &  preconditions, postconditions, class invariants \\[2cm]
+
+\textbf{Static \newline contracts validation} & \centering \cmark & \centering \xmark & \centering \cmark & \centering \cmark & \centering\arraybackslash \xmark \tabularnewline
+
+\textbf{Contracts inheritance} & \centering \cmark & \centering \cmark & \centering \cmark & \centering \cmark & \centering\arraybackslash \xmark \tabularnewline
+
+\textbf{Contracts in arbitrary places} & \centering \cmark & \centering \xmark & \centering \xmark & \centering \xmark & \centering\arraybackslash \xmark \tabularnewline
+
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent
+As we see contract api features are similar in all presented solutions. \textit{cofoja} and \textit{modern jass} offer \textit{exceptional contracts} which allow to specify separate contracts for cases when method execution ends with an exception. The \textit{coco} does not have this functionality yet.
+
+\noindent
+It is worth to note that \textit{coco} has the most convienient type of contract specifications - contracts can be embedded directly in a code as a method calls. This approach allows to exploit IDE features such as static type checking and code completion during contracts development. Other tools express contracts as strings in annotations or javadocs.
+
+\noindent
+The \textit{Code contracts for Java} is also the only tool which supports contracts in arbitrary places in the code such as loop invariants.
+
+\chapter{Aspect Oriented Programming Engine}
+
+\section{AOP Engine - API}
+Opis interfejsu
+
+\subsection{Pointcut expressions language}
+Opis języka wyrażeń do aspektów, gramatyki.
+\subsection{Advice ordering and instantiation}
+Informacje dot. kolejności wykonywania aspektów (aspect chain) i możliwości ich instancjonowania (SINGLETON i TRANSIENT)
+
+\subsection{Advice definitions embedded in a program code}
+Interfejs imperatywny
+\subsection{Advice definitions as annotations}
+Interfejs imperatywny
+
+\section{AOP examples}
+
+\subsection{Logging}
+
+\subsection{Method invocation authorization}
+
+\subsection{Database transactions management}
+
+\section{AOP Engine implementation}
+
+\subsection{Overview}
+
+\subsection{Advice definitions detection}
+
+\subsection{Annotation API processing}
+
+\subsection{Pointcut expressions parsing}
+
+\subsection{Advices validation}
+
+\subsection{Advice resolution at join points}
+
+\subsection{Code transformations}
+
+\subsection{Testing methods}
+
+\section{Other AOP tools for Java}
+
+\chapter{Tests}
+
+\section{Performance tests of contract evaluation engine}
+\subsection{Methodology}
+\subsection{Results and discussion}
+
+\section{Performance tests of AOP engine}
+
+\subsection{Methodology}
+\subsection{Results and discussion}
+
+\chapter{Summary}
+
+%%%%% BIBLIOGRAFIA
+
+\begin{thebibliography}{1}
+
+\bibitem{dbc} Applying "Design by Contract", Bertrand Meyer, Interactive Software Engineering
+
+\bibitem{eifell} eifell.org, Design by Contract and Assertions
+, https://www.eiffel.org/doc/solutions/Design\_by\_Contract\_and\_Assertions (last access: 4th August 2020)
+
+\bibitem{codecontracts} Fähndrich, M., Barnett, M., Logozzo, F., Code Contracts (2009)
+
+\bibitem{cofoja} https://github.com/nhatminhle/cofoja  (last access: 4th August 2020)
+
+\bibitem{mjass} Johannes Rieken, Design By Contract for Java (2007)
+
+\bibitem{icontract} R. Kramer, iContract - the Java design by Contract tool, Proceedings. Technology of Object-Oriented Languages. TOOLS 26 
+
+\bibitem{contract4j} Dean Wampler, Contract4J for Design by Contract in Java: Design Pattern-Like Protocols and Aspect Interfaces (2006)
+
+\bibitem{dbccodecontracts} https://www.npmjs.com/package/dbc-code-contracts (last access: 4th August 2020)
+
+\bibitem{jscontract} https://github.com/oyvindkinsey/jsContract (last access: 4th August 2020)
+
+\bibitem{pycontracts} https://github.com/AndreaCensi/contracts (last access: 4th August 2020)
+
+\bibitem{dpcontracts} https://github.com/deadpixi/contracts (last access: 4th August 2020)
+
+\bibitem{dbcpep} https://www.python.org/dev/peps/pep-0316/ (last access: 4th August 2020)
+
+\bibitem{liskov} Liskov, Barbara; Wing, Jeannette, A behavioral notion of subtyping. ACM Transactions on Programming Languages and Systems
+
+\bibitem{aop} Gregor Kiczales, John Lamping, Anurag Mendhekar, Chris Maeda, Cristina Videira Lopes,
+Jean-Marc Loingtier, John Irwin, Aspect-Oriented Programming
+
+\bibitem{springaop} https://docs.spring.io/spring/docs/4.3.15.RELEASE/spring-framework-reference/html/aop.html (last access: 4th August 2020)
+
+\bibitem{jbossaop} https://jbossaop.jboss.org/ (last access: 4th August 2020)
+
+\bibitem{aopcpp} https://www.aspectc.org/ (last access: 4th August 2020)
+
+\bibitem{aoppp} Zhen YaoQi-long ZhengGuo-liang Chen, AOP++: A Generic Aspect-Oriented Programming Framework in C++
+
+\bibitem{aspectjs} https://www.aspectjs.com/ (last access: 4th August 2020)
+
+\bibitem{meld} https://github.com/cujojs/meld (last access: 4th August 2020)
+
+\bibitem{aopharm} Constantinos Constantinides, Therapon Skotiniotis, Maximilian Stoerzer, AOP considered harmful
+
+\bibitem{javarefdoc} Oracle, The Reflection API, https://docs.oracle.com/javase/tutorial/reflect/index.html (last access: 5th August 2020)
+
+\bibitem{javaref} N. Frankel, Performance cost of reflection, https://blog.frankel.ch/performance-cost-of-reflection (last access: 5th August 2020)
+
+\bibitem{asm} Eric Bruneton, ASM 4.0 A Java bytecode engineering library, 2007
+
+\bibitem{asmexamples} Eugene Kuleshov, Using the ASM framework to implement common Java bytecode transformation patterns
+
+\bibitem{typeerasure} Gosling J., Joy B., Steel G., Bracha G. The Java Language Specification, 2015, pp 64.
+
+\bibitem{javac} OpenJDK, Compilation overview, https://openjdk.java.net/groups/compiler/doc/compilation-overview/index.html (last access: 5th August 2020)
+
+\end{thebibliography}
+
+\end{document}
+
