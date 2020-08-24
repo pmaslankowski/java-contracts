@@ -33,16 +33,16 @@ public class BenchmarkEnsures {
     @Benchmark
     @Warmup(iterations = 3, time = 3)
     @Measurement(iterations = 5, time = 5)
-    public void postconditions_1000(Blackhole hole, Input input) {
-        hole.consume(input.subject.target1000(input.x));
+    public void postconditions_500(Blackhole hole, Input input) {
+        hole.consume(input.subject.target500(input.x));
     }
 
-    @Benchmark
-    @Warmup(iterations = 3, time = 3)
-    @Measurement(iterations = 5, time = 5)
-    public void postconditions_5000(Blackhole hole, Input input) {
-        hole.consume(input.subject.target5000(input.x));
-    }
+//    @Benchmark
+//    @Warmup(iterations = 3, time = 3)
+//    @Measurement(iterations = 5, time = 5)
+//    public void postconditions_5000(Blackhole hole, Input input) {
+//        hole.consume(input.subject.target5000(input.x));
+//    }
 
     @State(Scope.Benchmark)
     public static class Input {

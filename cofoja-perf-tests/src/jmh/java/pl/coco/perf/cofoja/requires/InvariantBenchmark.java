@@ -10,7 +10,7 @@ import org.openjdk.jmh.infra.Blackhole;
 import pl.coco.perf.InvariantSubject;
 import pl.coco.perf.InvariantSubject10;
 import pl.coco.perf.InvariantSubject100;
-import pl.coco.perf.InvariantSubject1000;
+import pl.coco.perf.InvariantSubject500;
 
 public class InvariantBenchmark {
 
@@ -38,8 +38,8 @@ public class InvariantBenchmark {
     @Benchmark
     @Warmup(iterations = 1, time = 1)
     @Measurement(iterations = 3, time = 3)
-    public void invariants_1000(Blackhole hole, Input input) {
-        hole.consume(input.subject1000.target(input.x));
+    public void invariants_500(Blackhole hole, Input input) {
+        hole.consume(input.subject500.target(input.x));
     }
 
     @State(Scope.Benchmark)
@@ -48,7 +48,7 @@ public class InvariantBenchmark {
         public InvariantSubject subject = new InvariantSubject();
         public InvariantSubject10 subject10 = new InvariantSubject10();
         public InvariantSubject100 subject100 = new InvariantSubject100();
-        public InvariantSubject1000 subject1000 = new InvariantSubject1000();
+        public InvariantSubject500 subject500 = new InvariantSubject500();
 
         public int x = -1;
     }

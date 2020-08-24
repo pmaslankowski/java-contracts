@@ -35,8 +35,8 @@ public class EnsuresBenchmark {
     @Benchmark
     @Warmup(iterations = 1, time = 1)
     @Measurement(iterations = 3, time = 3)
-    public void postconditions_1000(Blackhole hole, Input input) {
-        hole.consume(input.subject.target1000(input.x));
+    public void postconditions_500(Blackhole hole, Input input) {
+        hole.consume(input.subject.target500(input.x));
     }
 
     @State(Scope.Benchmark)

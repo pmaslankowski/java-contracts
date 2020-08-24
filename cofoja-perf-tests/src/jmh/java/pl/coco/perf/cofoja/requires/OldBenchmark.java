@@ -32,12 +32,12 @@ public class OldBenchmark {
         hole.consume(input.subject.target100(input.x));
     }
 
-    @Benchmark
-    @Warmup(iterations = 1, time = 1)
-    @Measurement(iterations = 3, time = 3)
-    public void old_1000(Blackhole hole, Input input) {
-        hole.consume(input.subject.target1000(input.x));
-    }
+//    @Benchmark
+//    @Warmup(iterations = 1, time = 1)
+//    @Measurement(iterations = 3, time = 3)
+//    public void old_1000(Blackhole hole, Input input) {
+//        hole.consume(input.subject.target500(input.x));
+//    }
 
     @State(Scope.Benchmark)
     public static class Input {

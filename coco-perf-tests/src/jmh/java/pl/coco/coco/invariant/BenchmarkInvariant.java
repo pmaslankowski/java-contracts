@@ -33,8 +33,8 @@ public class BenchmarkInvariant {
     @Benchmark
     @Warmup(iterations = 1, time = 1)
     @Measurement(iterations = 3, time = 3)
-    public void invariant_1000(Blackhole hole, Input input) {
-        hole.consume(input.subject1000.target(input.x));
+    public void invariant_500(Blackhole hole, Input input) {
+        hole.consume(input.subject500.target(input.x));
     }
 
     @State(Scope.Benchmark)
@@ -43,7 +43,7 @@ public class BenchmarkInvariant {
         public InvariantSubject subject = new InvariantSubject();
         public InvariantSubject10 subject10 = new InvariantSubject10();
         public InvariantSubject100 subject100 = new InvariantSubject100();
-        public InvariantSubject1000 subject1000 = new InvariantSubject1000();
+        public InvariantSubject500 subject500 = new InvariantSubject500();
         public int x = -1;
     }
 }

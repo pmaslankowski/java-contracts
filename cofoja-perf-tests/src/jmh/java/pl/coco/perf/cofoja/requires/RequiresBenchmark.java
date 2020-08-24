@@ -36,7 +36,7 @@ public class RequiresBenchmark {
     @Warmup(iterations = 1, time = 1)
     @Measurement(iterations = 3, time = 3)
     public void preconditions_1000(Blackhole hole, Input input) {
-        hole.consume(input.subject.target1000(input.x));
+        hole.consume(input.subject.target500(input.x));
     }
 
     @State(Scope.Benchmark)

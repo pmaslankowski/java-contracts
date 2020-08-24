@@ -35,6 +35,7 @@ test {
 
 jmh {
     jvmArgsPrepend = ['-ea', '-javaagent:/home/pma/university/java-contracts/cofoja-perf-tests/libs/cofoja-1.3-20160207.jar']
+    fork = 2
     duplicateClassesStrategy = 'exclude'
     // Strategy to apply when encountring duplicate classes during creation of the fat jar (i.e. while executing jmhJar task)
 }
