@@ -507,7 +507,7 @@ import com.google.java.contract.Invariant;
 })
 public class InvariantSubject500 {
 
-    private int field = 0;
+    private int field = -1;
 
     public int target(int x) {
         if (field != Integer.MIN_VALUE) {

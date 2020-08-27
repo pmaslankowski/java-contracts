@@ -1,0 +1,23 @@
+Benchmark                              Mode  Cnt          Score           Error  Units
+EnsuresBenchmark.base                 thrpt    6   50270805.533 ±   8782486.940  ops/s
+EnsuresBenchmark.postconditions_10    thrpt    6   46266994.674 ±  12869328.198  ops/s
+EnsuresBenchmark.postconditions_100   thrpt    6   27850605.591 ±   2522216.660  ops/s
+EnsuresBenchmark.postconditions_500   thrpt    6     116500.801 ±      3026.110  ops/s
+InvariantBenchmark.base               thrpt    6  320997426.249 ± 165025978.216  ops/s
+InvariantBenchmark.invariants_10      thrpt    6   30322781.936 ±   3582445.172  ops/s
+InvariantBenchmark.invariants_100     thrpt    6   13885392.414 ±   1385628.905  ops/s
+InvariantBenchmark.invariants_500     thrpt    6      36396.974 ±      2261.247  ops/s
+MixedBenchmark.base                   thrpt    6   48126068.822 ±  13935276.708  ops/s
+MixedBenchmark.mixed_10               thrpt    6   22887917.353 ±   2906394.838  ops/s
+MixedBenchmark.mixed_100              thrpt    6      66955.163 ±     18867.705  ops/s
+OldBenchmark.base                     thrpt    6   38134265.941 ±   5620301.240  ops/s
+OldBenchmark.old_10                   thrpt    6   25986694.446 ±   6644811.732  ops/s
+OldBenchmark.old_100                  thrpt    6     333396.518 ±    112084.758  ops/s
+RequiresBenchmark.base                thrpt    6   40019982.813 ±   5350881.109  ops/s
+RequiresBenchmark.preconditions_10    thrpt    6   34649703.088 ±   4577910.443  ops/s
+RequiresBenchmark.preconditions_100   thrpt    6   20521834.161 ±   4786420.502  ops/s
+RequiresBenchmark.preconditions_1000  thrpt    6      68238.207 ±     35024.050  ops/s
+ResultBenchmark.base                  thrpt    6   39848049.321 ±   6391756.150  ops/s
+ResultBenchmark.result_10             thrpt    6   42710647.476 ±  15478134.105  ops/s
+ResultBenchmark.result_100            thrpt    6   25725656.375 ±   5758789.301  ops/s
+ResultBenchmark.result_500            thrpt    6     111789.801 ±     15490.411  ops/s

@@ -15,11 +15,14 @@
             <option value="$PROJECT_DIR$/coas-api" />
             <option value="$PROJECT_DIR$/coas-compiler" />
             <option value="$PROJECT_DIR$/coas-examples" />
+            <option value="$PROJECT_DIR$/coas-perf-tests" />
             <option value="$PROJECT_DIR$/coco-api" />
             <option value="$PROJECT_DIR$/coco-compiler" />
             <option value="$PROJECT_DIR$/coco-examples" />
             <option value="$PROJECT_DIR$/coco-perf-tests" />
+            <option value="$PROJECT_DIR$/cofoja-perf-tests" />
             <option value="$PROJECT_DIR$/compiler-commons" />
+            <option value="$PROJECT_DIR$/mjass-perf-tests" />
             <option value="$PROJECT_DIR$/test-compiler-commons" />
           </set>
         </option>

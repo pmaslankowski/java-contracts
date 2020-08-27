@@ -39,9 +39,9 @@ public class ContractEngine {
     private static void evaluate(ConditionSupplier condition, String contractMessage,
             String... args) {
 
-        if (isContractUnderEvaluation.get()) {
-            return;
-        }
+//        if (isContractUnderEvaluation.get()) {
+//            return;
+//        }
 
         boolean result = evaluateCondition(condition);
 
@@ -51,18 +51,18 @@ public class ContractEngine {
     }
 
     private static boolean evaluateCondition(ConditionSupplier condition) {
-        isContractUnderEvaluation.set(true);
+//        isContractUnderEvaluation.set(true);
         try {
             return condition.get();
         } catch (Exception e) {
             throw new ContractFailedException(
                     "An exception has been thrown during contract evaluation:", e);
-        } finally {
-            isContractUnderEvaluation.set(false);
-        }
+        } //finally {
+//            isContractUnderEvaluation.set(false);
+        //}
     }
 
     public static <T> T deepClone(T obj) {
-        return cloner.deepClone(obj);
+        return obj;//cloner.shallowClone(obj);
     }
 }

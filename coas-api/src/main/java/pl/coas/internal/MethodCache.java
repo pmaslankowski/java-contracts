@@ -21,8 +21,10 @@ public class MethodCache {
         try {
             return key.clazz.getDeclaredMethod(key.methodName, key.parameterTypes);
         } catch (NoSuchMethodException e) {
-            throw new AspectException("An internal exception during aspect evaluation occurred.",
-                    e);
+            // TODO: fix constructor handling
+            return null;
+//            throw new AspectException("An internal exception during aspect evaluation occurred.",
+//                    e);
         }
     }
 

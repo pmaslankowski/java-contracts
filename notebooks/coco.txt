@@ -1,0 +1,23 @@
+Benchmark                                            Mode  Cnt           Score           Error  Units
+p.c.c.ensures.BenchmarkEnsures.base                 thrpt   10  1265706085.658 ±   2357642.939  ops/s
+p.c.c.ensures.BenchmarkEnsures.postconditions_10    thrpt   10   345092166.079 ±    883700.556  ops/s
+p.c.c.ensures.BenchmarkEnsures.postconditions_100   thrpt   10     4456493.254 ±     88866.925  ops/s
+p.c.c.ensures.BenchmarkEnsures.postconditions_500   thrpt   10      155783.150 ±      4183.704  ops/s
+p.c.c.invariant.BenchmarkInvariant.base             thrpt    6   771113703.630 ± 152201721.757  ops/s
+p.c.c.invariant.BenchmarkInvariant.invariant_10     thrpt    6   205983167.616 ±  76720656.539  ops/s
+p.c.c.invariant.BenchmarkInvariant.invariant_100    thrpt    6     1651532.865 ±     69156.576  ops/s
+p.c.c.invariant.BenchmarkInvariant.invariant_500    thrpt    6       46736.277 ±     85335.525  ops/s
+p.c.c.mixed.MixedBenchmark.base                     thrpt    6  1264204669.352 ±  13548340.630  ops/s
+p.c.c.mixed.MixedBenchmark.mixed_10                 thrpt    6    97601140.037 ±  16434430.128  ops/s
+p.c.c.mixed.MixedBenchmark.mixed_100                thrpt    6       60416.369 ±     13543.273  ops/s
+p.c.c.old.BenchmarkOld.base                         thrpt    6   950240319.694 ±   5500691.422  ops/s
+p.c.c.old.BenchmarkOld.old_10                       thrpt    6   334939744.495 ±  43604208.228  ops/s
+p.c.c.old.BenchmarkOld.old_100                      thrpt    6      317761.893 ±     21492.559  ops/s
+p.c.c.requires.RequiresBenchmark.base               thrpt    6  1266185745.546 ±   5377180.217  ops/s
+p.c.c.requires.RequiresBenchmark.preconditions_10   thrpt    6   344344107.488 ±   2267015.737  ops/s
+p.c.c.requires.RequiresBenchmark.preconditions_100  thrpt    6     4438667.734 ±    314126.035  ops/s
+p.c.c.requires.RequiresBenchmark.preconditions_500  thrpt    6      103877.457 ±    180734.466  ops/s
+p.c.c.result.BenchmarkResult.base                   thrpt    6  1266386785.925 ±   8733539.761  ops/s
+p.c.c.result.BenchmarkResult.result_10              thrpt    6   271104851.298 ±  68990943.943  ops/s
+p.c.c.result.BenchmarkResult.result_100             thrpt    6     3552298.430 ±    151841.209  ops/s
+p.c.c.result.BenchmarkResult.result_500             thrpt    6       97641.509 ±    174276.136  ops/s

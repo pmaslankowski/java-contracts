@@ -12,20 +12,25 @@ repositories {
 }
 
 compileJava {
-    options.compilerArgs << '-Xplugin:coco'
+    options.compilerArgs << '-Xplugin:coas'
+}
+
+
+compileTestJava {
+    options.compilerArgs << '-Xplugin:coas'
 }
 
 compileJmhJava {
-    options.compilerArgs << '-Xplugin:coco'
+    options.compilerArgs << '-Xplugin:coas'
 }
 
 dependencies {
-    implementation project(':coco-api')
-    implementation project(':coco-compiler')
-
-    testImplementation 'org.assertj:assertj-core:3.11.1'
+    implementation project(':coas-api')
+    implementation project(':coas-compiler')
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    testImplementation 'org.assertj:assertj-core:3.11.1'
 }
 
 jmh {

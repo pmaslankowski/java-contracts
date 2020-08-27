@@ -5,7 +5,7 @@ import pl.coco.api.code.InvariantMethod;
 
 public class InvariantSubject500 {
 
-    private int field;
+    private int field = -1;
 
     @InvariantMethod
     public void invariants() {

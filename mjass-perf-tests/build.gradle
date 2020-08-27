@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+    id "me.champeau.gradle.jmh" version "0.5.0"
+}
+
+version 'unspecified'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+
+dependencies {
+    annotationProcessor files('libs/jass.modern.core-20070519.jar')
+    compile files('libs/jass.modern.core-20070519.jar')
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
+    testImplementation 'org.assertj:assertj-core:3.11.1'
+}
+
+jmh {
+    fork = 2
+    duplicateClassesStrategy = 'exclude'
+    // Strategy to apply when encountring duplicate classes during creation of the fat jar (i.e. while executing jmhJar task)
+}

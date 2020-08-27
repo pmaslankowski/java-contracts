@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$PROJECT_DIR$/cofoja-perf-tests/libs/cofoja.asm-1.3-20160207.jar" />
+        </processorPath>
+        <module name="java-contracts.cofoja-perf-tests.main" />
+      </profile>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$PROJECT_DIR$/mjass-perf-tests/libs/jass.modern.core-20070519.jar" />
+        </processorPath>
+        <module name="java-contracts.mjass-perf-tests.main" />
+      </profile>
+    </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="coco-perf-tests" target="1.5" />
       <module name="java-contracts.coas-compiler.generated" target="1.8" />
