@@ -23,6 +23,7 @@
             <option value="$PROJECT_DIR$/cofoja-perf-tests" />
             <option value="$PROJECT_DIR$/compiler-commons" />
             <option value="$PROJECT_DIR$/mjass-perf-tests" />
+            <option value="$PROJECT_DIR$/spring-aop-perf-tests" />
             <option value="$PROJECT_DIR$/test-compiler-commons" />
           </set>
         </option>
