@@ -1,5 +1,9 @@
+
 package coas.perf.ComplexCondition;
 
+import org.springframework.stereotype.Component;
+
+@Component("Subject_cc")
 public class Subject {
 
     public int target(int x) {
