@@ -6,4 +6,5 @@ include 'cofoja-perf-tests'
 include 'mjass-perf-tests'
 include 'coas-perf-tests'
 include 'spring-aop-perf-tests'
+include 'aspectj-perf-tests'
 

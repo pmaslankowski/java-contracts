@@ -28,7 +28,7 @@ public class Advice{i} {{
 
 
 def conditions(case):
-    res = f'execution(* coas.perf.ComplexCondition.Subject{case}.*(..)) and ('
+    res = f'execution(* coas.perf.ComplexCondition{case}.Subject{case}.*(..)) and ('
     res += ' or '.join([f'execution(* *.junk{i}(..))' for i in range(30)])
     res += ' or execution(* *.target(..))'
     res += ')'
@@ -37,7 +37,9 @@ def conditions(case):
 
 def subject(case):
     return f'''
-    package coas.perf.ComplexCondition{case};
+package coas.perf.ComplexCondition{case};
+
+import org.springframework.stereotype.Component;
 
 @Component("Subject_{case}_cc")
 public class Subject{case} {{
