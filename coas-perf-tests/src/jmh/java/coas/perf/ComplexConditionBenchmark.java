@@ -8,7 +8,6 @@ import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.infra.Blackhole;
 
 import coas.perf.ComplexCondition.Subject;
-import coas.perf.ComplexCondition10.Subject10;
 import coas.perf.ComplexCondition100.Subject100;
 import coas.perf.ComplexCondition150.Subject150;
 import coas.perf.ComplexCondition200.Subject200;
@@ -17,7 +16,6 @@ import coas.perf.ComplexCondition300.Subject300;
 import coas.perf.ComplexCondition50.Subject50;
 import coas.perf.ComplexCondition500.Subject500;
 
-
 public class ComplexConditionBenchmark {
 
     @Benchmark
@@ -25,13 +23,6 @@ public class ComplexConditionBenchmark {
     @Measurement(iterations = 5, time = 5)
     public void base(Blackhole hole, Input input) {
         hole.consume(input.subject.target(input.x));
-    }
-
-    @Benchmark
-    @Warmup(iterations = 3, time = 3)
-    @Measurement(iterations = 5, time = 5)
-    public void advices_10(Blackhole hole, Input input) {
-        hole.consume(input.subject10.target(input.x));
     }
 
     @Benchmark
@@ -87,7 +78,6 @@ public class ComplexConditionBenchmark {
     public static class Input {
 
         public Subject subject = new Subject();
-        public Subject10 subject10 = new Subject10();
         public Subject50 subject50 = new Subject50();
         public Subject100 subject100 = new Subject100();
         public Subject150 subject150 = new Subject150();

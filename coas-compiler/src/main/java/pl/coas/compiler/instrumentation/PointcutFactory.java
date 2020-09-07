@@ -7,11 +7,13 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.sun.source.tree.MethodInvocationTree;
+import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCBinary;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
 import com.sun.tools.javac.tree.JCTree.JCFieldAccess;
 import com.sun.tools.javac.tree.JCTree.JCLiteral;
 import com.sun.tools.javac.tree.JCTree.JCMethodInvocation;
+import com.sun.tools.javac.tree.JCTree.JCParens;
 import com.sun.tools.javac.tree.JCTree.JCUnary;
 import com.sun.tools.javac.tree.JCTree.Tag;
 import com.sun.tools.javac.util.Name;
@@ -65,9 +67,13 @@ public class PointcutFactory {
         } else if (expression instanceof JCUnary) {
             JCUnary operator = (JCUnary) expression;
             return newPointcutFromUnaryOp(operator);
+        } else if (expression instanceof JCParens) {
+//            System.out.println(((JCParens) expression).getExpression());
+            return newPointcut(((JCParens) expression).getExpression());
         } else {
             throw new IllegalArgumentException(
-                    "Pointcut expression has to be method invocation or logical expression");
+                    "Pointcut expression has to be method invocation or logical expression: "
+                            + expression.toString() + " found: " + expression.getClass().getName());
         }
     }
 

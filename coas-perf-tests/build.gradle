@@ -11,18 +11,18 @@ repositories {
     mavenCentral()
 }
 
-compileJava {
-    options.compilerArgs << '-Xplugin:coas'
-}
-
-
-compileTestJava {
-    options.compilerArgs << '-Xplugin:coas'
-}
-
-compileJmhJava {
-    options.compilerArgs << '-Xplugin:coas'
-}
+//compileJava {
+//    options.compilerArgs << '-Xplugin:coas'
+//}
+//
+//
+//compileTestJava {
+//    options.compilerArgs << '-Xplugin:coas'
+//}
+//
+//compileJmhJava {
+//    options.compilerArgs << '-Xplugin:coas'
+//}
 
 dependencies {
     implementation project(':coas-api')

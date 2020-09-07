@@ -1,5 +1,7 @@
 package pl.coas.compiler.listeners;
 
+import java.util.Optional;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -12,6 +14,7 @@ import com.sun.source.util.TaskListener;
 import pl.coas.compiler.instrumentation.AnnotationScanningVisitor;
 import pl.coas.compiler.instrumentation.AspectClassesInstrumentingVisitor;
 import pl.coas.compiler.instrumentation.AspectScanningVisitor;
+import pl.coas.compiler.instrumentation.AspectsRemover;
 import pl.coas.compiler.instrumentation.JoinpointInstrumentingVisitor;
 import pl.coas.compiler.validation.AspectValidatingVisitor;
 
@@ -25,18 +28,20 @@ public class InstrumentationListener implements TaskListener {
     private final AspectValidatingVisitor validatingVisitor;
     private final AspectClassesInstrumentingVisitor aspectClassesInstrumentingVisitor;
     private final JoinpointInstrumentingVisitor instrumentingVisitor;
+    private final AspectsRemover aspectRemover;
 
     @Inject
     public InstrumentationListener(AnnotationScanningVisitor annotationScanningVisitor,
             AspectScanningVisitor scanningVisitor,
             AspectValidatingVisitor validatingVisitor,
             AspectClassesInstrumentingVisitor aspectClassesInstrumentingVisitor,
-            JoinpointInstrumentingVisitor instrumentingVisitor) {
+            JoinpointInstrumentingVisitor instrumentingVisitor, AspectsRemover aspectRemover) {
         this.annotationScanningVisitor = annotationScanningVisitor;
         this.scanningVisitor = scanningVisitor;
         this.validatingVisitor = validatingVisitor;
         this.aspectClassesInstrumentingVisitor = aspectClassesInstrumentingVisitor;
         this.instrumentingVisitor = instrumentingVisitor;
+        this.aspectRemover = aspectRemover;
     }
 
     @Override
@@ -56,11 +61,15 @@ public class InstrumentationListener implements TaskListener {
         }
 
         if (taskEvent.getKind() == TaskEvent.Kind.ANALYZE) {
-            boolean isValid = taskEvent.getCompilationUnit().accept(validatingVisitor, null);
-            if (isValid) {
-                taskEvent.getCompilationUnit().accept(instrumentingVisitor, null);
-                log.debug("Instrumented compilation unit:\n{}", taskEvent.getCompilationUnit());
+            boolean isValid = Optional
+                    .ofNullable(taskEvent.getCompilationUnit().accept(validatingVisitor, null))
+                    .orElse(true);
+            if (!isValid) {
+                return;
             }
+            taskEvent.getCompilationUnit().accept(instrumentingVisitor, null);
+            aspectRemover.removeAspectStatements();
+            log.debug("Instrumented compilation unit:\n{}", taskEvent.getCompilationUnit());
         }
     }
 }

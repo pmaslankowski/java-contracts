@@ -21,56 +21,56 @@ import coas.perf.TargetClass500.Subject500;
 public class SimpleClassBenchmark {
 
     @Benchmark
-    @Warmup(iterations = 3, time = 3)
+    @Warmup(iterations = 1, time = 1)
     @Measurement(iterations = 5, time = 5)
     public void base(Blackhole hole, Input input) {
         hole.consume(input.subject.target(input.x));
     }
 
     @Benchmark
-    @Warmup(iterations = 3, time = 3)
+    @Warmup(iterations = 1, time = 1)
     @Measurement(iterations = 5, time = 5)
     public void advices_50(Blackhole hole, Input input) {
         hole.consume(input.subject50.target(input.x));
     }
 
     @Benchmark
-    @Warmup(iterations = 3, time = 3)
+    @Warmup(iterations = 1, time = 1)
     @Measurement(iterations = 5, time = 5)
     public void advices_100(Blackhole hole, Input input) {
         hole.consume(input.subject100.target(input.x));
     }
 
     @Benchmark
-    @Warmup(iterations = 3, time = 3)
+    @Warmup(iterations = 1, time = 1)
     @Measurement(iterations = 5, time = 5)
     public void advices_150(Blackhole hole, Input input) {
         hole.consume(input.subject150.target(input.x));
     }
 
     @Benchmark
-    @Warmup(iterations = 3, time = 3)
+    @Warmup(iterations = 1, time = 1)
     @Measurement(iterations = 5, time = 5)
     public void advices_200(Blackhole hole, Input input) {
         hole.consume(input.subject200.target(input.x));
     }
 
     @Benchmark
-    @Warmup(iterations = 3, time = 3)
+    @Warmup(iterations = 1, time = 1)
     @Measurement(iterations = 5, time = 5)
     public void advices_250(Blackhole hole, Input input) {
         hole.consume(input.subject250.target(input.x));
     }
 
     @Benchmark
-    @Warmup(iterations = 3, time = 3)
+    @Warmup(iterations = 1, time = 1)
     @Measurement(iterations = 5, time = 5)
     public void advices_300(Blackhole hole, Input input) {
         hole.consume(input.subject300.target(input.x));
     }
 
     @Benchmark
-    @Warmup(iterations = 3, time = 3)
+    @Warmup(iterations = 1, time = 1)
     @Measurement(iterations = 5, time = 5)
     public void advices_500(Blackhole hole, Input input) {
         hole.consume(input.subject500.target(input.x));

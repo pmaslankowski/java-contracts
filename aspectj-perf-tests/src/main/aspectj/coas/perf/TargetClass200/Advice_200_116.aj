@@ -1,12 +1,21 @@
 
 public aspect Advice_200_116 {
 
-    private int counter = 0;
 
     pointcut test(): execution(int coas.perf.TargetClass200.Subject200.target(..));
     int around(): test() {
 
-        counter += 1;
-        return proceed();
+        int res = proceed();
+        
+        for (int i=0; i < 1000; i++) {
+            if (res % 2 == 0) {
+                res /= 2;
+            } else {
+                res = 2 * res + 1;
+            }
+        }
+
+        return res;
+
     }
 }

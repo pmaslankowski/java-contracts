@@ -56,7 +56,6 @@ public class AspectScanner {
         if (!aspectInvocations.isEmpty()) {
             Aspect aspect = getAspect(clazz, method, aspectInvocations);
             aspectRegistry.registerAspect(aspect);
-            removeAspectStatements(method);
         }
     }
 
@@ -152,18 +151,5 @@ public class AspectScanner {
     private Pointcut doGetPointcut(SimpleMethodInvocation invocation) {
         JCExpression pointcutExpr = (JCExpression) invocation.getArguments().get(0);
         return pointcutFactory.newPointcut(pointcutExpr);
-    }
-
-    private void removeAspectStatements(JCMethodDecl method) {
-        List<JCStatement> stmtsWithoutAspects = method.getBody().getStatements().stream()
-                .filter(statement -> !isAspectStatement(statement))
-                .collect(Collectors.toList());
-
-        method.getBody().stats = com.sun.tools.javac.util.List.from(stmtsWithoutAspects);
-    }
-
-    private boolean isAspectStatement(JCStatement statement) {
-        return asMethodInvocation(statement).map(this::isAspectInvocation)
-                .orElse(false);
     }
 }

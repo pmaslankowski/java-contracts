@@ -1,6 +1,10 @@
 package pl.coas.compiler.instrumentation;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -35,10 +39,24 @@ public class JoinpointInstrumentingVisitor extends TreeScanner<Void, Void> {
         clazz = (JCClassDecl) classTree;
         super.visitClass(classTree, aVoid);
 
+        System.out.println(classTree.getSimpleName() + " attr started");
+
+        System.out.println(classTree.toString());
+
+        if (classTree.getSimpleName().toString().startsWith("Subject")) {
+            try {
+                Path path = Paths.get("/home/pma/university/" + classTree.getSimpleName() + ".java");
+                Files.write(path, classTree.toString().getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         attributeClass(clazz);
 
-        System.out.println("Join point after instrumentation");
-        System.out.println(classTree.toString());
+//        System.out.println(classTree.getSimpleName() + " attr finished");
+        // System.out.println("Join point after instrumentation");
+        // System.out.println(classTree.toString());
         return null;
     }
 

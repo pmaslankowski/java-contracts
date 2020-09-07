@@ -1,9 +1,9 @@
 
-package coas.perf.TargetClass150;
+    package coas.perf.TargetClass150;
 
-import org.springframework.stereotype.Component;
+    import org.springframework.stereotype.Component;
 
-@Component
+    @Component
 public class Subject150 {
 
     public int target(int x) {
